@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto scan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .telegram-emoji {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 24px;
+    background: transparent !important;
+  }
+        body {
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        .mega_alert_block {
+            border-radius: 10px;
+            margin: 10px 4%;
+            height: 75px;
+            color: #fff;
+        }
+        .percent {
+            text-align: right;
+        }
+        table{
+            background: url(../src/images.jpeg) no-repeat center center ;
+            
+        }
+        .container{
+            height: 80vh;
+            overflow: auto;
+        }
+        th{
+            color: #fff;
+        }  
+        .hoder_btn{
+            border: #fff;
+        border-radius: 30px;
+        margin: 5px;
+        background: linear-gradient(
+    135deg,
+    #ff1493 0%,
+    #fc3398 20%,
+    #ee82ee 40%,
+    #da70d6 60%,
+    #9667ad 80%,
+    #a660e7 100%
+  );
+  background-size: 200% 200%;
+  box-shadow: 0 0 15px rgba(218, 112, 214, 0.7);
+        }
+        @keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+        .hoder_btn:hover{
+            animation: gradientShift 2s ease infinite;
+  box-shadow: 0 0 25px rgba(218, 112, 214, 0.9);
+  transform: translateY(-2px);
+        }
+        .content{
+            padding:5px;
+        }
+        .table-bordered thead tr {
+  border-top: 1px solid #0dcaf0 !important; /* Цвет border-info */none !important;
+  border-bottom: none !important;
+}
+  
+
+    </style>
+</head>
+<body>
+    <main>
+        <div class="row">
+            <div class='col-11 bg-danger bg-opacity-50 mega_alert_block'>
+                <h2>🆕Левые <span class="percent">%</span></h2>
+            </div>
+        </div>
+        <div class="row">
+            
+            <div class="col-11 mx-auto container">
+                <div class="content border border-white border- rounded">
+                    <div class="d-flex">
+                    <button id="btn-1" class=" hoder_btn radiant-purple"></button>
+                    <button id="btn-2" class=" hoder_btn radiant-purple"></button>
+                    <button id="btn-3" class=" hoder_btn radiant-purple"></button>
+                    <span id="all_holder" class="ms-auto"></span>
+                </div>
+                <table class="table table-bordered border-info">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="25%">Кошелек</th>
+                            <th width="10%">Доля</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableinsert"></tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+         function formatNumber(num) {
+            if (num >= 1000000000) {
+                return (num / 1000000000).toFixed(2) + 'B';
+              }
+              if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+              }
+              if (num >= 1000) {
+                  return (num / 1000).toFixed(2) + 'K';
+                }
+                return num.toString();
+              }
+        const holders_table = new Map();
+        const contract = 'EQAb64zkvhg6biFzqkuGEXw_cI2z4Y1MmlJE0263pCuj5nU_';
+        let real_supply;
+        // Функция для добавления данных в Map
+        const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
+            const balance = element.balance / 10 ** decimals;
+            const percentage = (balance / totalSupply) * 100;
+            let kosh = document.createElement("a")
+            kosh.setAttribute("href" , `https://tonviewer.com/${element.owner.address}`)
+            
+            kosh.textContent = `тык`
+            kosh.target = '_blank';
+            holders_table.set(index, {
+                Кошелек: kosh,
+                Доля: `${percentage.toFixed(2)}%(${formatNumber(balance)})  `
+            });
+        };
+
+        // Функция для рендера таблицы
+        const renderTable = () => {
+            const all_btn = document.getElementById("btn-1")
+            const lev_btn = document.getElementById("btn-2")
+            const otleg_btn = document.getElementById("btn-3")
+            const all_holders =document.getElementById("all_holder");
+            all_holders.textContent=`Показано на странице ${holders_table.size}`;
+            all_btn.textContent=`Все (${holders_table.size})`;
+            lev_btn.textContent=`Левые ()`;
+            otleg_btn.textContent=`Отлега ()`
+            const tableBody = document.getElementById("tableinsert");
+            tableBody.innerHTML = ""; // Очищаем перед обновлением
+            const dict =  ["1f991.png","1f990.png","1f433.png","1f421.png","1f420.png","1f419.png"]
+            
+            for (const [key, value] of holders_table) {
+                let rand = 0 + Math.random() * (5 + 1 - 0);
+            let k = Math.floor(rand);
+                const row = document.createElement("tr");
+
+                const idCell = document.createElement("th");
+                idCell.textContent = key;
+                row.appendChild(idCell);
+
+                const walletCell = document.createElement("th");
+                const waterfish = document.createElement("img");
+                waterfish.setAttribute("src", `../src/${dict[k]}`);
+                waterfish.setAttribute("width", "20"); // Добавьте размеры
+                waterfish.setAttribute("alt", "emoji");
+                walletCell.appendChild(waterfish);
+                walletCell.appendChild(value.Кошелек);
+                row.appendChild(walletCell);
+
+                const shareCell = document.createElement("th");
+                shareCell.textContent = `${value.Доля}`;
+                row.appendChild(shareCell);
+
+                tableBody.appendChild(row);
+            }
+        };
+
+        // Загружаем данные и рендерим таблицу
+        const fetchData = async () => {
+            try {
+                // 1. Получаем общий supply
+                const supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
+                const supplyData = await supplyResponse.json();
+                real_supply = supplyData.total_supply / 10 ** 9;
+
+                // 2. Получаем держателей
+                const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=1000&offset=0`);
+                const holdersData = await holdersResponse.json();
+
+                // 3. Заполняем Map
+                holdersData.addresses.forEach((el, i) => {
+                    logHolderPercentage(el, i, real_supply, 9);
+                });
+
+                // 4. Рендерим таблицу
+                renderTable();
+            } catch (error) {
+                console.error("Ошибка загрузки данных:", error);
+            }
+        };
+
+        // Запускаем загрузку
+        fetchData();
+    </script>
+</body>
+</html> 
