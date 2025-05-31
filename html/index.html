@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Стили остаются без изменений -->
+    <style>
+      /* Общий стиль */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0; /* Убираем отступы по умолчанию */
+        font-family: Arial, sans-serif; /* Шрифт для всего документа */
+        font-size: 14px; /* Размер шрифта */
+        line-height: 20px; /* Высота строки */
+        color: #333; /* Цвет текста */
+        min-height: 100vh; /* Минимальная высота на весь экран */
+        background: linear-gradient(
+          135deg,
+          #110c29,
+          #1a1538
+        ); /* Сохранение левого цвета и немного затемненный правый цвет */
+      }
+
+      .logo {
+        height: 512px;
+        width: 512px;
+        margin: 20px;
+      }
+      .logo_text {
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        background-image: linear-gradient(
+          135deg,
+          rgb(216, 37, 223),
+          rgb(88, 9, 216)
+        );
+      }
+      .h_text {
+        font-family: Inter, sans-serif;
+        color: #fff;
+      }
+      .p_text {
+        font-family: Inter, sans-serif;
+        color: #fff;
+        font-size: 14pt;
+      }
+      .vvv {
+        padding: 2rem 0;
+      }
+
+      /* Стилизация поисковой строки */
+      .search-container {
+        position: relative;
+        margin: 0 auto;
+      }
+
+      .search-input {
+        padding: 1.25rem 4rem !important;
+        border-radius: 50px !important;
+        border: 2px solid #6a11cb;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+        font-size: 1.1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .search-input:focus {
+        box-shadow: 0 0 20px rgba(106, 17, 203, 0.4);
+        border-color: #7c4dff;
+        background: rgba(255, 255, 255, 0.15) !important;
+      }
+
+      /* Стили кнопок */
+      .paste-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 3;
+        height: 45px;
+        width: 45px;
+        border-radius: 50%;
+      }
+      .circle {
+        position: absolute;
+        height: 50px;
+        width: 100px;
+      }
+      .paste-button:hover {
+        background: #6a11cb;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      .paste-button svg {
+        fill: #fff;
+        opacity: 0.8;
+      }
+      .h_text,
+      .logo_text {
+        display: inline;
+        margin: 0;
+      }
+      .search-button {
+        background: #7c4dff;
+        border: none;
+        transition: all 0.3s ease;
+        position: absolute;
+        z-index: 3;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 20px;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+      }
+      .d2 {
+        border: 2px solid #ff0000;
+        border-radius: 100px/50px;
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        line-height: 1;
+        position: relative; /* Чтобы стрелка позиционировалась относительно этого элемента */
+        margin-bottom: 20px; /* Оставляем место для стрелки */
+      }
+
+      .d2::after {
+        content: "";
+        position: absolute;
+        bottom: -15px; /* Размещаем стрелку ниже элемента */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 12px solid #ff0000; /* Красная стрелка вниз */
+      }
+      .search-button:hover {
+        background: #6a11cb;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      /* Эффекты placeholder */
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+        letter-spacing: 0.5px;
+      }
+
+      .radiant-purple {
+        font-size: 18pt;
+        font-weight: bold;
+        background: linear-gradient(
+          135deg,
+          #8a2be2 0%,
+          #9932cc 20%,
+          #da70d6 40%,
+          #ee82ee 60%,
+          #ff69b4 80%,
+          #ff1493 100%
+        );
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: gradientShift 6s ease infinite;
+        display: inline-block;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .paragraph_container {
+        margin-left: 50px !important;
+      }
+    </style>
+    <title>Crypto scan</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar fixed-top">
+        <div class="container-fluid">
+          <div class="language_container ml-auto">
+            <button type="button" class="btn btn-success" id="eng_btn">
+              Eng
+            </button>
+            <button type="button" class="btn btn-outline-success" id="rus_btn">
+              Рус
+            </button>
+            <button type="button" class="btn btn-outline-secondary">
+              <img
+                src="../src/утенок.gif"
+                width="30"
+                height="24"
+                class="d-inline-block align-text-top"
+              />Donate project
+            </button>
+          </div>
+          <a class="navbar-brand" href="#">
+            <span class="radiant-purple">JettonAnalizer</span>
+            <img
+              src="../src/output-onlinegiftools.gif"
+              width="30"
+              height="24"
+              class="d-inline-block align-text-top"
+              style="margin-top: 5px"
+            />
+          </a>
+          <div class="networks mr-auto">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="30"
+              height="24"
+              viewBox="0 0 64 64"
+              style="fill: #fff"
+            >
+              <path
+                d="M 32 10 C 19.85 10 10 19.85 10 32 C 10 44.15 19.85 54 32 54 C 44.15 54 54 44.15 54 32 C 54 19.85 44.15 10 32 10 z M 32 14 C 41.941 14 50 22.059 50 32 C 50 41.941 41.941 50 32 50 C 22.059 50 14 41.941 14 32 C 14 22.059 22.059 14 32 14 z M 41.041016 23.337891 C 40.533078 23.279297 39.894891 23.418531 39.181641 23.675781 C 37.878641 24.145781 21.223719 31.217953 20.261719 31.626953 C 19.350719 32.014953 18.487328 32.437828 18.486328 33.048828 C 18.486328 33.478828 18.741312 33.721656 19.445312 33.972656 C 20.177313 34.234656 22.023281 34.79275 23.113281 35.09375 C 24.163281 35.38275 25.357344 35.130844 26.027344 34.714844 C 26.736344 34.273844 34.928625 28.7925 35.515625 28.3125 C 36.102625 27.8325 36.571797 28.448688 36.091797 28.929688 C 35.611797 29.410688 29.988094 34.865094 29.246094 35.621094 C 28.346094 36.539094 28.985844 37.490094 29.589844 37.871094 C 30.278844 38.306094 35.239328 41.632016 35.986328 42.166016 C 36.733328 42.700016 37.489594 42.941406 38.183594 42.941406 C 38.877594 42.941406 39.242891 42.026797 39.587891 40.966797 C 39.992891 39.725797 41.890047 27.352062 42.123047 24.914062 C 42.194047 24.175062 41.960906 23.683844 41.503906 23.464844 C 41.365656 23.398594 41.210328 23.357422 41.041016 23.337891 z"
+              ></path>
+            </svg>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="30"
+              height="24"
+              viewBox="0 0 50 50"
+              style="fill: #fff"
+            >
+              <path
+                d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"
+              ></path>
+            </svg>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="30"
+              height="24"
+              viewBox="0 0 72 72"
+              style="fill: #fff"
+            >
+              <path
+                d="M36,12c13.255,0,24,10.745,24,24c0,10.656-6.948,19.685-16.559,22.818c0.003-0.009,0.007-0.022,0.007-0.022	s-1.62-0.759-1.586-2.114c0.038-1.491,0-4.971,0-6.248c0-2.193-1.388-3.747-1.388-3.747s10.884,0.122,10.884-11.491	c0-4.481-2.342-6.812-2.342-6.812s1.23-4.784-0.426-6.812c-1.856-0.2-5.18,1.774-6.6,2.697c0,0-2.25-0.922-5.991-0.922	c-3.742,0-5.991,0.922-5.991,0.922c-1.419-0.922-4.744-2.897-6.6-2.697c-1.656,2.029-0.426,6.812-0.426,6.812	s-2.342,2.332-2.342,6.812c0,11.613,10.884,11.491,10.884,11.491s-1.097,1.239-1.336,3.061c-0.76,0.258-1.877,0.576-2.78,0.576	c-2.362,0-4.159-2.296-4.817-3.358c-0.649-1.048-1.98-1.927-3.221-1.927c-0.817,0-1.216,0.409-1.216,0.876s1.146,0.793,1.902,1.659	c1.594,1.826,1.565,5.933,7.245,5.933c0.617,0,1.876-0.152,2.823-0.279c-0.006,1.293-0.007,2.657,0.013,3.454	c0.034,1.355-1.586,2.114-1.586,2.114s0.004,0.013,0.007,0.022C18.948,55.685,12,46.656,12,36C12,22.745,22.745,12,36,12z"
+              ></path>
+            </svg>
+
+            <img
+              src="../src/support.png"
+              width="30"
+              height="24"
+              class="d-inline-block align-text-top"
+            />
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="vvv">
+        <div class="row">
+          <my-input text="absolute"></my-input>
+        </div>
+      </div>
+      <div class="row">
+        <div class="text-center col-12"></div>
+      </div>
+      <div class="row">
+        <div class="mx-auto col-6">
+          <div class="paragraph_container">
+            <h2 class="h_text">
+              Research TON tokens easier
+              <h2 class="h_text">with</h2>
+              <h2 class="logo_text">JettonAnalizer</h2>
+            </h2>
+            <p class="p_text">
+              An innovative solution to get AI analytics on ton blockchain. If
+              you don't trust AI, you can do your own analytics using
+              information about locks and token holders.Just enter the
+              <span class="d2">token ca here.</span>
+            </p>
+          </div>
+        </div>
+        <div class="mx-auto col-6">
+          <img class="logo" src="../src/logo.gif" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="mx-auto col-10">
+          <div class="search-container">
+            <button class="paste-button" id="pasteButton">
+              <svg
+                width="16"
+                height="16"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  d="M104.6 48L64 48C28.7 48 0 76.7 0 112L0 384c0 35.3 28.7 64 64 64l96 0 0-48-96 0c-8.8 0-16-7.2-16-16l0-272c0-8.8 7.2-16 16-16l16 0c0 17.7 14.3 32 32 32l72.4 0C202 108.4 227.6 96 256 96l62 0c-7.1-27.6-32.2-48-62-48l-40.6 0C211.6 20.9 188.2 0 160 0s-51.6 20.9-55.4 48zM144 56a16 16 0 1 1 32 0 16 16 0 1 1 -32 0zM448 464l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l140.1 0L464 243.9 464 448c0 8.8-7.2 16-16 16zM256 512l192 0c35.3 0 64-28.7 64-64l0-204.1c0-12.7-5.1-24.9-14.1-33.9l-67.9-67.9c-9-9-21.2-14.1-33.9-14.1L256 128c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64z"
+                />
+              </svg>
+            </button>
+            <a href="token.html">
+              <button class="search-button" id="search">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+                  />
+                </svg>
+              </button>
+            </a>
+            <input
+              id="contractInput"
+              class="form-control form-control-lg search-input"
+              type="text"
+              placeholder="ca search"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="mx-auto col-3 cards-container"></div>
+      </div>
+    </main>
+  </body>
+  <script>
+    // Функция вставки из буфера
+    document
+      .getElementById("pasteButton")
+      .addEventListener("click", async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          const input = document.getElementById("contractInput");
+          input.value = text;
+          input.focus();
+          input.select();
+        } catch (err) {
+          console.error("Ошибка доступа к буферу:", err);
+          alert("Разрешите доступ к буферу или введите адрес вручную");
+        }
+      });
+
+    // Заглушка для поиска (нужно добавить реальный API)
+    document.getElementById("search").addEventListener("click", () => {
+      const contractAddress = document.getElementById("contractInput").value;
+      if (contractAddress) {
+        console.log("Ищем контракт:", contractAddress);
+      }
+    });
+  </script>
+</html>
