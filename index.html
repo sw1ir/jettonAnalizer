@@ -210,7 +210,7 @@
             </button>
             <button type="button" class="btn btn-outline-secondary">
               <img
-                src="src/утенок.gif"
+                src="../src/утенок.gif"
                 width="30"
                 height="24"
                 class="d-inline-block align-text-top"
@@ -220,7 +220,7 @@
           <a class="navbar-brand" href="#">
             <span class="radiant-purple">JettonAnalizer</span>
             <img
-              src=" src/output-onlinegiftools.gif"
+              src="../src/output-onlinegiftools.gif"
               width="30"
               height="24"
               class="d-inline-block align-text-top"
@@ -271,7 +271,7 @@
             </svg>
 
             <img
-              src=" src/support.png"
+              src="../src/support.png"
               width="30"
               height="24"
               class="d-inline-block align-text-top"
@@ -306,7 +306,7 @@
           </div>
         </div>
         <div class="mx-auto col-6">
-          <img class="logo" src=" src/logo.gif" />
+          <img class="logo" src="../src/logo.png" />
         </div>
       </div>
       <div class="row">
@@ -324,7 +324,7 @@
                 />
               </svg>
             </button>
-            <a href="html/token.html">
+            <a href="token.html">
               <button class="search-button" id="search">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -370,11 +370,12 @@
         }
       });
 
-    // Заглушка для поиска (нужно добавить реальный API)
     document.getElementById("search").addEventListener("click", () => {
       const contractAddress = document.getElementById("contractInput").value;
       if (contractAddress) {
         console.log("Ищем контракт:", contractAddress);
+        localStorage.setItem("contract", contractAddress);
+        window.location.href = "./token.html";
       }
     });
   </script>
