@@ -134,7 +134,9 @@
             kosh.target = '_blank';
             holders_table.set(index, {
                 Кошелек: kosh,
-                Доля: `${percentage.toFixed(2)}%(${formatNumber(balance)})  `
+                Доля: balance > 0 
+        ? `${percentage.toFixed(2)}% (${formatNumber(balance.toFixed(2))})`
+        : "0"
             });
         };
 
