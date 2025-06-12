@@ -122,7 +122,10 @@
                 return num.toString();
               }
         const holders_table = new Map();
-        const contract = 'EQBvfpasf82aAQUkdGZBuAxlcUR3Al7vY1T7ifC6UXAnnhhA';
+        let contract = null;
+      if (localStorage.getItem("contract")) {
+        contract = localStorage.getItem("contract");
+      }
         let real_supply;
         // Функция для добавления данных в Map
         const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
