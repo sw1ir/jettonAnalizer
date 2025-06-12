@@ -374,6 +374,8 @@
       const contractAddress = document.getElementById("contractInput").value;
       if (contractAddress) {
         console.log("Ищем контракт:", contractAddress);
+        localStorage.setItem("contract", contractAddress);
+        window.location.href = "./token.html";
       }
     });
   </script>
