@@ -23,8 +23,8 @@
       }
 
       .logo {
-        height: 512px;
-        width: 512px;
+        height: 309px;
+        width: 359px;
         margin: 20px;
       }
       .logo_text {
@@ -121,29 +121,7 @@
         width: 45px;
         height: 45px;
       }
-      .d2 {
-        border: 2px solid #ff0000;
-        border-radius: 100px/50px;
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 10px;
-        line-height: 1;
-        position: relative; /* Чтобы стрелка позиционировалась относительно этого элемента */
-        margin-bottom: 20px; /* Оставляем место для стрелки */
-      }
 
-      .d2::after {
-        content: "";
-        position: absolute;
-        bottom: -15px; /* Размещаем стрелку ниже элемента */
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        border-top: 12px solid #ff0000; /* Красная стрелка вниз */
-      }
       .search-button:hover {
         background: #6a11cb;
         transform: translateY(-50%) scale(1.1);
@@ -199,7 +177,7 @@
   </head>
   <body>
     <header>
-      <nav class="navbar fixed-top">
+      <nav class="navbar">
         <div class="container-fluid">
           <div class="language_container ml-auto">
             <button type="button" class="btn btn-success" id="eng_btn">
@@ -300,13 +278,13 @@
             <p class="p_text">
               An innovative solution to get AI analytics on ton blockchain. If
               you don't trust AI, you can do your own analytics using
-              information about locks and token holders.Just enter the
-              <span class="d2">token ca here.</span>
+              information about locks and token holders.Just enter the token ca
+              below.
             </p>
           </div>
         </div>
         <div class="mx-auto col-6">
-          <img class="logo" src="src/logo.png" />
+          <img class="logo" src="src/logo1.png" />
         </div>
       </div>
       <div class="row">
