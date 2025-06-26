@@ -1,98 +1,64 @@
 <!DOCTYPE html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Фон как на HelloNesh</title>
+<html>
+<head>
+    <title>Candlestick Chart</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0; /* Убираем отступы по умолчанию */
-        font-family: Arial, sans-serif; /* Шрифт для всего документа */
-        font-size: 14px; /* Размер шрифта */
-        line-height: 20px; /* Высота строки */
-        color: #333; /* Цвет текста */
-        min-height: 100vh; /* Минимальная высота на весь экран */
-        background: linear-gradient(
-          135deg,
-          #110c29,
-          #1a1538
-        ); /* Сохранение левого цвета и немного затемненный правый цвет */
-      }
-      /* Обертка для позиционирования стрелки */
-      .d2-arrow-container {
-        position: relative;
-        display: inline-block;
-        margin-right: 10px; /* Отступ от текста до input */
-      }
-
-      /* Красный овал с текстом */
-      .d2 {
-        border: 2px solid #ff0000;
-        border-radius: 100px/50px;
-        display: inline-flex;
-        align-items: center;
-        padding: 2px 10px;
-        position: relative;
-        background: white; /* Чтобы стрелка не "залезала" на текст */
-        z-index: 2; /* Чтобы овал был поверх стрелки */
-      }
-
-      /* Длинная линия (тело стрелки) */
-      .d2-arrow-container::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 100%;
-        width: 120px; /* Длина линии (можно ajust под твой дизайн) */
-        height: 2px;
-        background: linear-gradient(135deg, rgb(216, 37, 223), rgb(88, 9, 216));
-        transform: translateY(-50%);
-        z-index: 1;
-      }
-
-      /* Наконечник стрелки (треугольник) */
-      .d2-arrow-container::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: calc(100% + 120px); /* Конец линии */
-        width: 0;
-        height: 0;
-        border-top: 6px solid transparent;
-        border-bottom: 6px solid transparent;
-        border-left: 10px solid rgb(88, 9, 216); /* Цвет как у градиента */
-        transform: translateY(-50%);
-        z-index: 1;
-      }
-      /* Это правило можно оставить, если нужно задать отступы */
-      .margin-container {
-        margin-left: auto;
-        margin-right: auto;
-        max-width: 1200px; /* Установите желаемую максимальную ширину, если нужно */
-      }
+        #candleChart {
+            width: 600px;
+            height: 400px;
+        }
+        body {
+            background: #1e1e2e;
+            margin: 0;
+            padding: 20px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="">
-      <span class="d2">token ca</span>
-      <h1>Добро пожаловать!</h1>
-      <p>Это пример заднего фона.</p>
-    </div>
-    <p class="p_text">
-      Just enter the
-      <span class="d2-arrow-container">
-        <span class="d2">token ca</span>
-      </span>
-      <input
-        id="contractInput"
-        class="search-input"
-        type="text"
-        placeholder="поиск по контракту"
-      />
-    </p>
-  </body>
+</head>
+<body>
+    <div id="candleChart"></div>
+
+    <!-- Используем правильную версию библиотеки -->
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <script>
+        // Создаем график
+        const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
+            layout: {
+                background: { color: '#1e1e2e' },
+                textColor: '#a1a1aa',
+            },
+            grid: {
+                vertLines: { color: '#2d2d3d' },
+                horzLines: { color: '#2d2d3d' },
+            },
+            timeScale: {
+                timeVisible: true,
+            },
+        });
+
+        // Добавляем свечной график (правильный метод)
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#26a69a', // Зеленый для роста
+            downColor: '#ef5350', // Красный для падения
+            borderDownColor: '#ef5350',
+            borderUpColor: '#26a69a',
+            wickDownColor: '#ef5350',
+            wickUpColor: '#26a69a',
+        });
+
+        // Пример данных (формат: time в секундах!)
+        const data = [
+            { time: 1672531200, open: 10, high: 15, low: 8, close: 12 }, // 1 янв 2023
+            { time: 1672617600, open: 12, high: 14, low: 10, close: 11 }, // 2 янв 2023
+            { time: 1672704000, open: 11, high: 13, low: 9, close: 13 }, // 3 янв 2023
+            { time: 1672790400, open: 13, high: 15, low: 1, close: 1 }, // 4 янв 2023
+        ];
+
+        // Устанавливаем данные
+        candleSeries.setData(data);
+
+        // Настраиваем шкалу времени
+        chart.timeScale().fitContent();
+    </script>
+</body>
 </html>

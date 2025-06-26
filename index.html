@@ -353,7 +353,8 @@
     </main>
   </body>
   <script>
-    localStorage.clear();
+    localStorage.setItem("lang", "eng");
+    localStorage.removeItem("contract")
     let engbtn = document.getElementById("eng_btn")
     let rusbtn = document.getElementById("rus_btn")
     let econtent = document.getElementById("en-content")
