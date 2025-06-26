@@ -437,6 +437,12 @@
        let safe = document.getElementById("safe")
        let left = document.getElementById("left")
        let otlega = document.getElementById("otlega")
+       function chg_lng(){
+       if(localStorage.getItem("lang")=="eng"){
+        engbtn.removeAttribute("class")
+      engbtn.setAttribute("class","btn btn-success")
+      rusbtn.removeAttribute("class")
+      rusbtn.setAttribute("class","btn btn-outline-success")
         price_chart.textContent = "price chart"
       transactions.textContent = "trancsation"
       hldrs.textContent = "holders"
@@ -447,30 +453,12 @@
       safe.textContent = "safety"
       left.textContent = "left"
       otlega.textContent = "old with afk" 
-    engbtn.addEventListener("click", function(){
-      engbtn.removeAttribute("class")
-      engbtn.setAttribute("class","btn btn-success")
-      rusbtn.removeAttribute("class")
-      rusbtn.setAttribute("class","btn btn-outline-success")
-      price_chart.textContent = "price chart"
-      transactions.textContent = "trancsation"
-      hldrs.textContent = "holders"
-      pric.textContent = "price"
-      mmmcap.textContent = "mcap"
-      loock.textContent = "Lock"
-      burn_enjer.textContent = "burned"
-      safe.textContent = "safety"
-      left.textContent = "left"
-      otlega.textContent = "old with afk" 
-    })
-    rusbtn.addEventListener("click", function(){
-
+    }
+    if(localStorage.getItem("lang")=="rus"){
       rusbtn.removeAttribute("class")
       rusbtn.setAttribute("class","btn btn-success")
       engbtn.removeAttribute("class")
       engbtn.setAttribute("class","btn btn-outline-success")
-      
-       // Устанавливаем переводы из Map
     price_chart.textContent = lingvistic.get("price chart");
     transactions.textContent = lingvistic.get("trancsation");
     hldrs.textContent = lingvistic.get("holders");
@@ -481,7 +469,26 @@
     safe.textContent = lingvistic.get("safety");
     left.textContent = lingvistic.get("left");
     otlega.textContent = lingvistic.get("old with afk");
+    }
+    }
+    function initLanguage() {
+  chg_lng();
+}
+    engbtn.addEventListener("click", function(){
+      language="eng"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
     })
+    
+    rusbtn.addEventListener("click", function(){
+      language = "rus"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
+    })
+
+      document.addEventListener("DOMContentLoaded", initLanguage);
       const currentTimestamp = Math.floor(Date.now() / 1000);
       console.log(currentTimestamp);
       const sevenDaysAgo = currentTimestamp - 7 * 24 * 60 * 60;

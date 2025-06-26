@@ -214,8 +214,8 @@
                     <thead>
                         <tr>
                             <th width="5%">#</th>
-                            <th width="25%">Кошелек</th>
-                            <th width="10%">Доля</th>
+                            <th width="25%" id="koshel"></th>
+                            <th width="10%" id="suplay"></th>
                         </tr>
                     </thead>
                     <tbody id="tableinsert"></tbody>
@@ -227,125 +227,174 @@
         </div>
     </main>
 
-    <script>
-        
-         function formatNumber(num) {
-            if (num >= 1000000000) {
-                return (num / 1000000000).toFixed(2) + 'B';
-              }
-              if (num >= 1000000) {
-                return (num / 1000000).toFixed(2) + 'M';
-              }
-              if (num >= 1000) {
-                  return (num / 1000).toFixed(2) + 'K';
-                }
-                return num.toString();
-              }
-        const holders_table = new Map();
-        let contract = null;
-      if (localStorage.getItem("contract")) {
-        contract = localStorage.getItem("contract");
-      }
-        let real_supply;
-        // Функция для добавления данных в Map
-        let known_addreses ={
-          "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f" : 'Ston.fi',
-          "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad" : 'Мужчина'
-        }
-        const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
-            const balance = element.balance / 10 ** decimals;
-            const percentage = (balance / totalSupply) * 100;
-            let kosh = document.createElement("a")
-            kosh.setAttribute("href" , `https://tonviewer.com/${element.owner.address}`)
-            let name = known_addreses[element.owner.address] ||(element.owner.name ? element.owner.name : `${element.owner.address.slice(0,5)}...${element.owner.address.slice(-5)}`)
-            kosh.textContent = name
-            kosh.target = '_blank';
-            holders_table.set(index, {
-                Кошелек: kosh,
-                Доля: balance > 0 
+<script>
+  // Глобальные переменные
+  let lang = localStorage.getItem("lang") || "eng";
+  const holders_table = new Map();
+  let contract = localStorage.getItem("contract") || null;
+  let real_supply;
+  
+  // Известные адреса
+  const known_addreses = {
+    "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f": 'Ston.fi',
+    "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad": 'Мужчина'
+  };
+
+  // Форматирование чисел
+  function formatNumber(num) {
+    if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
+    if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+    return num.toString();
+  }
+
+  // Расчет доли владельца
+  const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
+    const balance = element.balance / 10 ** decimals;
+    const percentage = (balance / totalSupply) * 100;
+    let kosh = document.createElement("a");
+    kosh.setAttribute("href", `https://tonviewer.com/${element.owner.address}`);
+    let name = known_addreses[element.owner.address] || 
+               (element.owner.name ? element.owner.name : 
+               `${element.owner.address.slice(0,5)}...${element.owner.address.slice(-5)}`);
+    kosh.textContent = name;
+    kosh.target = '_blank';
+    
+    holders_table.set(index, {
+      Кошелек: kosh,
+      Доля: balance > 0 
         ? `${percentage.toFixed(2)}% (${formatNumber(balance.toFixed(2))})`
         : "0"
-            });
-        };
-        
-        // Функция для рендера таблицы
-        const renderTable = () => {
-            const pick = document.getElementById("pick")
-            pick.textContent="Все"
-            const all_btn = document.getElementById("btn-1")
-            const lev_btn = document.getElementById("btn-2")
-            const otleg_btn = document.getElementById("btn-3")
-            const all_holders =document.getElementById("all_holder");
-            all_holders.textContent=`Показано на странице ${holders_table.size}`;
-            all_btn.textContent=`Все (${holders_table.size})`;
-            lev_btn.textContent=`Левые ()`;
-            otleg_btn.textContent=`Отлега ()`
-            all_btn.onclick = function(){
-                pick.textContent="Все"
-            }
-            lev_btn.onclick = function(){
-                pick.textContent="Левые"
-            }
-            otleg_btn.onclick = function(){
-                pick.textContent="Отлега"
-            }
-            const tableBody = document.getElementById("tableinsert");
-            tableBody.innerHTML = ""; // Очищаем перед обновлением
-            const dict =  ["1f991.png","1f990.png","1f433.png","1f421.png","1f420.png","1f419.png"]
-            
-            for (const [key, value] of holders_table) {
-                let rand = 0 + Math.random() * (5 + 1 - 0);
-            let k = Math.floor(rand);
-                const row = document.createElement("tr");
+    });
+  };
 
-                const idCell = document.createElement("th");
-                idCell.textContent = key;
-                row.appendChild(idCell);
+  // Получение локализованных текстов
+  function getLocalizedTexts() {
+    if (lang === "eng") {
+      return {
+        shown: "Shown on page ",
+        all: "All",
+        left: "New",
+        otlega: "Old with afk",
+        wall: "Wallet",
+        supl: "share"
+      };
+    } else {
+      return {
+        shown: "Показано на странице ",
+        all: "Все",
+        left: "Левые",
+        otlega: "Отлега",
+        wall: "Кошелек",
+        supl: "Доля"
+      };
+    }
+  }
 
-                const walletCell = document.createElement("th");
-                const waterfish = document.createElement("img");
-                waterfish.setAttribute("src", `../src/${dict[k]}`);
-                waterfish.setAttribute("width", "20"); // Добавьте размеры
-                waterfish.setAttribute("alt", "emoji");
-                walletCell.appendChild(waterfish);
-                walletCell.appendChild(value.Кошелек);
-                row.appendChild(walletCell);
+  // Обновление интерфейса
+  function updateUI() {
+    const { shown, all, left, otlega, wall, supl } = getLocalizedTexts();
+    
+    // Кнопки переключения языка
+    const engbtn = document.getElementById("eng_btn");
+    const rusbtn = document.getElementById("rus_btn");
+    
+    if (lang === "eng") {
+      engbtn.className = "btn btn-success";
+      rusbtn.className = "btn btn-outline-success";
+    } else {
+      rusbtn.className = "btn btn-success";
+      engbtn.className = "btn btn-outline-success";
+    }
+    
+    // Обновление текстов
+    document.getElementById("pick").textContent = all;
+    document.getElementById("koshel").textContent = wall;
+    document.getElementById("suplay").textContent = supl;
+    document.getElementById("all_holder").textContent = shown + holders_table.size;
+    document.getElementById("btn-1").textContent = `${all} (${holders_table.size})`;
+    document.getElementById("btn-2").textContent = `${left} ()`;
+    document.getElementById("btn-3").textContent = `${otlega} ()`;
+    
+    // Обработчики кнопок
+    document.getElementById("btn-1").onclick = () => document.getElementById("pick").textContent = all;
+    document.getElementById("btn-2").onclick = () => document.getElementById("pick").textContent = left;
+    document.getElementById("btn-3").onclick = () => document.getElementById("pick").textContent = otlega;
+  }
 
-                const shareCell = document.createElement("th");
-                shareCell.textContent = `${value.Доля}`;
-                row.appendChild(shareCell);
+  // Рендер таблицы
+  function renderTable() {
+    const tableBody = document.getElementById("tableinsert");
+    tableBody.innerHTML = "";
+    const dict = ["1f991.png", "1f990.png", "1f433.png", "1f421.png", "1f420.png", "1f419.png"];
+    
+    for (const [key, value] of holders_table) {
+      let rand = Math.floor(Math.random() * 6);
+      const row = document.createElement("tr");
 
-                tableBody.appendChild(row);
-            }
-        };
+      const idCell = document.createElement("th");
+      idCell.textContent = key;
+      row.appendChild(idCell);
 
-        // Загружаем данные и рендерим таблицу
-        const fetchData = async () => {
-            try {
-                // 1. Получаем общий supply
-                const supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
-                const supplyData = await supplyResponse.json();
-                real_supply = supplyData.total_supply / 10 ** 9;
+      const walletCell = document.createElement("th");
+      const waterfish = document.createElement("img");
+      waterfish.setAttribute("src", `../src/${dict[rand]}`);
+      waterfish.setAttribute("width", "20");
+      waterfish.setAttribute("alt", "emoji");
+      walletCell.appendChild(waterfish);
+      walletCell.appendChild(value.Кошелек);
+      row.appendChild(walletCell);
 
-                // 2. Получаем держателей
-                const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
-                //console.log(`https://tonapi.io/v2/jettons/${contract}/holders?limit=10000&offset=0`)
-                const holdersData = await holdersResponse.json();
-                console.log(holdersData)
-                // 3. Заполняем Map
-                holdersData.addresses.forEach((el, i) => {
-                    logHolderPercentage(el, i, real_supply, 9);
-                });
+      const shareCell = document.createElement("th");
+      shareCell.textContent = value.Доля;
+      row.appendChild(shareCell);
 
-                // 4. Рендерим таблицу
-                renderTable();
-            } catch (error) {
-                console.error("Ошибка загрузки данных:", error);
-            }
-        };
+      tableBody.appendChild(row);
+    }
+    
+    updateUI();
+  }
 
-        // Запускаем загрузку
-        fetchData();
-    </script>
+  // Загрузка данных
+  const fetchData = async () => {
+    if (!contract) return;
+    
+    try {
+      const supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
+      const supplyData = await supplyResponse.json();
+      real_supply = supplyData.total_supply / 10 ** 9;
+
+      const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
+      const holdersData = await holdersResponse.json();
+      
+      holdersData.addresses.forEach((el, i) => {
+        logHolderPercentage(el, i, real_supply, 9);
+      });
+
+      renderTable();
+    } catch (error) {
+      console.error("Ошибка загрузки данных:", error);
+    }
+  };
+
+  // Инициализация
+  document.addEventListener("DOMContentLoaded", () => {
+    // Обработчики кнопок языка
+    document.getElementById("eng_btn").addEventListener("click", () => {
+      lang = "eng";
+      localStorage.setItem("lang", lang);
+      updateUI();
+    });
+    
+    document.getElementById("rus_btn").addEventListener("click", () => {
+      lang = "rus";
+      localStorage.setItem("lang", lang);
+      updateUI();
+    });
+    
+    // Загрузка данных
+    fetchData();
+  });
+</script>
 </body>
 </html> 

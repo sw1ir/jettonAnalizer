@@ -353,7 +353,38 @@
     </main>
   </body>
   <script>
-    localStorage.setItem("lang", "eng");
+    function chg_lng(){
+    if (localStorage.getItem("lang") == "eng"){
+      rcontent.setAttribute("class","hidden")
+      econtent.removeAttribute("class")
+      engbtn.removeAttribute("class")
+      engbtn.setAttribute("class","btn btn-success")
+      rusbtn.removeAttribute("class")
+      rusbtn.setAttribute("class","btn btn-outline-success")
+      finder.placeholder = engplc
+    }
+    if (localStorage.getItem("lang") == "rus"){
+      econtent.setAttribute("class","hidden")
+      rcontent.removeAttribute("class")
+      rusbtn.removeAttribute("class")
+      rusbtn.setAttribute("class","btn btn-success")
+      engbtn.removeAttribute("class")
+      engbtn.setAttribute("class","btn btn-outline-success")
+      finder.placeholder = rusplc
+    }
+  }
+  function initLanguage() {
+  chg_lng();
+}
+  let language
+    try{
+      language = localStorage.getItem("lang")
+    }catch(err){
+    let default_lang = "eng"
+    if(language == null){
+      language = default_lang
+    }}
+    localStorage.setItem("lang", language);
     localStorage.removeItem("contract")
     let engbtn = document.getElementById("eng_btn")
     let rusbtn = document.getElementById("rus_btn")
@@ -363,23 +394,19 @@
     let engplc = "ca search"
     let rusplc = "поиск по контракту"
     engbtn.addEventListener("click", function(){
-      rcontent.setAttribute("class","hidden")
-      econtent.removeAttribute("class")
-      engbtn.removeAttribute("class")
-      engbtn.setAttribute("class","btn btn-success")
-      rusbtn.removeAttribute("class")
-      rusbtn.setAttribute("class","btn btn-outline-success")
-      finder.placeholder = engplc
+      language="eng"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
     })
+    
     rusbtn.addEventListener("click", function(){
-      econtent.setAttribute("class","hidden")
-      rcontent.removeAttribute("class")
-      rusbtn.removeAttribute("class")
-      rusbtn.setAttribute("class","btn btn-success")
-      engbtn.removeAttribute("class")
-      engbtn.setAttribute("class","btn btn-outline-success")
-      finder.placeholder = rusplc
+      language = "rus"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
     })
+    document.addEventListener("DOMContentLoaded", initLanguage);
     // Функция вставки из буфера
     document
       .getElementById("pasteButton")
