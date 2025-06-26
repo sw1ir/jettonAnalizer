@@ -248,13 +248,17 @@
       }
         let real_supply;
         // Функция для добавления данных в Map
+        let known_addreses ={
+          "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f" : 'Ston.fi',
+          "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad" : 'Мужчина'
+        }
         const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
             const balance = element.balance / 10 ** decimals;
             const percentage = (balance / totalSupply) * 100;
             let kosh = document.createElement("a")
             kosh.setAttribute("href" , `https://tonviewer.com/${element.owner.address}`)
-            
-            kosh.textContent = `тык`
+            let name = known_addreses[element.owner.address] ||(element.owner.name ? element.owner.name : `${element.owner.address.slice(0,5)}...${element.owner.address.slice(-5)}`)
+            kosh.textContent = name
             kosh.target = '_blank';
             holders_table.set(index, {
                 Кошелек: kosh,
@@ -263,7 +267,7 @@
         : "0"
             });
         };
-
+        
         // Функция для рендера таблицы
         const renderTable = () => {
             const pick = document.getElementById("pick")
@@ -324,9 +328,10 @@
                 real_supply = supplyData.total_supply / 10 ** 9;
 
                 // 2. Получаем держателей
-                const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=1000&offset=0`);
+                const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
+                //console.log(`https://tonapi.io/v2/jettons/${contract}/holders?limit=10000&offset=0`)
                 const holdersData = await holdersResponse.json();
-
+                console.log(holdersData)
                 // 3. Заполняем Map
                 holdersData.addresses.forEach((el, i) => {
                     logHolderPercentage(el, i, real_supply, 9);
