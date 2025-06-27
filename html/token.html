@@ -151,6 +151,37 @@
         border-radius: 30px;
         padding: 5px;
       }
+
+      .volume-bar-container {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.volume-bar {
+  display: flex;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #2d2d3d;
+}
+
+.buy-volume {
+  background: #00FF00; /* Зеленый для покупок */
+  height: 100%;
+}
+
+.sell-volume {
+  background: #FF0000; /* Красный для продаж */
+  height: 100%;
+}
+
+.volume-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
     </style>
     <title>Crypto scan</title>
     <link
@@ -384,7 +415,56 @@
                 <div id="safety" class="token_info_text"></div>
               </div>
             </div>
+            <div class="col-4">
+              <div class="token_info_block">
+                <p>
+                  <img
+                    src=""
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                  /><span id="liquid"></span>
+                </p>
+                <div id="liquidity" class="token_info_text"></div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="token_info_block">
+                <p>
+                  <img
+                    src=""
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                  /><span id="trancsation"></span>
+                </p>
+                <div class="volume-bar-container">
+                  <div class="volume-bar">
+                    <div class="buy-volume" id = "buy-volume" ></div>
+                    <div class="sell-volume" id = "sell-volume" ></div>
+                  </div>
+                  <div class="volume-labels">
+                    <span id = "buys" class="buy"></span>
+                    <span id = "sells" class="sell"></span>
+                  </div>
+              </div>
+            </div>
+            </div>
+            <div class="col-4">
+              <div class="token_info_block">
+                <p>
+                  <img
+                    src=""
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                  /><span id="suplayy"></span>
+                </p>
+                <div id="total_suplly" class="token_info_text"></div>
+              </div>
+            </div>
           </div>
+          
           <div class="row mx-auto">
             <div class="col bg-danger bg-opacity-50 alert_block">
               <img
@@ -414,7 +494,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["left","Левые"],["old with afk","Отлега"]])
+
+      let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"]])
        let engbtn = document.getElementById("eng_btn")
        let rusbtn = document.getElementById("rus_btn")
        let price_chart = document.getElementById("price_chart")
@@ -424,6 +505,9 @@
        let loock = document.getElementById("loock")
        let burn_enjer = document.getElementById("burn_enjer")
        let safe = document.getElementById("safe")
+       let luqid = document.getElementById("liquid")
+       let trancsations = document.getElementById("trancsation")
+       let suplyy = document.getElementById("suplayy")
        let left = document.getElementById("left")
        let otlega = document.getElementById("otlega")
        function chg_lng(){
@@ -439,6 +523,9 @@
       loock.textContent = "Lock"
       burn_enjer.textContent = "burned"
       safe.textContent = "safety"
+      luqid.textContent = "liquidity"
+      trancsations.textContent="trancsations"
+      suplyy.textContent="total_supply"
       left.textContent = "left"
       otlega.textContent = "old with afk" 
     }
@@ -454,6 +541,9 @@
     loock.textContent = lingvistic.get("Lock");
     burn_enjer.textContent = lingvistic.get("burned");
     safe.textContent = lingvistic.get("safety");
+    luqid.textContent = lingvistic.get("liquidity")
+    trancsations.textContent= lingvistic.get("trancsations")
+    suplyy.textContent=lingvistic.get("total_supply")
     left.textContent = lingvistic.get("left");
     otlega.textContent = lingvistic.get("old with afk");
     }
@@ -484,6 +574,35 @@
       if (localStorage.getItem("contract")) {
         contract = localStorage.getItem("contract");
       }
+      fetch("https://api.dexscreener.com/tokens/v1/ton/" + contract)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          let liquidity = data[0]['liquidity']['usd']
+
+          let buys = document.getElementById("buys")
+          let sells = document.getElementById("sells")
+
+          const buyValue = data["0"].txns.h24.buys;
+          const sellValue = data["0"].txns.h24.sells;
+
+          let all_trans = buyValue + sellValue
+
+          let buy_perc = (buyValue/all_trans) * 100
+          let sell_perc = (sellValue/all_trans) * 100
+
+          let buy_volume = document.getElementById("buy-volume")
+          let sell_volume = document.getElementById("sell-volume")
+
+          buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
+          sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
+          buys.textContent = buyValue
+          sells.textContent = sellValue
+          let likva = document.getElementById("liquidity")
+          likva.textContent = `${liquidity} $`
+        });
       function formatNumber(num) {
         if (num >= 1000000000) {
           return (num / 1000000000).toFixed(2) + "B";
@@ -630,7 +749,7 @@ handleResize();
               let burn = document.getElementById("burn");
               burn.textContent = formatNumber(burned_amount / 10 ** 9);
             });
-          console.log(data);
+          let emision = document.getElementById("total_suplly")
           let holders = data.holders_count;
           let name = data.metadata.name;
           let img = data.metadata.image;
@@ -638,6 +757,7 @@ handleResize();
           let token = name + "(" + simbol + ")";
           let supply = data.total_supply;
           real_supply = supply / 10 ** 9;
+          emision.textContent = real_supply
           console.log(token);
           document.getElementById("logo").src = img;
           document.getElementById("holders").innerHTML = holders;
