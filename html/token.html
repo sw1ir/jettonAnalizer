@@ -57,14 +57,18 @@
          }*/
 
       .token_chart_info {
-        margin: 20px;
-        padding: 20px;
-        margin-top: 20px;
+        position: relative;
+        overflow: hidden;
         border-style: solid;
         border: #8321f3 2px solid;
-        padding: 20px;
         border-radius: 50px;
       }
+        #candleChart {
+         position: relative;
+         margin: 2.5% ;
+          width: 95%;
+          min-height: 250px;
+        }
       .copy {
         fill: #fff;
       }
@@ -245,7 +249,7 @@
       <div class="row">
         <div class="col-11 mx-auto info_block">
           <div class="row tokken">
-            <div class="col-5">
+            <div class="col col-lg-5 col-md-12 col-sm-12 col-12">
               <div class="row align-items-center">
                 <div class="col-auto">
                   <img class="logo_token" id="logo" src="" />
@@ -273,7 +277,7 @@
               </div>
               <div id="description" class="token_info_text"></div>
             </div>
-            <div class="col-3 token_chart_info">
+            <div class="col col-lg-6 col-md-12 col-sm-12 col-12 token_chart_info">
               <span
                 id="price_chart"
                 class="token_info_text"
@@ -286,26 +290,10 @@
                 "
                 ></span
               >
-              <div><canvas id="myChart" height="250px"></canvas></div>
+                  <div id="candleChart" style=" height: 250px;"></div>
+
             </div>
-            <div class="col-3 token_chart_info">
-              <span
-                id="transactions"
-                class="token_info_text"
-                style="
-                  font-size: 16pt;
-                  display: inline-block;
-                  position: relative;
-                  left: 50%;
-                  transform: translateX(-50%);
-                "
-                ></span
-              >
-              <div><canvas id="dogChart"></canvas></div>
-              <span class="buy" id="buys"></span>
-              <br />
-              <span class="sell" id="sells"></span>
-            </div>
+            
           </div>
           <div class="row">
             <div class="col-4">
@@ -421,14 +409,15 @@
       </div>
       <!-- закрытие основного row -->
     </main>
+        <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      let lingvistic = new Map([["price chart","График цены"],["trancsation","Транкзации"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["left","Левые"],["old with afk","Отлега"]])
+      let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["left","Левые"],["old with afk","Отлега"]])
        let engbtn = document.getElementById("eng_btn")
        let rusbtn = document.getElementById("rus_btn")
        let price_chart = document.getElementById("price_chart")
-       let transactions = document.getElementById("transactions")
        let hldrs = document.getElementById("hldrs")
        let pric = document.getElementById("pric")
        let mmmcap = document.getElementById("mmmcap")
@@ -444,7 +433,6 @@
       rusbtn.removeAttribute("class")
       rusbtn.setAttribute("class","btn btn-outline-success")
         price_chart.textContent = "price chart"
-      transactions.textContent = "trancsation"
       hldrs.textContent = "holders"
       pric.textContent = "price"
       mmmcap.textContent = "mcap"
@@ -460,7 +448,6 @@
       engbtn.removeAttribute("class")
       engbtn.setAttribute("class","btn btn-outline-success")
     price_chart.textContent = lingvistic.get("price chart");
-    transactions.textContent = lingvistic.get("trancsation");
     hldrs.textContent = lingvistic.get("holders");
     pric.textContent = lingvistic.get("price");
     mmmcap.textContent = lingvistic.get("mcap");
@@ -517,74 +504,113 @@
         .then((data) => {
           lock_suplya = data.totalLockedTokens;
         });
-      let now = Math.floor(Date.now() / 1000);
-      let yesterday = now - 86400;
-      fetch(
-        "https://tonapi.io/v2/rates/chart?token=" +
-          contract +
-          "&currency=usd&start_date=" +
-          yesterday +
-          "&end_date=" +
-          now +
-          "&points_count=200"
-      )
+      
+          const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
+        layout: {
+            background: { color: '#1e1e2e' },
+            textColor: '#a1a1aa',
+        },
+        grid: {
+            vertLines: { color: '#2d2d3d' },
+            horzLines: { color: '#2d2d3d' },
+        },
+        timeScale: {
+            timeVisible: true,
+        },
+         width: document.getElementById('candleChart').clientWidth,
+         height: 250,
+         autoSize: true,
+         timeScale: {
+         timeVisible: true,
+         rightOffset: 12,}
+    });
+        function handleResize() {
+          chart.applyOptions({ 
+          width: document.getElementById('candleChart').clientWidth,
+          height: document.getElementById('candleChart').clientHeight
+        });
+      }
+      window.addEventListener('resize', handleResize);
+
+// Инициализация при загрузке
+handleResize();
+    // Добавляем свечной график
+    const candleSeries = chart.addCandlestickSeries({
+        upColor: '#00FF00', // Зеленый для роста
+        downColor: '#FF0000', // Красный для падения
+        borderDownColor: '#FF0000',
+        borderUpColor: '#00FF00',
+        wickDownColor: '#FF0000',
+        wickUpColor: '#00FF00	',
+    });
+     fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`)
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          console.log(data);
-          const points = data.points;
-          let arr = [];
-          for (let i = 1; i <= points.length - 1; i++) {
-            let b = points[i];
-            arr.push([b[0], b[1] * 1000000]);
-          }
-          let labels = [];
-          for (let a = 1; a <= points.length; a++) {
-            labels.push(a.toString());
-          }
-          var ctx = document.getElementById("myChart").getContext("2d");
+          let pool = data["data"][0]["attributes"]["address"]
+          console.log(pool)
+        
+    let url = `https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`;
 
-          // Создаем новый объект Chart
-          var myChart = new Chart(ctx, {
-            type: "line", // Тип графика
-            data: {
-              labels: labels, // Метки для графика
-              datasets: [
-                {
-                  data: arr,
-                  fill: true,
-                  borderColor: "#00FFFF", // Цвет линии
-                  borderWidth: 3,
-                  backgroundColor: "rgba(0, 255, 255, 0.4)", //прозрачность 40%
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка сети');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data); // Для отладки
+        const ohlcvList = data.data.attributes.ohlcv_list;
 
-                  pointRadius: 0,
-                  hidden: false,
-                },
-              ],
+        // Проверка на наличие данных
+        if (!ohlcvList || ohlcvList.length === 0) {
+            throw new Error('Нет данных для отображения');
+        }
+
+        // Создаем массив для данных графика и сортируем по времени
+        const chartData = ohlcvList.map(i => ({
+            time: i[0],   // Время в формате UNIX
+            open: i[1],   // Открытие
+            high: i[2],   // Максимум
+            low: i[3],    // Минимум
+            close: i[4]   // Закрытие
+        })).filter(i => 
+            i.time !== null && 
+            i.open !== null && 
+            i.high !== null && 
+            i.low !== null && 
+            i.close !== null &&
+            !isNaN(i.time) && 
+            !isNaN(i.open) && 
+            !isNaN(i.high) && 
+            !isNaN(i.low) && 
+            !isNaN(i.close)
+        ) // Фильтруем null значения и NaN
+        .sort((a, b) => a.time - b.time); // Сортируем по времени
+
+        // Проверка на наличие данных после фильтрации и сортировки
+        if (chartData.length === 0) {
+            throw new Error('Все данные являются null или некорректными');
+        }
+        chart.applyOptions({
+            localization: {
+                priceFormatter: price => price.toFixed(8)
             },
-
-            options: {
-              responsive: true,
-    plugins: {
-      legend: { display: false },
-    },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { color: '#a1a1aa' },
-        display: false
-
-      },
-      y: {
-        grid: { color: '#2d2d3d' },
-        ticks: { color: '#a1a1aa' },
-        display: false
-      }
-    }
-            },
-          });
         });
+        // Устанавливаем данные в график
+        candleSeries.setData(chartData);
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+    });
       fetch("https://tonapi.io/v2/jettons/" + contract)
         .then((response) => {
           return response.json();
@@ -663,46 +689,7 @@
         5
       )}...${contract.slice(-5)}`;
       const rtx = document.getElementById("dogChart");
-      fetch("https://api.dexscreener.com/tokens/v1/ton/" + contract)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data);
-          const buyValue = data["0"].txns.h24.buys;
-          const sellValue = data["0"].txns.h24.sells;
-          new Chart(rtx, {
-            type: "doughnut",
-            data: {
-              datasets: [
-                {
-                  label: "",
-                  data: [buyValue, sellValue],
-                  borderWidth: 1,
-                  backgroundColor: ["rgb(0,255,0)", "rgb(255, 0, 0)"],
-                },
-              ],
-            },
-            options: {
-              responsive: true, // Адаптивность
-              circumference: 180,
-              animation: {
-                animateRotate: true,
-              },
-              rotation: 270,
-              maintainAspectRatio: false,
-              plugins: {
-                tooltip: {
-                  enabled: false, // Отключаем подсказки
-                },
-              },
-            },
-          });
-          let buy = document.getElementById("buys");
-          let sells = document.getElementById("sells");
-          buy.textContent = `Покупки: ${buyValue}`;
-          sells.textContent = `Продажи: ${sellValue}`;
-        });
+      
     </script>
   </body>
 </html>
