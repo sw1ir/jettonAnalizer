@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="icon" href="../src/favicon.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       body {
@@ -331,17 +332,12 @@
               <a href="holders_table.html">
                 <div class="token_info_block">
                   <p>
-                    <svg
-                      width="16"
-                      height="16"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 320 512"
-                    >
-                      <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"
-                      />
-                    </svg>
+                    <img
+                    src="../src/holders.gif"
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                  />
                     <span id="hldrs"></span>
                   </p>
                   <div id="holders" class="token_info_text"></div>
@@ -377,6 +373,7 @@
           </div>
           <div class="row">
             <div class="col-4">
+              <a href="lock_table.html">
               <div class="token_info_block">
                 <p>
                   <img
@@ -388,6 +385,7 @@
                 </p>
                 <div id="lock" class="token_info_text"></div>
               </div>
+            </a>
             </div>
             <div class="col-4">
               <div class="token_info_block">
@@ -566,10 +564,7 @@
     })
 
       document.addEventListener("DOMContentLoaded", initLanguage);
-      const currentTimestamp = Math.floor(Date.now() / 1000);
-      console.log(currentTimestamp);
-      const sevenDaysAgo = currentTimestamp - 7 * 24 * 60 * 60;
-      console.log(sevenDaysAgo);
+
       let contract = null;
       if (localStorage.getItem("contract")) {
         contract = localStorage.getItem("contract");
@@ -579,7 +574,6 @@
           return response.json();
         })
         .then((data) => {
-          console.log(data);
           let liquidity = data[0]['liquidity']['usd']
 
           let buys = document.getElementById("buys")
@@ -595,6 +589,12 @@
 
           let buy_volume = document.getElementById("buy-volume")
           let sell_volume = document.getElementById("sell-volume")
+          
+          let price = data["0"]["priceUsd"]
+          let fdv = data["0"]["fdv"]
+          document.getElementById("price").textContent = `${price}$`;
+ 
+          document.getElementById("mcap").textContent = `${fdv}$`;
 
           buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
           sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
@@ -622,6 +622,15 @@
         })
         .then((data) => {
           lock_suplya = data.totalLockedTokens;
+          let now = Date.now() /1000
+          let massiv = data.lockRecords
+          for ( let i = 0; i<=massiv.length - 1; i++){
+            let lock_rec = massiv[i]
+            if (lock_rec.contractData.firstPayoutTime < now){
+              continue
+            }else{
+            }
+          }
         });
       
           const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
@@ -668,7 +677,6 @@ handleResize();
         })
         .then((data) => {
           let pool = data["data"][0]["attributes"]["address"]
-          console.log(pool)
         
     let url = `https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`;
 
@@ -685,7 +693,6 @@ handleResize();
         return response.json();
     })
     .then(data => {
-        console.log(data); // Для отладки
         const ohlcvList = data.data.attributes.ohlcv_list;
 
         // Проверка на наличие данных
@@ -727,7 +734,6 @@ handleResize();
         candleSeries.setData(chartData);
     })
     .catch(error => {
-        console.error('Ошибка:', error);
     });
     });
       fetch("https://tonapi.io/v2/jettons/" + contract)
@@ -758,7 +764,6 @@ handleResize();
           let supply = data.total_supply;
           real_supply = supply / 10 ** 9;
           emision.textContent = real_supply
-          console.log(token);
           document.getElementById("logo").src = img;
           document.getElementById("holders").innerHTML = holders;
           document.getElementById("token_name").innerHTML = token;
@@ -771,15 +776,6 @@ handleResize();
               return response.json();
             })
             .then((data) => {
-              console.log(data);
-              let price = data.rates[contract].prices.USD;
-              document.getElementById("price").textContent = `$${price.toFixed(
-                6
-              )}`;
-              let mcap = real_supply * price;
-              console.log(mcap);
-              const formattedMCap = formatNumber(mcap);
-              document.getElementById("mcap").textContent = `$${formattedMCap}`;
               lock = document.getElementById("lock");
               lock.textContent = formatNumber(lock_suplya / 10 ** 9);
             });
