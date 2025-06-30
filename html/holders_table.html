@@ -230,12 +230,12 @@
 <script>
   // Глобальные переменные
   let lang = localStorage.getItem("lang") || "eng";
-  const holders_table = new Map();
+  let holders_table = new Map();
   let contract = localStorage.getItem("contract") || null;
   let real_supply;
   
   // Известные адреса
-  const known_addreses = {
+  let known_addreses = {
     "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f": 'Ston.fi',
     "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad": 'Мужчина'
   };
@@ -249,9 +249,9 @@
   }
 
   // Расчет доли владельца
-  const logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
-    const balance = element.balance / 10 ** decimals;
-    const percentage = (balance / totalSupply) * 100;
+  let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
+    let balance = element.balance / 10 ** decimals;
+    let percentage = (balance / totalSupply) * 100;
     let kosh = document.createElement("a");
     kosh.setAttribute("href", `https://tonviewer.com/${element.owner.address}`);
     let name = known_addreses[element.owner.address] || 
@@ -293,11 +293,11 @@
 
   // Обновление интерфейса
   function updateUI() {
-    const { shown, all, left, otlega, wall, supl } = getLocalizedTexts();
+    let { shown, all, left, otlega, wall, supl } = getLocalizedTexts();
     
     // Кнопки переключения языка
-    const engbtn = document.getElementById("eng_btn");
-    const rusbtn = document.getElementById("rus_btn");
+    let engbtn = document.getElementById("eng_btn");
+    let rusbtn = document.getElementById("rus_btn");
     
     if (lang === "eng") {
       engbtn.className = "btn btn-success";
@@ -324,20 +324,20 @@
 
   // Рендер таблицы
   function renderTable() {
-    const tableBody = document.getElementById("tableinsert");
+    let tableBody = document.getElementById("tableinsert");
     tableBody.innerHTML = "";
-    const dict = ["1f991.png", "1f990.png", "1f433.png", "1f421.png", "1f420.png", "1f419.png"];
+    let dict = ["1f991.png", "1f990.png", "1f433.png", "1f421.png", "1f420.png", "1f419.png"];
     
-    for (const [key, value] of holders_table) {
+    for (let [key, value] of holders_table) {
       let rand = Math.floor(Math.random() * 6);
-      const row = document.createElement("tr");
+      let row = document.createElement("tr");
 
-      const idCell = document.createElement("th");
+      let idCell = document.createElement("th");
       idCell.textContent = key;
       row.appendChild(idCell);
 
-      const walletCell = document.createElement("th");
-      const waterfish = document.createElement("img");
+      let walletCell = document.createElement("th");
+      let waterfish = document.createElement("img");
       waterfish.setAttribute("src", `../src/${dict[rand]}`);
       waterfish.setAttribute("width", "20");
       waterfish.setAttribute("alt", "emoji");
@@ -345,7 +345,7 @@
       walletCell.appendChild(value.Кошелек);
       row.appendChild(walletCell);
 
-      const shareCell = document.createElement("th");
+      let shareCell = document.createElement("th");
       shareCell.textContent = value.Доля;
       row.appendChild(shareCell);
 
@@ -356,16 +356,16 @@
   }
 
   // Загрузка данных
-  const fetchData = async () => {
+  let fetchData = async () => {
     if (!contract) return;
     
     try {
-      const supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
-      const supplyData = await supplyResponse.json();
+      let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
+      let supplyData = await supplyResponse.json();
       real_supply = supplyData.total_supply / 10 ** 9;
 
-      const holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
-      const holdersData = await holdersResponse.json();
+      let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
+      let holdersData = await holdersResponse.json();
       
       holdersData.addresses.forEach((el, i) => {
         logHolderPercentage(el, i, real_supply, 9);

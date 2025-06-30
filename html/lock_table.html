@@ -208,7 +208,9 @@
                         <tr>
                             <th width="" id="koshel"></th>
                             <th width="" id="suplay"></th>
-                            <th width="" id="lock_time"></th>
+                            <th width="" id="start_lock"></th>
+                            <th width="" id="start_unlock"></th>
+                            <th width="" id="unlock"></th>
                         </tr>
                     </thead>
                     <tbody id="tableinsert"></tbody>
@@ -240,7 +242,7 @@
   // Расчет доли владельца
   let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
     let balance = element.initialTokens / 10 ** decimals;
-    let percentage = (balance / totalSupply) * 100;
+    let  percentage = (balance / totalSupply) * 100;
     let now = Date.now() /1000
 
     if (element.contractData.firstPayoutTime < now){
@@ -286,28 +288,28 @@
   function getLocalizedTexts() {
     if (lang === "eng") {
       return {
-        shown: "Shown on page ",
-        all: "All",
-        left: "New",
-        otlega: "Old with afk",
+
         wall: "Wallet",
-        supl: "share"
+        supl: "locked",
+        stlock : "Lock date",
+        unlok: "Unlock Date",
+        left: "Left"
       };
     } else {
       return {
-        shown: "Показано на странице ",
-        all: "Все",
-        left: "Левые",
-        otlega: "Отлега",
         wall: "Кошелек",
-        supl: "Доля"
+        supl: "Заблокированно",
+        stlock : "Дата лока",
+        unlok: "Дата разлока",
+        left: "Осталось"
+
       };
     }
   }
 
   // Обновление интерфейса
   function updateUI() {
-    let { shown, all, left, otlega, wall, supl } = getLocalizedTexts();
+    let {wall, supl , stlock, unlok, left} = getLocalizedTexts();
     
     // Кнопки переключения языка
     let engbtn = document.getElementById("eng_btn");
@@ -322,11 +324,11 @@
     }
     
     // Обновление текстов
-    /*document.getElementById("pick").textContent = all;
     document.getElementById("koshel").textContent = wall;
     document.getElementById("suplay").textContent = supl;
-    document.getElementById("all_holder").textContent = shown + holders_table.size;
-*/
+    document.getElementById("start_lock").textContent = stlock
+    document.getElementById("start_unlock").textContent = unlok
+    document.getElementById("unlock").textContent = left
   }
 
   // Рендер таблицы
