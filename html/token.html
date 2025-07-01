@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="icon" href="../src/favicon.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       body {
@@ -63,12 +64,12 @@
         border: #8321f3 2px solid;
         border-radius: 50px;
       }
-      #candleChart {
-        position: relative;
-        margin: 2.5%;
-        width: 95%;
-        min-height: 250px;
-      }
+        #candleChart {
+         position: relative;
+         margin: 2.5% ;
+          width: 95%;
+          min-height: 250px;
+        }
       .copy {
         fill: #fff;
       }
@@ -153,33 +154,33 @@
       }
 
       .volume-bar-container {
-        width: 100%;
-      }
+  width: 100%;
+}
 
-      .volume-bar {
-        display: flex;
-        height: 20px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: #2d2d3d;
-      }
+.volume-bar {
+  display: flex;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #2d2d3d;
+}
 
-      .buy-volume {
-        background: #00ff00; /* Зеленый для покупок */
-        height: 100%;
-      }
+.buy-volume {
+  background: #00FF00; /* Зеленый для покупок */
+  height: 100%;
+}
 
-      .sell-volume {
-        background: #ff0000; /* Красный для продаж */
-        height: 100%;
-      }
+.sell-volume {
+  background: #FF0000; /* Красный для продаж */
+  height: 100%;
+}
 
-      .volume-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 5px;
-        font-size: 12px;
-      }
+.volume-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
     </style>
     <title>Crypto scan</title>
     <link
@@ -201,15 +202,14 @@
               Рус
             </button>
             <a href="https://t.me/xrocket?start=inv_j7KZ3oTLQI5bjNW">
-              <button type="button" class="btn btn-outline-secondary">
-                <img
-                  src="../src/утенок.gif"
-                  width="30"
-                  height="24"
-                  class="d-inline-block align-text-top"
-                />Donate project
-              </button></a
-            >
+            <button type="button" class="btn btn-outline-secondary">
+              <img
+                src="../src/утенок.gif"
+                width="30"
+                height="24"
+                class="d-inline-block align-text-top"
+              />Donate project
+            </button></a>
           </div>
           <a class="navbar-brand" href="../index.html">
             <span class="radiant-purple">JettonAnalizer</span>
@@ -222,20 +222,20 @@
             />
           </a>
           <div class="networks mr-auto">
-            <a href="https://t.me/jettonanalizer" style="text-decoration: none">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="30"
-                height="24"
-                viewBox="0 0 64 64"
-                style="fill: #fff"
-              >
-                <path
-                  d="M 32 10 C 19.85 10 10 19.85 10 32 C 10 44.15 19.85 54 32 54 C 44.15 54 54 44.15 54 32 C 54 19.85 44.15 10 32 10 z M 32 14 C 41.941 14 50 22.059 50 32 C 50 41.941 41.941 50 32 50 C 22.059 50 14 41.941 14 32 C 14 22.059 22.059 14 32 14 z M 41.041016 23.337891 C 40.533078 23.279297 39.894891 23.418531 39.181641 23.675781 C 37.878641 24.145781 21.223719 31.217953 20.261719 31.626953 C 19.350719 32.014953 18.487328 32.437828 18.486328 33.048828 C 18.486328 33.478828 18.741312 33.721656 19.445312 33.972656 C 20.177313 34.234656 22.023281 34.79275 23.113281 35.09375 C 24.163281 35.38275 25.357344 35.130844 26.027344 34.714844 C 26.736344 34.273844 34.928625 28.7925 35.515625 28.3125 C 36.102625 27.8325 36.571797 28.448688 36.091797 28.929688 C 35.611797 29.410688 29.988094 34.865094 29.246094 35.621094 C 28.346094 36.539094 28.985844 37.490094 29.589844 37.871094 C 30.278844 38.306094 35.239328 41.632016 35.986328 42.166016 C 36.733328 42.700016 37.489594 42.941406 38.183594 42.941406 C 38.877594 42.941406 39.242891 42.026797 39.587891 40.966797 C 39.992891 39.725797 41.890047 27.352062 42.123047 24.914062 C 42.194047 24.175062 41.960906 23.683844 41.503906 23.464844 C 41.365656 23.398594 41.210328 23.357422 41.041016 23.337891 z"
-                ></path>
-              </svg>
+            <a href="https://t.me/jettonanalizer"style="text-decoration: none;">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="30"
+              height="24"
+              viewBox="0 0 64 64"
+              style="fill: #fff"
+            >
+              <path
+                d="M 32 10 C 19.85 10 10 19.85 10 32 C 10 44.15 19.85 54 32 54 C 44.15 54 54 44.15 54 32 C 54 19.85 44.15 10 32 10 z M 32 14 C 41.941 14 50 22.059 50 32 C 50 41.941 41.941 50 32 50 C 22.059 50 14 41.941 14 32 C 14 22.059 22.059 14 32 14 z M 41.041016 23.337891 C 40.533078 23.279297 39.894891 23.418531 39.181641 23.675781 C 37.878641 24.145781 21.223719 31.217953 20.261719 31.626953 C 19.350719 32.014953 18.487328 32.437828 18.486328 33.048828 C 18.486328 33.478828 18.741312 33.721656 19.445312 33.972656 C 20.177313 34.234656 22.023281 34.79275 23.113281 35.09375 C 24.163281 35.38275 25.357344 35.130844 26.027344 34.714844 C 26.736344 34.273844 34.928625 28.7925 35.515625 28.3125 C 36.102625 27.8325 36.571797 28.448688 36.091797 28.929688 C 35.611797 29.410688 29.988094 34.865094 29.246094 35.621094 C 28.346094 36.539094 28.985844 37.490094 29.589844 37.871094 C 30.278844 38.306094 35.239328 41.632016 35.986328 42.166016 C 36.733328 42.700016 37.489594 42.941406 38.183594 42.941406 C 38.877594 42.941406 39.242891 42.026797 39.587891 40.966797 C 39.992891 39.725797 41.890047 27.352062 42.123047 24.914062 C 42.194047 24.175062 41.960906 23.683844 41.503906 23.464844 C 41.365656 23.398594 41.210328 23.357422 41.041016 23.337891 z"
+              ></path>
+            </svg>
             </a>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -250,33 +250,26 @@
                 d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"
               ></path>
             </svg>
-            <a
-              href="https://github.com/sw1ir/jettonanazer"
-              style="text-decoration: none"
+            <a href="https://github.com/sw1ir/jettonanazer" style="text-decoration: none;">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="30"
+              height="24"
+              viewBox="0 0 72 72"
+              style="fill: #fff"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="30"
-                height="24"
-                viewBox="0 0 72 72"
-                style="fill: #fff"
-              >
-                <path
-                  d="M36,12c13.255,0,24,10.745,24,24c0,10.656-6.948,19.685-16.559,22.818c0.003-0.009,0.007-0.022,0.007-0.022	s-1.62-0.759-1.586-2.114c0.038-1.491,0-4.971,0-6.248c0-2.193-1.388-3.747-1.388-3.747s10.884,0.122,10.884-11.491	c0-4.481-2.342-6.812-2.342-6.812s1.23-4.784-0.426-6.812c-1.856-0.2-5.18,1.774-6.6,2.697c0,0-2.25-0.922-5.991-0.922	c-3.742,0-5.991,0.922-5.991,0.922c-1.419-0.922-4.744-2.897-6.6-2.697c-1.656,2.029-0.426,6.812-0.426,6.812	s-2.342,2.332-2.342,6.812c0,11.613,10.884,11.491,10.884,11.491s-1.097,1.239-1.336,3.061c-0.76,0.258-1.877,0.576-2.78,0.576	c-2.362,0-4.159-2.296-4.817-3.358c-0.649-1.048-1.98-1.927-3.221-1.927c-0.817,0-1.216,0.409-1.216,0.876s1.146,0.793,1.902,1.659	c1.594,1.826,1.565,5.933,7.245,5.933c0.617,0,1.876-0.152,2.823-0.279c-0.006,1.293-0.007,2.657,0.013,3.454	c0.034,1.355-1.586,2.114-1.586,2.114s0.004,0.013,0.007,0.022C18.948,55.685,12,46.656,12,36C12,22.745,22.745,12,36,12z"
-                ></path>
-              </svg>
-            </a>
-            <a
-              href="https://t.me/JettonAnalizer_bot"
-              style="text-decoration: none"
-            >
-              <img
-                src="../src/support.png"
-                width="30"
-                height="24"
-                class="d-inline-block align-text-top"
+              <path
+                d="M36,12c13.255,0,24,10.745,24,24c0,10.656-6.948,19.685-16.559,22.818c0.003-0.009,0.007-0.022,0.007-0.022	s-1.62-0.759-1.586-2.114c0.038-1.491,0-4.971,0-6.248c0-2.193-1.388-3.747-1.388-3.747s10.884,0.122,10.884-11.491	c0-4.481-2.342-6.812-2.342-6.812s1.23-4.784-0.426-6.812c-1.856-0.2-5.18,1.774-6.6,2.697c0,0-2.25-0.922-5.991-0.922	c-3.742,0-5.991,0.922-5.991,0.922c-1.419-0.922-4.744-2.897-6.6-2.697c-1.656,2.029-0.426,6.812-0.426,6.812	s-2.342,2.332-2.342,6.812c0,11.613,10.884,11.491,10.884,11.491s-1.097,1.239-1.336,3.061c-0.76,0.258-1.877,0.576-2.78,0.576	c-2.362,0-4.159-2.296-4.817-3.358c-0.649-1.048-1.98-1.927-3.221-1.927c-0.817,0-1.216,0.409-1.216,0.876s1.146,0.793,1.902,1.659	c1.594,1.826,1.565,5.933,7.245,5.933c0.617,0,1.876-0.152,2.823-0.279c-0.006,1.293-0.007,2.657,0.013,3.454	c0.034,1.355-1.586,2.114-1.586,2.114s0.004,0.013,0.007,0.022C18.948,55.685,12,46.656,12,36C12,22.745,22.745,12,36,12z"
+              ></path>
+            </svg></a>
+            <a href="https://t.me/JettonAnalizer_bot" style="text-decoration: none;">
+            <img
+              src="../src/support.png"
+              width="30"
+              height="24"
+              class="d-inline-block align-text-top"
             /></a>
           </div>
         </div>
@@ -314,9 +307,7 @@
               </div>
               <div id="description" class="token_info_text"></div>
             </div>
-            <div
-              class="col col-lg-6 col-md-12 col-sm-12 col-12 token_chart_info"
-            >
+            <div class="col col-lg-6 col-md-12 col-sm-12 col-12 token_chart_info">
               <span
                 id="price_chart"
                 class="token_info_text"
@@ -327,26 +318,24 @@
                   left: 50%;
                   transform: translateX(-50%);
                 "
-              ></span>
-              <div id="candleChart" style="height: 250px"></div>
+                ></span
+              >
+                  <div id="candleChart" style=" height: 250px;"></div>
+
             </div>
+            
           </div>
           <div class="row">
             <div class="col-4">
               <a href="holders_table.html">
                 <div class="token_info_block">
                   <p>
-                    <svg
-                      width="16"
-                      height="16"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 320 512"
-                    >
-                      <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"
-                      />
-                    </svg>
+                    <img
+                    src="../src/holders.gif"
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                  />
                     <span id="hldrs"></span>
                   </p>
                   <div id="holders" class="token_info_text"></div>
@@ -382,6 +371,7 @@
           </div>
           <div class="row">
             <div class="col-4">
+              <a href="lock_table.html">
               <div class="token_info_block">
                 <p>
                   <img
@@ -393,6 +383,7 @@
                 </p>
                 <div id="lock" class="token_info_text"></div>
               </div>
+            </a>
             </div>
             <div class="col-4">
               <div class="token_info_block">
@@ -424,7 +415,7 @@
               <div class="token_info_block">
                 <p>
                   <img
-                    src="../src/liquidity.gif"
+                    src="../src/"
                     width="30"
                     height="24"
                     class="d-inline-block align-text-top"
@@ -437,7 +428,7 @@
               <div class="token_info_block">
                 <p>
                   <img
-                    src="../src/treancsations.gif"
+                    src=""
                     width="30"
                     height="24"
                     class="d-inline-block align-text-top"
@@ -445,21 +436,21 @@
                 </p>
                 <div class="volume-bar-container">
                   <div class="volume-bar">
-                    <div class="buy-volume" id="buy-volume"></div>
-                    <div class="sell-volume" id="sell-volume"></div>
+                    <div class="buy-volume" id = "buy-volume" ></div>
+                    <div class="sell-volume" id = "sell-volume" ></div>
                   </div>
                   <div class="volume-labels">
-                    <span id="buys" class="buy"></span>
-                    <span id="sells" class="sell"></span>
+                    <span id = "buys" class="buy"></span>
+                    <span id = "sells" class="sell"></span>
                   </div>
-                </div>
               </div>
+            </div>
             </div>
             <div class="col-4">
               <div class="token_info_block">
                 <p>
                   <img
-                    src="../src/supply.gif"
+                    src=""
                     width="30"
                     height="24"
                     class="d-inline-block align-text-top"
@@ -469,7 +460,7 @@
               </div>
             </div>
           </div>
-
+          
           <div class="row mx-auto">
             <div class="col bg-danger bg-opacity-50 alert_block">
               <img
@@ -494,99 +485,84 @@
       </div>
       <!-- закрытие основного row -->
     </main>
-    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+        <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      let lingvistic = new Map([
-        ["price chart", "График цены"],
-        ["holders", "Холдеры"],
-        ["price", "Цена"],
-        ["mcap", "Капитализация"],
-        ["Lock", "Заблокированно"],
-        ["burned", "Соженно"],
-        ["safety", "Безопасность"],
-        ["liquidity", "Ликвидность"],
-        ["trancsations", "Транкзации"],
-        ["total_supply", "Эмиссия"],
-        ["left", "Левые"],
-        ["old with afk", "Отлега"],
-      ]);
-      let engbtn = document.getElementById("eng_btn");
-      let rusbtn = document.getElementById("rus_btn");
-      let price_chart = document.getElementById("price_chart");
-      let hldrs = document.getElementById("hldrs");
-      let pric = document.getElementById("pric");
-      let mmmcap = document.getElementById("mmmcap");
-      let loock = document.getElementById("loock");
-      let burn_enjer = document.getElementById("burn_enjer");
-      let safe = document.getElementById("safe");
-      let luqid = document.getElementById("liquid");
-      let trancsations = document.getElementById("trancsation");
-      let suplyy = document.getElementById("suplayy");
-      let left = document.getElementById("left");
-      let otlega = document.getElementById("otlega");
-      function chg_lng() {
-        if (localStorage.getItem("lang") == "eng") {
-          engbtn.removeAttribute("class");
-          engbtn.setAttribute("class", "btn btn-success");
-          rusbtn.removeAttribute("class");
-          rusbtn.setAttribute("class", "btn btn-outline-success");
-          price_chart.textContent = "price chart";
-          hldrs.textContent = "holders";
-          pric.textContent = "price";
-          mmmcap.textContent = "mcap";
-          loock.textContent = "Lock";
-          burn_enjer.textContent = "burned";
-          safe.textContent = "safety";
-          luqid.textContent = "liquidity";
-          trancsations.textContent = "trancsations";
-          suplyy.textContent = "total_supply";
-          left.textContent = "left";
-          otlega.textContent = "old with afk";
-        }
-        if (localStorage.getItem("lang") == "rus") {
-          rusbtn.removeAttribute("class");
-          rusbtn.setAttribute("class", "btn btn-success");
-          engbtn.removeAttribute("class");
-          engbtn.setAttribute("class", "btn btn-outline-success");
-          price_chart.textContent = lingvistic.get("price chart");
-          hldrs.textContent = lingvistic.get("holders");
-          pric.textContent = lingvistic.get("price");
-          mmmcap.textContent = lingvistic.get("mcap");
-          loock.textContent = lingvistic.get("Lock");
-          burn_enjer.textContent = lingvistic.get("burned");
-          safe.textContent = lingvistic.get("safety");
-          luqid.textContent = lingvistic.get("liquidity");
-          trancsations.textContent = lingvistic.get("trancsations");
-          suplyy.textContent = lingvistic.get("total_supply");
-          left.textContent = lingvistic.get("left");
-          otlega.textContent = lingvistic.get("old with afk");
-        }
-      }
-      function initLanguage() {
-        chg_lng();
-      }
-      engbtn.addEventListener("click", function () {
-        language = "eng";
-        localStorage.removeItem("lang");
-        localStorage.setItem("lang", language);
-        chg_lng();
-      });
 
-      rusbtn.addEventListener("click", function () {
-        language = "rus";
-        localStorage.removeItem("lang");
-        localStorage.setItem("lang", language);
-        chg_lng();
-      });
+      let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"]])
+       let engbtn = document.getElementById("eng_btn")
+       let rusbtn = document.getElementById("rus_btn")
+       let price_chart = document.getElementById("price_chart")
+       let hldrs = document.getElementById("hldrs")
+       let pric = document.getElementById("pric")
+       let mmmcap = document.getElementById("mmmcap")
+       let loock = document.getElementById("loock")
+       let burn_enjer = document.getElementById("burn_enjer")
+       let safe = document.getElementById("safe")
+       let luqid = document.getElementById("liquid")
+       let trancsations = document.getElementById("trancsation")
+       let suplyy = document.getElementById("suplayy")
+       let left = document.getElementById("left")
+       let otlega = document.getElementById("otlega")
+       function chg_lng(){
+       if(localStorage.getItem("lang")=="eng"){
+        engbtn.removeAttribute("class")
+      engbtn.setAttribute("class","btn btn-success")
+      rusbtn.removeAttribute("class")
+      rusbtn.setAttribute("class","btn btn-outline-success")
+        price_chart.textContent = "price chart"
+      hldrs.textContent = "holders"
+      pric.textContent = "price"
+      mmmcap.textContent = "mcap"
+      loock.textContent = "Lock"
+      burn_enjer.textContent = "burned"
+      safe.textContent = "safety"
+      luqid.textContent = "liquidity"
+      trancsations.textContent="trancsations"
+      suplyy.textContent="total_supply"
+      left.textContent = "left"
+      otlega.textContent = "old with afk" 
+    }
+    if(localStorage.getItem("lang")=="rus"){
+      rusbtn.removeAttribute("class")
+      rusbtn.setAttribute("class","btn btn-success")
+      engbtn.removeAttribute("class")
+      engbtn.setAttribute("class","btn btn-outline-success")
+    price_chart.textContent = lingvistic.get("price chart");
+    hldrs.textContent = lingvistic.get("holders");
+    pric.textContent = lingvistic.get("price");
+    mmmcap.textContent = lingvistic.get("mcap");
+    loock.textContent = lingvistic.get("Lock");
+    burn_enjer.textContent = lingvistic.get("burned");
+    safe.textContent = lingvistic.get("safety");
+    luqid.textContent = lingvistic.get("liquidity")
+    trancsations.textContent= lingvistic.get("trancsations")
+    suplyy.textContent=lingvistic.get("total_supply")
+    left.textContent = lingvistic.get("left");
+    otlega.textContent = lingvistic.get("old with afk");
+    }
+    }
+    function initLanguage() {
+  chg_lng();
+}
+    engbtn.addEventListener("click", function(){
+      language="eng"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
+    })
+    
+    rusbtn.addEventListener("click", function(){
+      language = "rus"
+      localStorage.removeItem("lang")
+      localStorage.setItem("lang", language);
+      chg_lng()
+    })
 
       document.addEventListener("DOMContentLoaded", initLanguage);
-      const currentTimestamp = Math.floor(Date.now() / 1000);
-      console.log(currentTimestamp);
-      const sevenDaysAgo = currentTimestamp - 7 * 24 * 60 * 60;
-      console.log(sevenDaysAgo);
+
       let contract = null;
       if (localStorage.getItem("contract")) {
         contract = localStorage.getItem("contract");
@@ -596,29 +572,34 @@
           return response.json();
         })
         .then((data) => {
-          console.log(data);
-          let liquidity = data[0]["liquidity"]["usd"];
+          let liquidity = data[0]['liquidity']['usd']
 
-          let buys = document.getElementById("buys");
-          let sells = document.getElementById("sells");
+          let buys = document.getElementById("buys")
+          let sells = document.getElementById("sells")
 
           const buyValue = data["0"].txns.h24.buys;
           const sellValue = data["0"].txns.h24.sells;
 
-          let all_trans = buyValue + sellValue;
+          let all_trans = buyValue + sellValue
 
-          let buy_perc = (buyValue / all_trans) * 100;
-          let sell_perc = (sellValue / all_trans) * 100;
+          let buy_perc = (buyValue/all_trans) * 100
+          let sell_perc = (sellValue/all_trans) * 100
 
-          let buy_volume = document.getElementById("buy-volume");
-          let sell_volume = document.getElementById("sell-volume");
+          let buy_volume = document.getElementById("buy-volume")
+          let sell_volume = document.getElementById("sell-volume")
+          
+          let price = data["0"]["priceUsd"]
+          let fdv = data["0"]["fdv"]
+          document.getElementById("price").textContent = `${price}$`;
+ 
+          document.getElementById("mcap").textContent = `${fdv}$`;
 
-          buy_volume.setAttribute("style", `width: ${buy_perc}%;`);
-          sell_volume.setAttribute("style", `width: ${sell_perc}%;`);
-          buys.textContent = buyValue;
-          sells.textContent = sellValue;
-          let likva = document.getElementById("liquidity");
-          likva.textContent = `${liquidity} $`;
+          buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
+          sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
+          buys.textContent = buyValue
+          sells.textContent = sellValue
+          let likva = document.getElementById("liquidity")
+          likva.textContent = `${liquidity} $`
         });
       function formatNumber(num) {
         if (num >= 1000000000) {
@@ -639,123 +620,120 @@
         })
         .then((data) => {
           lock_suplya = data.totalLockedTokens;
+          let now = Date.now() /1000
+          let massiv = data.lockRecords
+          for ( let i = 0; i<=massiv.length - 1; i++){
+            let lock_rec = massiv[i]
+            if (lock_rec.contractData.firstPayoutTime < now){
+              continue
+            }else{
+            }
+          }
         });
-
-      const chart = LightweightCharts.createChart(
-        document.getElementById("candleChart"),
-        {
-          layout: {
-            background: { color: "#1e1e2e" },
-            textColor: "#a1a1aa",
-          },
-          grid: {
-            vertLines: { color: "#2d2d3d" },
-            horzLines: { color: "#2d2d3d" },
-          },
-          timeScale: {
+      
+          const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
+        layout: {
+            background: { color: '#1e1e2e' },
+            textColor: '#a1a1aa',
+        },
+        grid: {
+            vertLines: { color: '#2d2d3d' },
+            horzLines: { color: '#2d2d3d' },
+        },
+        timeScale: {
             timeVisible: true,
-          },
-          width: document.getElementById("candleChart").clientWidth,
-          height: 250,
-          autoSize: true,
-          timeScale: {
-            timeVisible: true,
-            rightOffset: 12,
-          },
-        }
-      );
-      function handleResize() {
-        chart.applyOptions({
-          width: document.getElementById("candleChart").clientWidth,
-          height: document.getElementById("candleChart").clientHeight,
+        },
+         width: document.getElementById('candleChart').clientWidth,
+         height: 250,
+         autoSize: true,
+         timeScale: {
+         timeVisible: true,
+         rightOffset: 12,}
+    });
+        function handleResize() {
+          chart.applyOptions({ 
+          width: document.getElementById('candleChart').clientWidth,
+          height: document.getElementById('candleChart').clientHeight
         });
       }
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
 
-      // Инициализация при загрузке
-      handleResize();
-      // Добавляем свечной график
-      const candleSeries = chart.addCandlestickSeries({
-        upColor: "#00FF00", // Зеленый для роста
-        downColor: "#FF0000", // Красный для падения
-        borderDownColor: "#FF0000",
-        borderUpColor: "#00FF00",
-        wickDownColor: "#FF0000",
-        wickUpColor: "#00FF00	",
-      });
-      fetch(
-        `https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`
-      )
+// Инициализация при загрузке
+handleResize();
+    // Добавляем свечной график
+    const candleSeries = chart.addCandlestickSeries({
+        upColor: '#00FF00', // Зеленый для роста
+        downColor: '#FF0000', // Красный для падения
+        borderDownColor: '#FF0000',
+        borderUpColor: '#00FF00',
+        wickDownColor: '#FF0000',
+        wickUpColor: '#00FF00	',
+    });
+     fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`)
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          let pool = data["data"][0]["attributes"]["address"];
-          console.log(pool);
+          let pool = data["data"][0]["attributes"]["address"]
+        
+    let url = `https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`;
 
-          let url = `https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`;
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка сети');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const ohlcvList = data.data.attributes.ohlcv_list;
 
-          fetch(url, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
+        // Проверка на наличие данных
+        if (!ohlcvList || ohlcvList.length === 0) {
+            throw new Error('Нет данных для отображения');
+        }
+
+        // Создаем массив для данных графика и сортируем по времени
+        const chartData = ohlcvList.map(i => ({
+            time: i[0],   // Время в формате UNIX
+            open: i[1],   // Открытие
+            high: i[2],   // Максимум
+            low: i[3],    // Минимум
+            close: i[4]   // Закрытие
+        })).filter(i => 
+            i.time !== null && 
+            i.open !== null && 
+            i.high !== null && 
+            i.low !== null && 
+            i.close !== null &&
+            !isNaN(i.time) && 
+            !isNaN(i.open) && 
+            !isNaN(i.high) && 
+            !isNaN(i.low) && 
+            !isNaN(i.close)
+        ) // Фильтруем null значения и NaN
+        .sort((a, b) => a.time - b.time); // Сортируем по времени
+
+        // Проверка на наличие данных после фильтрации и сортировки
+        if (chartData.length === 0) {
+            throw new Error('Все данные являются null или некорректными');
+        }
+        chart.applyOptions({
+            localization: {
+                priceFormatter: price => price.toFixed(8)
             },
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Ошибка сети");
-              }
-              return response.json();
-            })
-            .then((data) => {
-              console.log(data); // Для отладки
-              const ohlcvList = data.data.attributes.ohlcv_list;
-
-              // Проверка на наличие данных
-              if (!ohlcvList || ohlcvList.length === 0) {
-                throw new Error("Нет данных для отображения");
-              }
-
-              // Создаем массив для данных графика и сортируем по времени
-              const chartData = ohlcvList
-                .map((i) => ({
-                  time: i[0], // Время в формате UNIX
-                  open: i[1], // Открытие
-                  high: i[2], // Максимум
-                  low: i[3], // Минимум
-                  close: i[4], // Закрытие
-                }))
-                .filter(
-                  (i) =>
-                    i.time !== null &&
-                    i.open !== null &&
-                    i.high !== null &&
-                    i.low !== null &&
-                    i.close !== null &&
-                    !isNaN(i.time) &&
-                    !isNaN(i.open) &&
-                    !isNaN(i.high) &&
-                    !isNaN(i.low) &&
-                    !isNaN(i.close)
-                ) // Фильтруем null значения и NaN
-                .sort((a, b) => a.time - b.time); // Сортируем по времени
-
-              // Проверка на наличие данных после фильтрации и сортировки
-              if (chartData.length === 0) {
-                throw new Error("Все данные являются null или некорректными");
-              }
-              chart.applyOptions({
-                localization: {
-                  priceFormatter: (price) => price.toFixed(8),
-                },
-              });
-              // Устанавливаем данные в график
-              candleSeries.setData(chartData);
-            })
-            .catch((error) => {
-              console.error("Ошибка:", error);
-            });
         });
+        // Устанавливаем данные в график
+        candleSeries.setData(chartData);
+    })
+    .catch(error => {
+    });
+    });
       fetch("https://tonapi.io/v2/jettons/" + contract)
         .then((response) => {
           return response.json();
@@ -775,7 +753,7 @@
               let burn = document.getElementById("burn");
               burn.textContent = formatNumber(burned_amount / 10 ** 9);
             });
-          let emision = document.getElementById("total_suplly");
+          let emision = document.getElementById("total_suplly")
           let holders = data.holders_count;
           let name = data.metadata.name;
           let img = data.metadata.image;
@@ -783,8 +761,7 @@
           let token = name + "(" + simbol + ")";
           let supply = data.total_supply;
           real_supply = supply / 10 ** 9;
-          emision.textContent = real_supply;
-          console.log(token);
+          emision.textContent = real_supply
           document.getElementById("logo").src = img;
           document.getElementById("holders").innerHTML = holders;
           document.getElementById("token_name").innerHTML = token;
@@ -797,15 +774,6 @@
               return response.json();
             })
             .then((data) => {
-              console.log(data);
-              let price = data.rates[contract].prices.USD;
-              document.getElementById("price").textContent = `$${price.toFixed(
-                6
-              )}`;
-              let mcap = real_supply * price;
-              console.log(mcap);
-              const formattedMCap = formatNumber(mcap);
-              document.getElementById("mcap").textContent = `$${formattedMCap}`;
               lock = document.getElementById("lock");
               lock.textContent = formatNumber(lock_suplya / 10 ** 9);
             });
@@ -835,6 +803,7 @@
         5
       )}...${contract.slice(-5)}`;
       const rtx = document.getElementById("dogChart");
+      
     </script>
   </body>
 </html>
