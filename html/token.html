@@ -308,18 +308,25 @@
               <div id="description" class="token_info_text"></div>
             </div>
             <div class="col col-lg-6 col-md-12 col-sm-12 col-12 token_chart_info">
-              <span
-                id="price_chart"
-                class="token_info_text"
-                style="
+              <div style="
                   font-size: 16pt;
                   display: inline-block;
                   position: relative;
                   left: 50%;
                   transform: translateX(-50%);
-                "
+                ">
+              <img  
+                    id = "chartImg"
+                    width="30"
+                    height="24"
+                    class="d-inline-block align-text-top"
+                    style="margin-top: 5px;"
+                  />
+              <span
+                id="price_chart"
+                class="token_info_text"
                 ></span
-              >
+              ></div>
                   <div id="candleChart" style=" height: 250px;"></div>
 
             </div>
@@ -359,7 +366,9 @@
               <div class="token_info_block">
                 <p>
                   <img
-                    src="../src/mcap.gif"
+                    src=""
+                    id = "mcapImg"
+                    style="margin-right: 5px;"
                     width="30"
                     height="24"
                     class="d-inline-block align-text-top"
@@ -572,6 +581,7 @@
           return response.json();
         })
         .then((data) => {
+          console.log(data)
           let liquidity = data[0]['liquidity']['usd']
 
           let buys = document.getElementById("buys")
@@ -590,6 +600,16 @@
           
           let price = data["0"]["priceUsd"]
           let fdv = data["0"]["fdv"]
+          let mcapImg = document.getElementById("mcapImg")
+          let priceChange = data["0"]["priceChange"]["h1"]
+          let chartImg = document.getElementById("chartImg")
+          if (priceChange > 0){
+            chartImg.src = "../src/chart_up.gif"
+            mcapImg.src = "../src/mcap.gif"
+          }else{
+            chartImg.src = "../src/chart_down.gif"
+            mcapImg.src = "../src/chart_down.gif"
+          }
           document.getElementById("price").textContent = `${price}$`;
  
           document.getElementById("mcap").textContent = `${fdv}$`;
