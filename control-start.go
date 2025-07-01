@@ -21,12 +21,17 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Добавьте следующие две строки
-	fs := http.FileServer(http.Dir("html"))
-	mux.Handle("/html/", http.StripPrefix("/html/", fs))
+	html := http.FileServer(http.Dir("html"))
+	mux.Handle("/html/", http.StripPrefix("/html/", html))
 
-	ts := http.FileServer(http.Dir("src"))
-	mux.Handle("/src/", http.StripPrefix("/src/", ts))
+	src := http.FileServer(http.Dir("src"))
+	mux.Handle("/src/", http.StripPrefix("/src/", src))
+
+	style := http.FileServer(http.Dir("style"))
+	mux.Handle("/style/", http.StripPrefix("/style/", style))
+
+	js := http.FileServer(http.Dir("js"))
+	mux.Handle("/js/", http.StripPrefix("/js/", js))
 
 	mux.HandleFunc("/", indexHandler)
 	http.ListenAndServe(":"+port, mux)

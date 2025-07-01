@@ -11,101 +11,32 @@
             background: #1e1e2e;
             margin: 0;
             padding: 20px;
+            color: #ffffff
         }
     </style>
 </head>
     <body>
-    <div id="candleChart" style="width: 600px; height: 400px;"></div>
+
+                                                <span id = "price"></span>
 
     <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 
+
 <script>
-    // Создаем график
-    const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
-        layout: {
-            background: { color: '#1e1e2e' },
-            textColor: '#a1a1aa',
-        },
-        grid: {
-            vertLines: { color: '#2d2d3d' },
-            horzLines: { color: '#2d2d3d' },
-        },
-        timeScale: {
-            timeVisible: true,
-        },
-    });
+    let geckopool = document.getElementById("price")
+    contract = "EQBvfpasf82aAQUkdGZBuAxlcUR3Al7vY1T7ifC6UXAnnhhA"
+     fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          let pool = data["data"][0]["attributes"]["address"]
+          geckopool.textContent = pool
+        })
 
-    // Добавляем свечной график
-    const candleSeries = chart.addCandlestickSeries({
-        upColor: '#26a69a', // Зеленый для роста
-        downColor: '#ef5350', // Красный для падения
-        borderDownColor: '#ef5350',
-        borderUpColor: '#26a69a',
-        wickDownColor: '#ef5350',
-        wickUpColor: '#26a69a',
-    });
-
-    let url = 'https://api.geckoterminal.com/api/v2/networks/ton/pools/EQBPzTdSiYLW7TL-xA3NIFGUDW-irR5xHAUi1vTkTlOPSuWn/ohlcv/minute?aggregate=1&currency=usd';
-
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Ошибка сети');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data); // Для отладки
-        const ohlcvList = data.data.attributes.ohlcv_list;
-
-        // Проверка на наличие данных
-        if (!ohlcvList || ohlcvList.length === 0) {
-            throw new Error('Нет данных для отображения');
-        }
-
-        // Создаем массив для данных графика и сортируем по времени
-        const chartData = ohlcvList.map(i => ({
-            time: i[0],   // Время в формате UNIX
-            open: i[1],   // Открытие
-            high: i[2],   // Максимум
-            low: i[3],    // Минимум
-            close: i[4]   // Закрытие
-        })).filter(i => 
-            i.time !== null && 
-            i.open !== null && 
-            i.high !== null && 
-            i.low !== null && 
-            i.close !== null &&
-            !isNaN(i.time) && 
-            !isNaN(i.open) && 
-            !isNaN(i.high) && 
-            !isNaN(i.low) && 
-            !isNaN(i.close)
-        ) // Фильтруем null значения и NaN
-        .sort((a, b) => a.time - b.time); // Сортируем по времени
-
-        // Проверка на наличие данных после фильтрации и сортировки
-        if (chartData.length === 0) {
-            throw new Error('Все данные являются null или некорректными');
-        }
-        chart.applyOptions({
-            localization: {
-                priceFormatter: price => price.toFixed(8)
-            },
-        });
-        // Устанавливаем данные в график
-        candleSeries.setData(chartData);
-    })
-    .catch(error => {
-        console.error('Ошибка:', error);
-    });
 </script>
+<script>
 
-    
+</script>
 </body>
 </html>

@@ -576,31 +576,38 @@
       if (localStorage.getItem("contract")) {
         contract = localStorage.getItem("contract");
       }
-      fetch("https://api.dexscreener.com/tokens/v1/ton/" + contract)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data)
-          let liquidity = data[0]['liquidity']['usd']
-
-          let buys = document.getElementById("buys")
-          let sells = document.getElementById("sells")
-
-          const buyValue = data["0"].txns.h24.buys;
-          const sellValue = data["0"].txns.h24.sells;
-
-          let all_trans = buyValue + sellValue
-
-          let buy_perc = (buyValue/all_trans) * 100
-          let sell_perc = (sellValue/all_trans) * 100
-
-          let buy_volume = document.getElementById("buy-volume")
+      //основная инфа по монете
+    async function getJettonInfo(){
+        let responce = await fetch(`https://tonapi.io/v2/jettons/${contract}`)
+        let data = await responce.json()
+        return data
+    }
+              let buy_volume = document.getElementById("buy-volume")
           let sell_volume = document.getElementById("sell-volume")
-          
-          let price = data["0"]["priceUsd"]
-          let fdv = data["0"]["fdv"]
-          let mcapImg = document.getElementById("mcapImg")
+              let likva = document.getElementById("liquidity")
+
+      //запрос к декскринеру
+          async function getDexScreneerData(){
+        let responce = await fetch(`https://api.dexscreener.com/tokens/v1/ton/${contract}`)
+        let data = await responce.json()
+        console.log(data)
+        console.log(data + "dsdsadasfdef")
+        return data
+    }
+        //инфа с декскринера
+            getDexScreneerData().then(data =>{
+        console.log(data)
+        let liquidity = data["0"].liquidity.usd
+        let buyValue = data["0"].txns.h24.buys;
+        let sellValue = data["0"].txns.h24.sells;
+        let all_trans = buyValue + sellValue
+        let buy_perc = (buyValue/all_trans) * 100
+        let sell_perc = (sellValue/all_trans) * 100
+
+        let price = data["0"]["priceUsd"]
+        let fdv = data["0"]["fdv"]
+
+                  let mcapImg = document.getElementById("mcapImg")
           let priceChange = data["0"]["priceChange"]["h1"]
           let chartImg = document.getElementById("chartImg")
           if (priceChange > 0){
@@ -609,8 +616,7 @@
           }else{
             chartImg.src = "../src/chart_down.gif"
             mcapImg.src = "../src/chart_down.gif"
-          }
-          document.getElementById("price").textContent = `${price}$`;
+            document.getElementById("price").textContent = `${price}$`;
  
           document.getElementById("mcap").textContent = `${fdv}$`;
 
@@ -618,9 +624,10 @@
           sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
           buys.textContent = buyValue
           sells.textContent = sellValue
-          let likva = document.getElementById("liquidity")
           likva.textContent = `${liquidity} $`
-        });
+
+          }
+    })
       function formatNumber(num) {
         if (num >= 1000000000) {
           return (num / 1000000000).toFixed(2) + "B";
@@ -633,23 +640,11 @@
         }
         return num.toString();
       }
-      let lock_suplya;
-      fetch(`https://api.tonraffles.app/api/v2/lock/${contract}`)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          lock_suplya = data.totalLockedTokens;
-          let now = Date.now() /1000
-          let massiv = data.lockRecords
-          for ( let i = 0; i<=massiv.length - 1; i++){
-            let lock_rec = massiv[i]
-            if (lock_rec.contractData.firstPayoutTime < now){
-              continue
-            }else{
-            }
-          }
-        });
+      async function getLockData(){
+        let responce = await fetch(`https://api.tonraffles.app/api/v2/lock/${contract}`)
+        let data = await responce.json()
+        return data.totalLockedTokens
+      }
       
           const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
         layout: {
@@ -754,50 +749,42 @@ handleResize();
     .catch(error => {
     });
     });
-      fetch("https://tonapi.io/v2/jettons/" + contract)
-        .then((response) => {
-          return response.json();
+    //async burn
+      async function getBurnInfo(){
+        let responce = await fetch(`https://tonapi.io/v2/accounts/UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ/jettons/${contract}?currencies=ton,usd,rub&supported_extensions=custom_payload`)
+        let data = await responce.json()
+        return data.balance
+    }
+        //lock async vivod
+        lock = document.getElementById("lock");
+        getLockData().then( data => {
+          lock.textContent = formatNumber( data/ 10 ** 9);
         })
-        .then((data) => {
-          let response = fetch(
-            "https://tonapi.io/v2/accounts/UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ/jettons/" +
-              contract +
-              "?currencies=ton,usd,rub&supported_extensions=custom_payload"
-          )
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              let burned_amount;
-              burned_amount = data.balance;
-              let burn = document.getElementById("burn");
-              burn.textContent = formatNumber(burned_amount / 10 ** 9);
-            });
-          let emision = document.getElementById("total_suplly")
-          let holders = data.holders_count;
-          let name = data.metadata.name;
-          let img = data.metadata.image;
-          let simbol = data.metadata.symbol;
-          let token = name + "(" + simbol + ")";
-          let supply = data.total_supply;
-          real_supply = supply / 10 ** 9;
-          emision.textContent = real_supply
-          document.getElementById("logo").src = img;
-          document.getElementById("holders").innerHTML = holders;
-          document.getElementById("token_name").innerHTML = token;
-          document.getElementById("description").innerHTML =
-            data.metadata.description;
-          fetch(
-            "https://tonapi.io/v2/rates?tokens=" + contract + "&currencies=usd"
-          )
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              lock = document.getElementById("lock");
-              lock.textContent = formatNumber(lock_suplya / 10 ** 9);
-            });
-        });
+        //основная инфа о монете
+        getJettonInfo().then(data =>{
+        let supply = data.total_supply;
+        real_supply = supply / 10 ** 9;
+        let img = data.metadata.image;
+        document.getElementById("logo").src = img;
+        let name = data.metadata.name;
+        let simbol = data.metadata.symbol;
+        let token = name + "(" + simbol + ")";
+        document.getElementById("token_name").innerHTML = token;
+        let holders = data.holders_count;
+        document.getElementById("holders").innerHTML = holders;
+        document.getElementById("description").innerHTML =data.metadata.description;
+        let emision = document.getElementById("total_suplly")
+        emision.textContent = real_supply
+
+    }
+    )
+    //async burn
+      let burn = document.getElementById("burn");
+    getBurnInfo().then(burned_amount => {
+        burn.textContent = formatNumber(burned_amount / 10 ** 9);
+        console.log(burned_amount)
+    })
+
     </script>
     <script>
       document.querySelector("#copy_ca").addEventListener("click", () => {
