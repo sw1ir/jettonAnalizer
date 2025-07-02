@@ -4,6 +4,14 @@
   let contract = localStorage.getItem("contract") || null;
   let real_supply;
 
+let daay = document.createElement("span")
+let hrs = document.createElement("span")
+let minut = document.createElement("span")
+let secnds = document.createElement("span")
+daay.setAttribute("id","days")
+hrs.setAttribute("id","hour")
+minut.setAttribute("id","minu")
+secnds.setAttribute("id","sec")
 
   // Форматирование чисел
   function formatNumber(num) {
@@ -33,7 +41,7 @@
     unlock_time %= 3600
     let minutes = Math.floor(unlock_time / 60)
     unlock_time %= 60
-    unnlock = `${day} дней ${hours} часов ${minutes} минут ${unlock_time} секунд`
+    unnlock = aaa(day,hours,minutes,unlock_time)
     let unlock_data = document.createElement("span")
     let lock_data = document.createElement("span")
     let utime = document.createElement("span")
@@ -76,7 +84,6 @@
         stlock : "Дата лока",
         unlok: "Дата разлока",
         left: "Осталось"
-
       };
     }
   }
@@ -104,7 +111,13 @@
     document.getElementById("start_unlock").textContent = unlok
     document.getElementById("unlock").textContent = left
   }
-
+function aaa(day,hours,minutes,unlock_time){
+    if (localStorage.getItem("lang")=="rus"){
+    unnlock = `${day} дней ${hours} часов ${minutes} мин. ${unlock_time} сек.`
+    }else{
+        unnlock = `${day} days ${hours} hours ${minutes} min. ${unlock_time} sec.`
+    }
+}
   // Рендер таблицы
   function renderTable() {
     let tableBody = document.getElementById("tableinsert");
