@@ -1,4 +1,4 @@
-# jettonanАlizer
+# jettonAnalizer
 
 
 ## 1. Установка.
@@ -18,12 +18,12 @@ sudo apt install git
 ### Установка Репозитория
 Далее нам нужно загрузить репозиторий jettonAnalizer делается это с помощью этой команды:
 ```
-git clone https://github.com/sw1ir/jettonanazer
+git clone https://github.com/sw1ir/jettonAnalizer
 ```
-### Заходим в каталог jettonanalizer
-Для того чтобы зайти в каталог jettonanalizer необходимо ввести следующую команду:
+### Заходим в каталог jettonAnalizer
+Для того чтобы зайти в каталог jettonAnalizer необходимо ввести следующую команду:
 ```
-cd jettonanazer
+cd jettonAnalizer
 ```
 ### Даем разрешение на исполнение файлу install.sh
 Нужно дать разрешение на исполнение файлу install.sh, он устанавливает все нужные зависимости сделать это можно командой:
