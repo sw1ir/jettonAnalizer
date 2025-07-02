@@ -596,7 +596,6 @@
     }
         //инфа с декскринера
             getDexScreneerData().then(data =>{
-        console.log(data)
         let liquidity = data["0"].liquidity.usd
         let buyValue = data["0"].txns.h24.buys;
         let sellValue = data["0"].txns.h24.sells;
@@ -607,24 +606,25 @@
         let price = data["0"]["priceUsd"]
         let fdv = data["0"]["fdv"]
 
-                  let mcapImg = document.getElementById("mcapImg")
+        let mcapImg = document.getElementById("mcapImg")
           let priceChange = data["0"]["priceChange"]["h1"]
           let chartImg = document.getElementById("chartImg")
+           document.getElementById("price").textContent = `${price}$`;
+ 
+          document.getElementById("mcap").textContent = `${formatNumber(fdv)}$`;
+
+          buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
+          sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
+          buys.textContent = buyValue
+          sells.textContent = sellValue
+          likva.textContent = `${formatNumber(liquidity)} $`
           if (priceChange > 0){
             chartImg.src = "../src/chart_up.gif"
             mcapImg.src = "../src/mcap.gif"
           }else{
             chartImg.src = "../src/chart_down.gif"
             mcapImg.src = "../src/chart_down.gif"
-            document.getElementById("price").textContent = `${price}$`;
- 
-          document.getElementById("mcap").textContent = `${fdv}$`;
-
-          buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
-          sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
-          buys.textContent = buyValue
-          sells.textContent = sellValue
-          likva.textContent = `${liquidity} $`
+    
 
           }
     })
@@ -646,109 +646,97 @@
         return data.totalLockedTokens
       }
       
-          const chart = LightweightCharts.createChart(document.getElementById('candleChart'), {
-        layout: {
-            background: { color: '#1e1e2e' },
-            textColor: '#a1a1aa',
-        },
-        grid: {
-            vertLines: { color: '#2d2d3d' },
-            horzLines: { color: '#2d2d3d' },
-        },
-        timeScale: {
-            timeVisible: true,
-        },
-         width: document.getElementById('candleChart').clientWidth,
-         height: 250,
-         autoSize: true,
-         timeScale: {
-         timeVisible: true,
-         rightOffset: 12,}
-    });
-        function handleResize() {
-          chart.applyOptions({ 
-          width: document.getElementById('candleChart').clientWidth,
-          height: document.getElementById('candleChart').clientHeight
-        });
-      }
-      window.addEventListener('resize', handleResize);
+// Инициализация графика
+const chartElement = document.getElementById('candleChart');
+const chart = LightweightCharts.createChart(chartElement, {
+    layout: {
+        background: { color: '#1e1e2e' },
+        textColor: '#a1a1aa',
+    },
+    grid: {
+        vertLines: { color: '#2d2d3d' },
+        horzLines: { color: '#2d2d3d' },
+    },
+    width: chartElement.clientWidth,
+    height: 250,
+    timeScale: {
+        timeVisible: true,
+        rightOffset: 12,
+    }
+});
 
-// Инициализация при загрузке
+// Обработчик изменения размера
+function handleResize() {
+    chart.applyOptions({ 
+        width: chartElement.clientWidth,
+        height: chartElement.clientHeight
+    });
+}
+window.addEventListener('resize', handleResize);
 handleResize();
-    // Добавляем свечной график
-    const candleSeries = chart.addCandlestickSeries({
-        upColor: '#00FF00', // Зеленый для роста
-        downColor: '#FF0000', // Красный для падения
-        borderDownColor: '#FF0000',
-        borderUpColor: '#00FF00',
-        wickDownColor: '#FF0000',
-        wickUpColor: '#00FF00	',
-    });
-     fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          let pool = data["data"][0]["attributes"]["address"]
+
+// Добавление свечной серии
+const candleSeries = chart.addCandlestickSeries({
+    upColor: '#00FF00',
+    downColor: '#FF0000',
+    borderDownColor: '#FF0000',
+    borderUpColor: '#00FF00',
+    wickDownColor: '#FF0000',
+    wickUpColor: '#00FF00',
+});
+
+// Основная функция загрузки данных
+async function loadChartData() {
+    try {
+        // 1. Получаем адрес пула
+        const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`);
+        if (!poolResponse.ok) throw new Error('Ошибка при получении пула');
+        const poolData = await poolResponse.json();
         
-    let url = `https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`;
+        const pool = poolData.data[0].attributes.address;
+        
+        // 2. Получаем данные OHLCV
+        const ohlcvResponse = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`);
+        if (!ohlcvResponse.ok) throw new Error('Ошибка при получении данных графика');
+        const ohlcvData = await ohlcvResponse.json();
 
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Ошибка сети');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const ohlcvList = data.data.attributes.ohlcv_list;
+        // 3. Обработка данных
+        const ohlcvList = ohlcvData.data?.attributes?.ohlcv_list || [];
+        if (ohlcvList.length === 0) throw new Error('Нет данных для отображения');
 
-        // Проверка на наличие данных
-        if (!ohlcvList || ohlcvList.length === 0) {
-            throw new Error('Нет данных для отображения');
-        }
+        const chartData = ohlcvList
+            .map(i => ({
+                time: i[0],
+                open: i[1],
+                high: i[2],
+                low: i[3],
+                close: i[4]
+            }))
+            .filter(i => [i.time, i.open, i.high, i.low, i.close].every(
+                val => val !== null && !isNaN(val)
+            ))
+            .sort((a, b) => a.time - b.time);
 
-        // Создаем массив для данных графика и сортируем по времени
-        const chartData = ohlcvList.map(i => ({
-            time: i[0],   // Время в формате UNIX
-            open: i[1],   // Открытие
-            high: i[2],   // Максимум
-            low: i[3],    // Минимум
-            close: i[4]   // Закрытие
-        })).filter(i => 
-            i.time !== null && 
-            i.open !== null && 
-            i.high !== null && 
-            i.low !== null && 
-            i.close !== null &&
-            !isNaN(i.time) && 
-            !isNaN(i.open) && 
-            !isNaN(i.high) && 
-            !isNaN(i.low) && 
-            !isNaN(i.close)
-        ) // Фильтруем null значения и NaN
-        .sort((a, b) => a.time - b.time); // Сортируем по времени
+        if (chartData.length === 0) throw new Error('Все данные некорректны');
 
-        // Проверка на наличие данных после фильтрации и сортировки
-        if (chartData.length === 0) {
-            throw new Error('Все данные являются null или некорректными');
-        }
+        // 4. Настройка и отображение графика
         chart.applyOptions({
             localization: {
                 priceFormatter: price => price.toFixed(8)
             },
         });
-        // Устанавливаем данные в график
+        
         candleSeries.setData(chartData);
-    })
-    .catch(error => {
-    });
-    });
+        
+    } catch (error) {
+        console.error('Ошибка:', error);
+        // Здесь можно добавить уведомление для пользователя
+        chartElement.innerHTML = `<div class="error-message">${error.message}</div>`;
+    }
+}
+
+// Запускаем загрузку данных
+loadChartData();
     //async burn
       async function getBurnInfo(){
         let responce = await fetch(`https://tonapi.io/v2/accounts/UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ/jettons/${contract}?currencies=ton,usd,rub&supported_extensions=custom_payload`)
@@ -774,7 +762,7 @@ handleResize();
         document.getElementById("holders").innerHTML = holders;
         document.getElementById("description").innerHTML =data.metadata.description;
         let emision = document.getElementById("total_suplly")
-        emision.textContent = real_supply
+        emision.textContent = formatNumber(real_supply)
 
     }
     )
