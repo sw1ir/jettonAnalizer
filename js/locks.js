@@ -41,7 +41,7 @@ secnds.setAttribute("id","sec")
     unlock_time %= 3600
     let minutes = Math.floor(unlock_time / 60)
     unlock_time %= 60
-    unnlock = aaa(day,hours,minutes,unlock_time)
+    unnlock = `${day} дней ${hours} часов ${minutes} мин. ${unlock_time} сек.`
     let unlock_data = document.createElement("span")
     let lock_data = document.createElement("span")
     let utime = document.createElement("span")
@@ -111,13 +111,7 @@ secnds.setAttribute("id","sec")
     document.getElementById("start_unlock").textContent = unlok
     document.getElementById("unlock").textContent = left
   }
-function aaa(day,hours,minutes,unlock_time){
-    if (localStorage.getItem("lang")=="rus"){
-    unnlock = `${day} дней ${hours} часов ${minutes} мин. ${unlock_time} сек.`
-    }else{
-        unnlock = `${day} days ${hours} hours ${minutes} min. ${unlock_time} sec.`
-    }
-}
+
   // Рендер таблицы
   function renderTable() {
     let tableBody = document.getElementById("tableinsert");
