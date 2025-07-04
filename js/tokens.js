@@ -189,7 +189,7 @@ const candleSeries = chart.addCandlestickSeries({
 async function loadChartData() {
     try {
         // 1. Получаем адрес пула
-        const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`);
+        const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}&page=1`);
         if (!poolResponse.ok) throw new Error('Ошибка при получении пула');
         const poolData = await poolResponse.json();
         
