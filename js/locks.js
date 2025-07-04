@@ -58,7 +58,7 @@ secnds.setAttribute("id","sec")
     holders_table.set(index, {
       Кошелек: kosh,
       Доля: balance > 0 
-        ? `${percentage.toFixed(2)}% (${formatNumber(balance.toFixed(2))})`
+        ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
         : "0",
         Лок : lock_data,
         Разлок: unlock_data,
