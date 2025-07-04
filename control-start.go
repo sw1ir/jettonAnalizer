@@ -13,13 +13,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
 }
 func main() {
+	var a string
+	fmt.Print("Введите свободный порт: ")
+	fmt.Scan(&a)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
-		fmt.Println("Успешно запущено на http://localhost:3000/")
+		port = a
 	}
 
 	mux := http.NewServeMux()
+	fmt.Println("Успешно запущено на http://localhost:" + port + "/")
 
 	html := http.FileServer(http.Dir("html"))
 	mux.Handle("/html/", http.StripPrefix("/html/", html))
