@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 )
@@ -13,16 +14,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
 }
 func main() {
-	var a string
-	fmt.Print("Введите свободный порт: ")
-	fmt.Scan(&a)
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = a
+		fmt.Print("Введите свободный порт: ")
+		_, err := fmt.Scan(&port)
+		if err != nil {
+			log.Fatal("Ошибка ввода порта:", err)
+		}
 	}
 
 	mux := http.NewServeMux()
-	fmt.Println("Успешно запущено на http://localhost:" + port + "/")
 
 	html := http.FileServer(http.Dir("html"))
 	mux.Handle("/html/", http.StripPrefix("/html/", html))
@@ -37,6 +38,8 @@ func main() {
 	mux.Handle("/js/", http.StripPrefix("/js/", js))
 
 	mux.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":"+port, mux)
 
+	log.Printf("Сервер запущен на http://localhost:%s", port)
+	fmt.Println("чтобы остановить сервер зажмите ctrl + c")
+	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
