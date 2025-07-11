@@ -85,28 +85,34 @@
           let sell_volume = document.getElementById("sell-volume")
               let likva = document.getElementById("liquidity")
 
-      //запрос к декскринеру
-          async function getDexScreneerData(){
-        let responce = await fetch(`https://api.dexscreener.com/tokens/v1/ton/${contract}`)
-        let data = await responce.json()
-        console.log(data)
-        console.log(data + "dsdsadasfdef")
-        return data
+      //запрос к гекотерминалу
+          async function getGeckoData(){
+            const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}&page=1`);
+        if (!poolResponse.ok) throw new Error('Ошибка при получении пула');
+        const poolData = await poolResponse.json();
+        
+        const pool = poolData.data[0].attributes.address;
+        let responce = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}`)
+        let geckoData = await responce.json()
+        console.log(geckoData)
+        console.log(geckoData + "dsdsadasfdef")
+        return geckoData
     }
         //инфа с декскринера
-            getDexScreneerData().then(data =>{
-        let liquidity = data["0"].liquidity.usd
-        let buyValue = data["0"].txns.h24.buys;
-        let sellValue = data["0"].txns.h24.sells;
+            getGeckoData().then(geckoData =>{
+        let liquidity = geckoData.data.attributes.reserve_in_usd
+        let buyValue = geckoData.data.attributes.transactions.h24.buys;
+        let sellValue = geckoData.data.attributes.transactions.h24.sells;
         let all_trans = buyValue + sellValue
         let buy_perc = (buyValue/all_trans) * 100
         let sell_perc = (sellValue/all_trans) * 100
 
-        let price = data["0"]["priceUsd"]
-        let fdv = data["0"]["fdv"]
-
+        let price =  geckoData.data.attributes.base_token_price_usd
+        price = parseFloat(price);
+        price = price.toFixed(8)
+        let fdv = geckoData.data.attributes.fdv_usd
         let mcapImg = document.getElementById("mcapImg")
-          let priceChange = data["0"]["priceChange"]["h1"]
+          let priceChange = geckoData.data.attributes.price_change_percentage.h24
           let chartImg = document.getElementById("chartImg")
            document.getElementById("price").textContent = `${price}$`;
  
@@ -199,8 +205,7 @@ async function loadChartData() {
         const ohlcvResponse = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`);
         if (!ohlcvResponse.ok) throw new Error('Ошибка при получении данных графика');
         const ohlcvData = await ohlcvResponse.json();
-
-        // 3. Обработка данных
+        // 4. Обработка данных
         const ohlcvList = ohlcvData.data?.attributes?.ohlcv_list || [];
         if (ohlcvList.length === 0) throw new Error('Нет данных для отображения');
 
@@ -219,7 +224,7 @@ async function loadChartData() {
 
         if (chartData.length === 0) throw new Error('Все данные некорректны');
 
-        // 4. Настройка и отображение графика
+        // 5. Настройка и отображение графика
         chart.applyOptions({
             localization: {
                 priceFormatter: price => price.toFixed(8)
@@ -295,3 +300,11 @@ loadChartData();
         5
       )}...${contract.slice(-5)}`;
  
+
+
+
+
+
+
+
+
