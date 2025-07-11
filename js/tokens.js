@@ -1,43 +1,43 @@
 
-      let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"]])
-       let engbtn = document.getElementById("eng_btn")
-       let rusbtn = document.getElementById("rus_btn")
-       let price_chart = document.getElementById("price_chart")
-       let hldrs = document.getElementById("hldrs")
-       let pric = document.getElementById("pric")
-       let mmmcap = document.getElementById("mmmcap")
-       let loock = document.getElementById("loock")
-       let burn_enjer = document.getElementById("burn_enjer")
-       let safe = document.getElementById("safe")
-       let luqid = document.getElementById("liquid")
-       let trancsations = document.getElementById("trancsation")
-       let suplyy = document.getElementById("suplayy")
-       let left = document.getElementById("left")
-       let otlega = document.getElementById("otlega")
-       function chg_lng(){
-       if(localStorage.getItem("lang")=="eng"){
-        engbtn.removeAttribute("class")
-      engbtn.setAttribute("class","btn btn-success")
-      rusbtn.removeAttribute("class")
-      rusbtn.setAttribute("class","btn btn-outline-success")
-        price_chart.textContent = "price chart"
-      hldrs.textContent = "holders"
-      pric.textContent = "price"
-      mmmcap.textContent = "mcap"
-      loock.textContent = "Lock"
-      burn_enjer.textContent = "burned"
-      safe.textContent = "safety"
-      luqid.textContent = "liquidity"
-      trancsations.textContent="trancsations"
-      suplyy.textContent="total_supply"
-      left.textContent = "left"
-      otlega.textContent = "old with afk" 
-    }
-    if(localStorage.getItem("lang")=="rus"){
-      rusbtn.removeAttribute("class")
-      rusbtn.setAttribute("class","btn btn-success")
-      engbtn.removeAttribute("class")
-      engbtn.setAttribute("class","btn btn-outline-success")
+let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"]])
+let engbtn = document.getElementById("eng_btn")
+let rusbtn = document.getElementById("rus_btn")
+let price_chart = document.getElementById("price_chart")
+let hldrs = document.getElementById("hldrs")
+let pric = document.getElementById("pric")
+let mmmcap = document.getElementById("mmmcap")
+let loock = document.getElementById("loock")
+let burn_enjer = document.getElementById("burn_enjer")
+let safe = document.getElementById("safe")
+let luqid = document.getElementById("liquid")
+let trancsations = document.getElementById("trancsation")
+let suplyy = document.getElementById("suplayy")
+let left = document.getElementById("left")
+let otlega = document.getElementById("otlega")
+function chg_lng(){
+if(localStorage.getItem("lang")=="eng"){
+  engbtn.removeAttribute("class")
+engbtn.setAttribute("class","btn btn-success")
+rusbtn.removeAttribute("class")
+rusbtn.setAttribute("class","btn btn-outline-success")
+price_chart.textContent = "price chart"
+hldrs.textContent = "holders"
+pric.textContent = "price"
+mmmcap.textContent = "mcap"
+loock.textContent = "Lock"
+burn_enjer.textContent = "burned"
+safe.textContent = "safety"
+luqid.textContent = "liquidity"
+trancsations.textContent="trancsations"
+suplyy.textContent="total_supply"
+left.textContent = "left"
+otlega.textContent = "old with afk" 
+}
+if(localStorage.getItem("lang")=="rus"){
+rusbtn.removeAttribute("class")
+rusbtn.setAttribute("class","btn btn-success")
+    engbtn.removeAttribute("class")
+    engbtn.setAttribute("class","btn btn-outline-success")
     price_chart.textContent = lingvistic.get("price chart");
     hldrs.textContent = lingvistic.get("holders");
     pric.textContent = lingvistic.get("price");
@@ -81,25 +81,23 @@
         let data = await responce.json()
         return data
     }
-              let buy_volume = document.getElementById("buy-volume")
-          let sell_volume = document.getElementById("sell-volume")
-              let likva = document.getElementById("liquidity")
+        let buy_volume = document.getElementById("buy-volume")
+        let sell_volume = document.getElementById("sell-volume")
+        let likva = document.getElementById("liquidity")
 
       //запрос к гекотерминалу
-          async function getGeckoData(){
-            const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}&page=1`);
+    async function getGeckoData(){
+        const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}&page=1`);
         if (!poolResponse.ok) throw new Error('Ошибка при получении пула');
         const poolData = await poolResponse.json();
         
         const pool = poolData.data[0].attributes.address;
         let responce = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}`)
         let geckoData = await responce.json()
-        console.log(geckoData)
-        console.log(geckoData + "dsdsadasfdef")
         return geckoData
     }
         //инфа с декскринера
-            getGeckoData().then(geckoData =>{
+    getGeckoData().then(geckoData =>{
         let liquidity = geckoData.data.attributes.reserve_in_usd
         let buyValue = geckoData.data.attributes.transactions.h24.buys;
         let sellValue = geckoData.data.attributes.transactions.h24.sells;
@@ -112,25 +110,21 @@
         price = price.toFixed(8)
         let fdv = geckoData.data.attributes.fdv_usd
         let mcapImg = document.getElementById("mcapImg")
-          let priceChange = geckoData.data.attributes.price_change_percentage.h24
-          let chartImg = document.getElementById("chartImg")
-           document.getElementById("price").textContent = `${price}$`;
- 
-          document.getElementById("mcap").textContent = `${formatNumber(fdv)}$`;
-
-          buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
-          sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
-          buys.textContent = buyValue
-          sells.textContent = sellValue
-          likva.textContent = `${formatNumber(liquidity)} $`
-          if (priceChange > 0){
-            chartImg.src = "../src/chart_up.gif"
-            mcapImg.src = "../src/mcap.gif"
-          }else{
-            chartImg.src = "../src/chart_down.gif"
-            mcapImg.src = "../src/chart_down.gif"
-    
-
+        let priceChange = geckoData.data.attributes.price_change_percentage.h24
+        let chartImg = document.getElementById("chartImg")
+        document.getElementById("price").textContent = `${price}$`;
+        document.getElementById("mcap").textContent = `${formatNumber(fdv)}$`;
+        buy_volume.setAttribute("style" , `width: ${buy_perc}%;`)
+        sell_volume.setAttribute("style" , `width: ${sell_perc}%;`)
+        buys.textContent = buyValue
+        sells.textContent = sellValue
+        likva.textContent = `${formatNumber(liquidity)} $`
+        if (priceChange > 0){
+          chartImg.src = "../src/chart_up.gif"
+          mcapImg.src = "../src/mcap.gif"
+        }else{
+          chartImg.src = "../src/chart_down.gif"
+          mcapImg.src = "../src/chart_down.gif"
           }
     })
       function formatNumber(num) {
