@@ -11,32 +11,170 @@
             background: #1e1e2e;
             margin: 0;
             padding: 20px;
-            color: #ffffff
         }
     </style>
 </head>
     <body>
-
-                                                <span id = "price"></span>
+    <div id="candleChart" style="width: 600px; height: 400px;"></div>
 
     <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 
-
-<script>
-    let geckopool = document.getElementById("price")
-    contract = "EQBvfpasf82aAQUkdGZBuAxlcUR3Al7vY1T7ifC6UXAnnhhA"
-     fetch(`https://api.geckoterminal.com/api/v2/networks/ton/tokens/${contract}/pools?page=1`)
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          let pool = data["data"][0]["attributes"]["address"]
-          geckopool.textContent = pool
-        })
-
-</script>
 <script>
 
+    let contract = 'EQDnY9OB8vss3wtEZ3BgCuDoFopw7wqpE8397yc8RM2CCsEQ'
+   // Инициализация графика
+const chartElement = document.getElementById('candleChart');
+const chart = LightweightCharts.createChart(chartElement, {
+    layout: {
+        background: { color: '#1e1e2e' },
+        textColor: '#a1a1aa',
+    },
+    grid: {
+        vertLines: { color: '#2d2d3d' },
+        horzLines: { color: '#2d2d3d' },
+    },
+    width: chartElement.clientWidth,
+    height: 250,
+    timeScale: {
+        timeVisible: true,
+        rightOffset: 6,
+    },
+    
+});
+
+// Обработчик изменения размера
+function handleResize() {
+    chart.applyOptions({ 
+        width: chartElement.clientWidth,
+        height: chartElement.clientHeight
+    });
+}
+window.addEventListener('resize', handleResize);
+handleResize();
+
+// Добавление свечной серии
+const candleSeries = chart.addCandlestickSeries({
+    upColor: '#00FF00',
+    downColor: '#FF0000',
+    borderDownColor: '#FF0000',
+    borderUpColor: '#00FF00',
+    wickDownColor: '#FF0000',
+    wickUpColor: '#00FF00',
+});
+
+// Основная функция загрузки данных
+async function loadChartData() {
+    try {
+        // 1. Получаем адрес пула
+        const poolResponse = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}&page=1`);
+        if (!poolResponse.ok) throw new Error('Ошибка при получении пула');
+        const poolData = await poolResponse.json();
+        
+        const pool = poolData.data[0].attributes.address;
+        
+        // 2. Получаем данные OHLCV
+        const ohlcvResponse = await fetch(`https://api.geckoterminal.com/api/v2/networks/ton/pools/${pool}/ohlcv/minute?aggregate=5&currency=usd&limit=1000`);
+        if (!ohlcvResponse.ok) throw new Error('Ошибка при получении данных графика');
+        const ohlcvData = await ohlcvResponse.json();
+        // 4. Обработка данных
+        const ohlcvList = ohlcvData.data?.attributes?.ohlcv_list || [];
+        if (ohlcvList.length === 0) throw new Error('Нет данных для отображения');
+
+        const chartData = ohlcvList
+            .map(i => ({
+                time: i[0],
+                open: i[1],
+                high: i[2],
+                low: i[3],
+                close: i[4]
+            }))
+            .filter(i => [i.time, i.open, i.high, i.low, i.close].every(
+                val => val !== null && !isNaN(val)
+            ))
+            .sort((a, b) => a.time - b.time);
+
+        if (chartData.length === 0) throw new Error('Все данные некорректны');
+
+        // 5. Настройка и отображение графика
+        chart.applyOptions({
+            localization: {
+                priceFormatter: price => price.toFixed(8)
+            },
+        });
+        
+        candleSeries.setData(chartData);
+        // В функции loadChartData(), после получения chartData:
+
+// 1. Форматирование цен (исправленный вариант)
+const prices = chartData.flatMap(d => [d.high, d.low]);
+const minPrice = Math.min(...prices);
+const maxPrice = Math.max(...prices);
+const priceRange = maxPrice - minPrice;
+
+// 2. Настройки шкалы для очень маленьких значений
+chart.applyOptions({
+    rightPriceScale: {
+        visible: true,
+        borderColor: '#3D3D3D',
+        borderVisible: true,
+        textColor: '#FFFFFF',
+        autoScale: true,
+        scaleMargins: {
+            top: 0.1,
+            bottom: 0.1,
+        },
+        mode: LightweightCharts.PriceScaleMode.Normal,
+        minimumWidth: 80 // Гарантированная ширина шкалы
+    },
+    localization: {
+        priceFormatter: price => {
+            // Для очень маленьких цен показываем 8 знаков
+            if (price < 0.001) return price.toFixed(8);
+            // Для средних - 6 знаков
+            if (price < 1) return price.toFixed(6);
+            // Для больших - 2 знака
+            return price.toFixed(2);
+        }
+    }
+});
+
+// 3. Принудительное обновление масштаба
+chart.timeScale().fitContent();
+
+// 4. Добавляем маркеры для проверки
+const lineSeries = chart.addLineSeries({ color: 'transparent' });
+lineSeries.setMarkers([
+    {
+        time: chartData[chartData.length-1].time,
+        position: 'aboveBar',
+        color: 'rgba(255, 255, 255, 0.5)',
+        shape: 'horizontalLine',
+        text: `Max: ${maxPrice.toFixed(8)}`,
+        size: 1
+    },
+    {
+        time: chartData[chartData.length-1].time,
+        position: 'belowBar',
+        color: 'rgba(255, 255, 255, 0.5)',
+        shape: 'horizontalLine',
+        text: `Min: ${minPrice.toFixed(8)}`,
+        size: 1
+    }
+]);
+
+// 5. Убедимся, что данные отображаются
+candleSeries.setData(chartData);
+    } catch (error) {
+        console.error('Ошибка:', error);
+        // Здесь можно добавить уведомление для пользователя
+        chartElement.innerHTML = `<div class="error-message">${error.message}</div>`;
+    }
+}
+
+// Запускаем загрузку данных
+loadChartData();
 </script>
+
+    
 </body>
 </html>
