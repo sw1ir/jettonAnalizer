@@ -66,7 +66,45 @@ margin: 0;
   height: 80vh;
   overflow: auto;
 }
+.socials{
+  /*#72186a*/
+  background-color: #cf7be9;
+  border: 2px solid #8321f3;  
+  color: #ffffff;
+  border-radius: 15px;
+  padding: 0px ; 
+  position: relative; 
+}
+.zatmen{
+  background-color: #8321f3;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 15px 0px 0px 15px;
+  padding: 0;
+  top: 0; /* Теперь привязывается к .socials, а не к документу */
+  left: -1px;
+  margin: 0;
+  display: flex;  /* Для центрирования иконки */
+  align-items: center;
+  justify-content: center;
+}
+.sprav_zatmet{
+  margin-left: 28px;
+  margin-right: 8px;
+  
+}
+.socials_drop{
+  min-width: 75px;
+  border: #8321f3 2px solid;
+  /*border-radius: 30px; */
+  height: auto;
+  background-color: #c065ef;
+}
+.socials_drop div{
+  font-size: 14;
 
+}
 /* ===== COMPONENTS ===== */
 /* Logo */
 .logo {

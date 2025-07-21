@@ -1,5 +1,5 @@
 
-let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"]])
+let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"], ["socials","соц. сети"]])
 let engbtn = document.getElementById("eng_btn")
 let rusbtn = document.getElementById("rus_btn")
 let price_chart = document.getElementById("price_chart")
@@ -14,6 +14,7 @@ let trancsations = document.getElementById("trancsation")
 let suplyy = document.getElementById("suplayy")
 let left = document.getElementById("left")
 let otlega = document.getElementById("otlega")
+let soc_txt = document.getElementById("soc_txt")
 function chg_lng(){
 if(localStorage.getItem("lang")=="eng"){
   engbtn.removeAttribute("class")
@@ -32,6 +33,7 @@ trancsations.textContent="trancsations"
 suplyy.textContent="total_supply"
 left.textContent = "left"
 otlega.textContent = "old with afk" 
+soc_txt.textContent="socials"
 }
 if(localStorage.getItem("lang")=="rus"){
 rusbtn.removeAttribute("class")
@@ -50,6 +52,7 @@ rusbtn.setAttribute("class","btn btn-success")
     suplyy.textContent=lingvistic.get("total_supply")
     left.textContent = lingvistic.get("left");
     otlega.textContent = lingvistic.get("old with afk");
+    soc_txt.textContent = lingvistic.get("socials");
     }
     }
     function initLanguage() {
@@ -255,7 +258,7 @@ loadChartData();
         document.getElementById("logo").src = img;
         let name = data.metadata.name;
         let simbol = data.metadata.symbol;
-        let token = name + "(" + simbol + ")";
+        let token = name + "($" + simbol + ")";
         document.getElementById("token_name").innerHTML = token;
         let holders = data.holders_count;
         document.getElementById("holders").innerHTML = holders;
@@ -293,7 +296,14 @@ loadChartData();
         0,
         5
       )}...${contract.slice(-5)}`;
- 
+      document.querySelector("#socials").addEventListener("click" , () => {
+      let socials_drop = document.getElementById("socials_drop")
+      if (socials_drop.style.display === "inline-block"){
+        socials_drop.style.display ="none"
+      }else{
+        socials_drop.style.display ="inline-block"
+      }
+      })
 
 
 
