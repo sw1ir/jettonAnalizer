@@ -68,13 +68,38 @@ margin: 0;
 }
 .socials{
   /*#72186a*/
-  background-color: #cf7be9;
+  background: transparent;
   border: 2px solid #8321f3;  
   color: #ffffff;
   border-radius: 15px;
   padding: 0px ; 
   position: relative; 
 }
+.soc{
+  position: relative;
+}
+.socials::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        z-index: -1;
+        border-radius: 15px;
+
+        background: linear-gradient(
+          135deg,
+          #8a2be2 0%,
+          #9932cc 20%,
+          #da70d6 40%,
+          #ee82ee 60%,
+          #ff69b4 80%,
+          #ff1493 100%
+        );
+        background-size: 200% 200%;
+        animation: gradientShift 6s ease infinite;
+      }
 .zatmen{
   background-color: #8321f3;
   position: absolute;
@@ -94,16 +119,51 @@ margin: 0;
   margin-right: 8px;
   
 }
-.socials_drop{
-  min-width: 75px;
-  border: #8321f3 2px solid;
-  /*border-radius: 30px; */
+.soc_img{
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 5px;
+}
+.socials_drop {
+  width: 87px;
+  max-height: 150px;
+  border: #8321f3 1px solid;
   height: auto;
+  /*background-color: #c065ef;*/
+  background-color:#8321f3;
+  position: absolute;
+  left: 36px;
+  top: 28px;
+  
+  /* Новые свойства */
+  overflow-y: auto;    /* Вертикальный скролл при необходимости */
+  overflow-x: hidden;  /* Запрет горизонтального скролла */
+  white-space: normal; /* Автоматический перенос строк */
+  word-wrap: break-word; /* Перенос длинных слов */
+  z-index: 1000;      /* Гарантированно поверх других элементов */
+  
+}
+
+.socials_drop::-webkit-scrollbar {
+  width: 4px;
+}
+.socials_drop::-webkit-scrollbar-track {
+  background: #8321f3;
+}
+.socials_drop::-webkit-scrollbar-thumb {
   background-color: #c065ef;
+  border-radius: 2px;
 }
 .socials_drop div{
-  font-size: 14;
-
+  height: 35px;
+  padding: 3px;
+  border: 1px #c065ef solid;
+}
+.socials_drop div a{
+  color: #ffffff;
 }
 /* ===== COMPONENTS ===== */
 /* Logo */

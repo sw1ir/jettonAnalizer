@@ -33,7 +33,7 @@ trancsations.textContent="trancsations"
 suplyy.textContent="total_supply"
 left.textContent = "left"
 otlega.textContent = "old with afk" 
-soc_txt.textContent="socials"
+soc_txt.textContent=" socials ㅤ"   
 }
 if(localStorage.getItem("lang")=="rus"){
 rusbtn.removeAttribute("class")
@@ -251,7 +251,7 @@ loadChartData();
           lock.textContent = formatNumber( data/ 10 ** 9);
         })
         //основная инфа о монете
-        getJettonInfo().then(data =>{
+    getJettonInfo().then(data =>{
         let supply = data.total_supply;
         real_supply = supply / 10 ** 9;
         let img = data.metadata.image;
@@ -265,9 +265,67 @@ loadChartData();
         document.getElementById("description").innerHTML =data.metadata.description;
         let emision = document.getElementById("total_suplly")
         emision.textContent = formatNumber(real_supply)
-
+        let socials = data.metadata.social
+        let sites = data.metadata.websites
+          
+        
+        button = document.getElementById("socials")
+        let soc_drp = document.getElementById("socials_drop")
+      if (socials === undefined || sites === undefined ){
+        button.style.display ="none"          
+      }else{
+        if (socials.length >0 || sites.length >0){
+          button.disabled = false
+          if (socials.length >0){
+            let soc_img = new Map([["t.me","../src/teleg.png"],["discord.gg","../src/discord.png"],
+            ["twitter.com","../src/twitter.png"],["instagram.com","../src/instagram.png"],
+            ["dexscreener.com","../src/dexscreener.png"],["app.ston.fi","../src/stonfi.png"]])
+            // текст к соцсетям
+            let soc_txt = new Map([["t.me","tg"],["discord.gg","disc."],
+            ["twitter.com","X"],["instagram.com","Insta"],
+            ["dexscreener.com","dex"],["app.ston.fi","stonfi"]])
+            socials.forEach(element => {
+              for (let [key , value] of soc_img){
+                if (element.includes(key)) {
+                  let newDiv = document.createElement("div")
+                  let newImg = document.createElement("img")
+                  newImg.setAttribute("class","soc_img")
+                  newImg.src = value
+                  let newA = document.createElement("a")
+                  newA.href = element
+                  newA.setAttribute("target","_blank")
+                  newA.textContent = soc_txt.get(key)
+                  newDiv.appendChild(newImg)
+                  newDiv.appendChild(newA)
+                  
+                  soc_drp.appendChild(newDiv)
+                }
+              }
+            });
+          }
+          if (sites.length >0){
+            sites.forEach(element => {
+              var newDiv = document.createElement("div")
+              var newImg = document.createElement("img")
+              newImg.setAttribute("class","soc_img")
+              newImg.src = "../src/site.png"
+              let newA = document.createElement("a")
+              newA.href = element
+              newA.setAttribute("target","_blank")
+              newA.textContent = "site"
+              newDiv.appendChild(newImg)
+              newDiv.appendChild(newA)
+              
+              soc_drp.appendChild(newDiv)
+            })
+        }
+        else{
+          button.style.display ="none"            
+        }
     }
-    )
+  }
+    })
+  
     //async burn
       let burn = document.getElementById("burn");
     getBurnInfo().then(burned_amount => {
