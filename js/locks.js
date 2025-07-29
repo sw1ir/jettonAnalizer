@@ -22,50 +22,72 @@ secnds.setAttribute("id","sec")
   }
 
   // Расчет доли владельца
-  let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
+// Измененная функция logHolderPercentage
+let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
     let balance = element.initialTokens / 10 ** decimals;
-    let  percentage = (balance / totalSupply) * 100;
-    let now = Date.now() /1000
+    let percentage = (balance / totalSupply) * 100;
+    let now = Date.now() / 1000;
 
-    if (element.contractData.firstPayoutTime < now){
-        return
-    }else{
-    let lock_date = element.lockTime * 1000
-    let unlock_date = element.contractData.firstPayoutTime 
-    let udata = new Date(unlock_date*1000)
-    let ldata = new Date(lock_date)
-    let unlock_time = new Date(unlock_date - now)
-    let day = Math.floor(unlock_time / 86400);
-     unlock_time %= 86400;
-    let hours = Math.floor(unlock_time / 3600);
-    unlock_time %= 3600
-    let minutes = Math.floor(unlock_time / 60)
-    unlock_time %= 60
-    unnlock = `${day} дней ${hours} часов ${minutes} мин. ${unlock_time} сек.`
-    let unlock_data = document.createElement("span")
-    let lock_data = document.createElement("span")
-    let utime = document.createElement("span")
-    unlock_data.textContent = udata
-    lock_data.textContent = ldata
-    utime.textContent = unnlock
-    let kosh = document.createElement("a");
-    kosh.setAttribute("href", `https://tonraffles.app/lock/${contract}/${element.address}`);
-    let name = 
-               `${element.address.slice(0,5)}...${element.address.slice(-5)}`;
-    kosh.textContent = name;
-    kosh.target = '_blank';
-    
-    holders_table.set(index, {
-      Кошелек: kosh,
-      Доля: balance > 0 
-        ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
-        : "0",
-        Лок : lock_data,
-        Разлок: unlock_data,
-        Время_Разлока : utime
-    } );
-  };
-  }
+    if (element.contractData.firstPayoutTime < now) {
+        return;
+    } else {
+        let lock_date = element.lockTime * 1000;
+        let unlock_date = element.contractData.firstPayoutTime;
+        let udata = new Date(unlock_date * 1000);
+        let ldata = new Date(lock_date);
+        
+        // Создаем элементы для отображения данных
+        let unlock_data = document.createElement("span");
+        let lock_data = document.createElement("span");
+        let utime = document.createElement("span");
+        
+        unlock_data.textContent = udata;
+        lock_data.textContent = ldata;
+        
+        // Функция для обновления обратного отсчета
+        function updateCountdown() {
+            const now = Math.floor(Date.now() / 1000);
+            const diff = unlock_date - now;
+            
+            if (diff <= 0) {
+                utime.textContent = "Разблокировано";
+                return;
+            }
+            
+            const days = Math.floor(diff / (60 * 60 * 24));
+            const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+            const minutes = Math.floor((diff % (60 * 60)) / 60);
+            const seconds = Math.floor(diff % 60);
+            
+            utime.textContent = `${days} days ${hours} hours ${minutes} min. ${seconds} sec.`;
+        }
+        
+        // Первое обновление
+        updateCountdown();
+        
+        // Запускаем таймер
+        const timer = setInterval(updateCountdown, 1000);
+        
+        // Создаем ссылку на кошелек
+        let kosh = document.createElement("a");
+        kosh.setAttribute("href", `https://tonraffles.app/lock/${contract}/${element.address}`);
+        let name = `${element.address.slice(0,5)}...${element.address.slice(-5)}`;
+        kosh.textContent = name;
+        kosh.target = '_blank';
+        
+        // Сохраняем данные в holders_table
+        holders_table.set(index, {
+            Кошелек: kosh,
+            Доля: balance > 0 
+                ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
+                : "0",
+            Лок: lock_data,
+            Разлок: unlock_data,
+            Время_Разлока: utime,
+            timerId: timer // Сохраняем ID таймера для последующей очистки
+        });
+    }
+};
   // Получение локализованных текстов
   function getLocalizedTexts() {
     if (lang === "eng") {

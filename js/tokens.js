@@ -252,6 +252,13 @@ loadChartData();
         })
         //основная инфа о монете
     getJettonInfo().then(data =>{
+
+       //async burn
+      let burn = document.getElementById("burn");
+      
+    getBurnInfo().then(burned_amount => {
+        burn.textContent = formatNumber(burned_amount / 10 ** 9);
+    
         let supply = data.total_supply;
         real_supply = supply / 10 ** 9;
         let img = data.metadata.image;
@@ -264,7 +271,12 @@ loadChartData();
         document.getElementById("holders").innerHTML = holders;
         document.getElementById("description").innerHTML =data.metadata.description;
         let emision = document.getElementById("total_suplly")
-        emision.textContent = formatNumber(real_supply)
+        if (burned_amount === undefined){
+          emision.textContent = formatNumber(real_supply)
+        }else{
+          emision.textContent = formatNumber(real_supply-(burned_amount/ 10 ** 9))
+        }
+        })
         let socials = data.metadata.social
         let sites = data.metadata.websites
           
@@ -326,12 +338,7 @@ loadChartData();
   }
     })
   
-    //async burn
-      let burn = document.getElementById("burn");
-    getBurnInfo().then(burned_amount => {
-        burn.textContent = formatNumber(burned_amount / 10 ** 9);
-        console.log(burned_amount)
-    })
+   
       document.querySelector("#copy_ca").addEventListener("click", () => {
         navigator.clipboard
           .writeText(contract)

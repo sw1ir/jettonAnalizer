@@ -310,7 +310,9 @@ margin: 0;
   border-image: linear-gradient(to bottom, #7d0581, #250179) 1;
   border-radius: 45px;
 }
-
+.token_info_text{
+  padding: 2px;
+}
 .token_info_block {
   border: #8321f3 2px solid;
   border-radius: 30px;
@@ -361,6 +363,7 @@ margin: 0;
   height: 40px;
   width: 40px;
   border-radius: 50%;
+  padding: 1px;
 }
 
 .tokken {
@@ -371,8 +374,39 @@ margin: 0;
   border: #8321f3 2px solid;
   border-radius: 30px;
   padding: 5px;
+  margin: 2px;
 }
 
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+    max-width: 500px;
+}
+
+.timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    min-width: 15px;
+}
+
+.timer-block span {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.label {
+    margin-top: 5px;
+    color: #ffffff;
+}
+
+/* @media screen and (max-width: 425px) {
+  .navbar{
+    display: none;
+  }
+ }*/
 /* Volume Bars */
 .volume-bar-container {
   width: 100%;
