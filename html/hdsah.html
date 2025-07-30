@@ -52,280 +52,29 @@
 </div>
 
 <script>
-
-
- let lang = localStorage.getItem("lang") || "eng";
-  let holders_table = new Map();
-  let contract = localStorage.getItem("contract") || null;
-  let real_supply;
-
-let daay = document.createElement("span")
-let hrs = document.createElement("span")
-let minut = document.createElement("span")
-let secnds = document.createElement("span")
-daay.setAttribute("id","days")
-hrs.setAttribute("id","hour")
-minut.setAttribute("id","minu")
-secnds.setAttribute("id","sec")
-
-  // Форматирование чисел
-  function formatNumber(num) {
-    if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-    if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
-    return num.toString();
+async function getEventInfo(event_id){
+    let responce = await fetch(`https://tonapi.io/v2/events/${event_id}`)
+    let data = await responce.json()
+    return data.actions
+}
+//0:1d253b9261a22e06c1764e5461a175727c699b76f6b2c447d560840714349d09
+let wallet = "0:1d253b9261a22e06c1764e5461a175727c699b76f6b2c447d560840714349d09"
+async function getLeftData(){
+  let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}/events?initiator=false&subject_only=false&limit=100`)
+  let data = await responce.json()
+  return data
   }
-
-  // Расчет доли владельца
-  let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
-    let balance = element.initialTokens / 10 ** decimals;
-    let  percentage = (balance / totalSupply) * 100;
-    let now = Date.now() /1000
-
-    if (element.contractData.firstPayoutTime < now){
-        return
-    }else{
-    let lock_date = element.lockTime * 1000
-    let unlock_date = element.contractData.firstPayoutTime 
-    let udata = new Date(unlock_date*1000)
-    let ldata = new Date(lock_date)
-    let unlock_time = new Date(unlock_date - now)
-    let day = Math.floor(unlock_time / 86400);
-     unlock_time %= 86400;
-    let hours = Math.floor(unlock_time / 3600);
-    unlock_time %= 3600
-    let minutes = Math.floor(unlock_time / 60)
-    unlock_time %= 60
-    let unlock_data = document.createElement("span")
-    let lock_data = document.createElement("span")
-    unlock_data.textContent = udata
-    lock_data.textContent = ldata
-    
-    let countdown_timer = document.createElement("div")
-    countdown_timer.setAttribute("class","countdown-timer")
-    
-    let dtimer_block = document.createElement("div")
-    dtimer_block.setAttribute("class","timer-block")
-    let htimer_block = document.createElement("div")
-    htimer_block.setAttribute("class","timer-block")
-    let mtimer_block = document.createElement("div")
-    mtimer_block.setAttribute("class","timer-block")
-    let stimer_block = document.createElement("div")
-    stimer_block.setAttribute("class","timer-block")
-    
-    let dspan = document.createElement("span")
-    dspan.setAttribute("id","days")
-    let hspan = document.createElement("span")
-    hspan.setAttribute("id","hours")
-    let mspan = document.createElement("span")
-    mspan.setAttribute("id","minutes")
-    let sspan = document.createElement("span")
-    sspan.setAttribute("id","seconds")
-    
-    let dlspan = document.createElement("span")
-    dlspan.setAttribute("class","label")
-    let hlspan = document.createElement("span")
-    hlspan.setAttribute("class","label")
-    let mlspan = document.createElement("span")
-    mlspan.setAttribute("class","label")
-    let slspan = document.createElement("span")
-    slspan.setAttribute("class","label")
-
-    dtimer_block.appendChild(dspan)
-    dlspan.textContent="days"
-    dtimer_block.appendChild(dlspan)
-
-    htimer_block.appendChild(hspan)
-    hlspan.textContent="hours"
-    htimer_block.appendChild(hlspan)
-
-    mtimer_block.appendChild(mspan)
-    mlspan.textContent="mins"
-    mtimer_block.appendChild(mlspan)
-
-    stimer_block.appendChild(sspan)
-    slspan.textContent="secs"
-    stimer_block.appendChild(slspan)
-
-    countdown_timer.appendChild(dtimer_block)
-    countdown_timer.appendChild(htimer_block)
-    countdown_timer.appendChild(mtimer_block)
-    countdown_timer.appendChild(stimer_block)
-
-    document.addEventListener('DOMContentLoaded', function() {
-    // Устанавливаем дату окончания (например, через 10 дней от текущей даты)
-    //unnlock = `${day} дней ${hours} часов ${minutes} мин. ${unlock_time} сек.`
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + day);
-    endDate.setHours(endDate.getHours() + hours);
-    endDate.setMinutes(endDate.getMinutes() + minutes);
-    endDate.setSeconds(endDate.getSeconds() + unlock_time);
-    function updateTimer() {
-        const now = new Date();
-        const timeDifference = endDate - now;
-
-        if (timeDifference <= 0) {
-            document.querySelector('.countdown-timer').innerHTML = 'Время истекло!';
-            return;
+ getLeftData().then(async data =>{
+    let cnt = 0
+    for (const element of data.events) {  // Используем for...of вместо forEach
+        const actions = await getEventInfo(element.event_id);  // Ждём результат
+        if (actions.some(item => item.type === "JettonSwap" || item.type === "JettonTransfer")) {
+            cnt++;
         }
-
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-        document.getElementById('days').textContent = String(days).padStart(2, '0');
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
     }
-
-    // Обновляем таймер каждую секунду
-    updateTimer();
-    setInterval(updateTimer, 1000);
+    console.log(cnt);  // Теперь cnt будет корректным
 });
-    
-    let kosh = document.createElement("a");
-    kosh.setAttribute("href", `https://tonraffles.app/lock/${contract}/${element.address}`);
-    let name = 
-               `${element.address.slice(0,5)}...${element.address.slice(-5)}`;
-    kosh.textContent = name;
-    kosh.target = '_blank';
-    
-    holders_table.set(index, {
-      Кошелек: kosh,
-      Доля: balance > 0 
-        ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
-        : "0",
-        Лок : lock_data,
-        Разлок: unlock_data,
-        Время_Разлока : countdown_timer
-    } );
-  };
-  }
-  // Получение локализованных текстов
-  function getLocalizedTexts() {
-    if (lang === "eng") {
-      return {
-
-        wall: "Wallet",
-        supl: "locked",
-        stlock : "Lock date",
-        unlok: "Unlock Date",
-        left: "Left"
-      };
-    } else {
-      return {
-        wall: "Кошелек",
-        supl: "Заблокированно",
-        stlock : "Дата лока",
-        unlok: "Дата разлока",
-        left: "Осталось"
-      };
-    }
-  }
-
-  // Обновление интерфейса
-  function updateUI() {
-    let {wall, supl , stlock, unlok, left} = getLocalizedTexts();
-    
-    // Кнопки переключения языка
-    let engbtn = document.getElementById("eng_btn");
-    let rusbtn = document.getElementById("rus_btn");
-    
-    if (lang === "eng") {
-      engbtn.className = "btn btn-success";
-      rusbtn.className = "btn btn-outline-success";
-    } else {
-      rusbtn.className = "btn btn-success";
-      engbtn.className = "btn btn-outline-success";
-    }
-    
-    // Обновление текстов
-    document.getElementById("koshel").textContent = wall;
-    document.getElementById("suplay").textContent = supl;
-    document.getElementById("start_lock").textContent = stlock
-    document.getElementById("start_unlock").textContent = unlok
-    document.getElementById("unlock").textContent = left
-  }
-
-  // Рендер таблицы
-  function renderTable() {
-    let tableBody = document.getElementById("tableinsert");
-    tableBody.innerHTML = "";
-    
-    for (let [key, value] of holders_table) {
- 
-      let row = document.createElement("tr");
-
-
-
-      let walletCell = document.createElement("th");
-      walletCell.appendChild(value.Кошелек);
-      row.appendChild(walletCell);
-
-      let shareCell = document.createElement("th");
-      shareCell.textContent = value.Доля;
-      row.appendChild(shareCell);
-      
-      let lock = document.createElement("th");
-      lock.appendChild(value.Лок);
-      row.appendChild(lock); 
-
-      let unlock = document.createElement("th");
-      unlock.appendChild(value.Разлок);
-      row.appendChild(unlock);
-
-      let unlock_time = document.createElement("th");
-      unlock_time.appendChild(value.Время_Разлока);
-      row.appendChild(unlock_time);
-
-      tableBody.appendChild(row);
-    }
-    
-    updateUI();
-  }
-
-  // Загрузка данных
-  let fetchData = async () => {
-    if (!contract) return;
-    
-    try {
-      let locks = await fetch(`https://api.tonraffles.app/api/v2/lock/${contract}`)
-      let allLockData = await locks.json()
-    let massiv = allLockData.lockRecords
-
-    let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
-      let supplyData = await supplyResponse.json();
-      real_supply = supplyData.total_supply / 10 ** 9;
-      massiv.forEach((el, i) => {
-        logHolderPercentage(el, i, real_supply, 9);
-      });
-
-      renderTable();
-    } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
-    }
-  };
-
-  // Инициализация
-  document.addEventListener("DOMContentLoaded", () => {
-    // Обработчики кнопок языка
-    document.getElementById("eng_btn").addEventListener("click", () => {
-      lang = "eng";
-      localStorage.setItem("lang", lang);
-      updateUI();
-    });
-    
-    document.getElementById("rus_btn").addEventListener("click", () => {
-      lang = "rus";
-      localStorage.setItem("lang", lang);
-      updateUI();
-    });
-    
-    // Загрузка данных
-    fetchData();
-  });
+  
 
 </script>
 
