@@ -101,6 +101,7 @@
     for (let [key, value] of holders_table) {
       let rand = Math.floor(Math.random() * 6);
       let row = document.createElement("tr");
+      row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
 
       let idCell = document.createElement("th");
       idCell.textContent = key;

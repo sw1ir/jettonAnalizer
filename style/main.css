@@ -2,7 +2,6 @@
 * {
   box-sizing: border-box;
 }
-
 body {
         background: #0f0c29;
         background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
@@ -10,17 +9,26 @@ body {
         color: #fff;
         font-family: "Arial", sans-serif;
 }
- .body {
-margin: 0;
+ /*body {
+            background: linear-gradient(135deg, #1a0a2e, #2d0b4b);
+            color: #e0d6eb;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }*/
+.body {
+  margin: 0;
   min-height: 100vh;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #fff;
   background: linear-gradient(135deg, #110c29, #1a1538);
-      }
+}
 /* ===== TYPOGRAPHY ===== */
-.h_text, .logo_text {
+.h_text,
+.logo_text {
   display: inline;
   margin: 0;
 }
@@ -32,7 +40,8 @@ margin: 0;
   background-image: linear-gradient(135deg, rgb(216, 37, 223), rgb(88, 9, 216));
 }
 
-.h_text, .p_text {
+.h_text,
+.p_text {
   font-family: Inter, sans-serif;
   color: #fff;
 }
@@ -41,10 +50,53 @@ margin: 0;
   font-size: 14pt;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th {
+  background: rgba(93, 52, 147, 0.5);
+  color: #e6d7f5;
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+tr {
+  border-bottom: 1px solid rgba(157, 78, 221, 0.1);
+  transition: all 0.3s ease;
+}
+
+tr:hover {
+  background: rgba(93, 52, 147, 0.2);
+}
+
+td {
+  padding: 15px 20px;
+  color: #e0d6eb;
+}
+
+td:first-child {
+  font-weight: 600;
+  color: #c19ee0;
+}
+
 .radiant-purple {
   font-size: 18pt;
   font-weight: bold;
-  background: linear-gradient(135deg, #8a2be2 0%, #9932cc 20%, #da70d6 40%, #ee82ee 60%, #ff69b4 80%, #ff1493 100%);
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #9932cc 20%,
+    #da70d6 40%,
+    #ee82ee 60%,
+    #ff69b4 80%,
+    #ff1493 100%
+  );
   background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -62,45 +114,75 @@ margin: 0;
   margin-left: 50px !important;
 }
 
+        .card {
+            background: rgba(30, 15, 50, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(157, 78, 221, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .card-header {
+            padding: 20px 25px;
+            background: rgba(61, 30, 97, 0.4);
+            border-bottom: 1px solid rgba(157, 78, 221, 0.3);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            color: #d0b3e6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-content {
+            padding: 25px;
+        }
+
 .container {
   height: 80vh;
   overflow: auto;
+  margin: 0 auto;
+  padding: 20px;
 }
-.socials{
+.socials {
   /*#72186a*/
   background: transparent;
-  border: 2px solid #8321f3;  
+  border: 2px solid #8321f3;
   color: #ffffff;
   border-radius: 15px;
-  padding: 0px ; 
-  position: relative; 
+  padding: 0px;
+  position: relative;
 }
-.soc{
+.soc {
   position: relative;
 }
 .socials::before {
-        content: "";
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        z-index: -1;
-        border-radius: 15px;
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  border-radius: 15px;
 
-        background: linear-gradient(
-          135deg,
-          #8a2be2 0%,
-          #9932cc 20%,
-          #da70d6 40%,
-          #ee82ee 60%,
-          #ff69b4 80%,
-          #ff1493 100%
-        );
-        background-size: 200% 200%;
-        animation: gradientShift 6s ease infinite;
-      }
-.zatmen{
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #9932cc 20%,
+    #da70d6 40%,
+    #ee82ee 60%,
+    #ff69b4 80%,
+    #ff1493 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+.zatmen {
   background-color: #8321f3;
   position: absolute;
   width: 24px;
@@ -110,16 +192,15 @@ margin: 0;
   top: 0; /* Теперь привязывается к .socials, а не к документу */
   left: -1px;
   margin: 0;
-  display: flex;  /* Для центрирования иконки */
+  display: flex; /* Для центрирования иконки */
   align-items: center;
   justify-content: center;
 }
-.sprav_zatmet{
+.sprav_zatmet {
   margin-left: 28px;
   margin-right: 8px;
-  
 }
-.soc_img{
+.soc_img {
   width: 24px;
   height: 24px;
   margin-left: 5px;
@@ -133,18 +214,17 @@ margin: 0;
   border: #8321f3 1px solid;
   height: auto;
   /*background-color: #c065ef;*/
-  background-color:#8321f3;
+  background-color: #8321f3;
   position: absolute;
   left: 36px;
   top: 28px;
-  
+
   /* Новые свойства */
-  overflow-y: auto;    /* Вертикальный скролл при необходимости */
-  overflow-x: hidden;  /* Запрет горизонтального скролла */
+  overflow-y: auto; /* Вертикальный скролл при необходимости */
+  overflow-x: hidden; /* Запрет горизонтального скролла */
   white-space: normal; /* Автоматический перенос строк */
   word-wrap: break-word; /* Перенос длинных слов */
-  z-index: 1000;      /* Гарантированно поверх других элементов */
-  
+  z-index: 1000; /* Гарантированно поверх других элементов */
 }
 
 .socials_drop::-webkit-scrollbar {
@@ -157,12 +237,12 @@ margin: 0;
   background-color: #c065ef;
   border-radius: 2px;
 }
-.socials_drop div{
+.socials_drop div {
   height: 35px;
   padding: 3px;
   border: 1px #c065ef solid;
 }
-.socials_drop div a{
+.socials_drop div a {
   color: #ffffff;
 }
 /* ===== COMPONENTS ===== */
@@ -201,7 +281,8 @@ margin: 0;
 }
 
 /* Buttons */
-.paste-button, .search-button {
+.paste-button,
+.search-button {
   transition: all 0.3s ease;
   position: absolute;
   z-index: 3;
@@ -227,7 +308,8 @@ margin: 0;
   right: 20px;
 }
 
-.paste-button:hover, .search-button:hover {
+.paste-button:hover,
+.search-button:hover {
   background: #6a11cb;
   transform: translateY(-50%) scale(1.1);
 }
@@ -236,63 +318,71 @@ margin: 0;
   fill: #fff;
   opacity: 0.8;
 }
-  .but {
-        position: relative;
+.but {
+  position: relative;
 
-        border-radius: 50%;
-        background: transparent;
-        border: none;
-        font-family: Arial, sans-serif;
-        cursor: pointer;
-        z-index: 1;
-      }
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  z-index: 1;
+}
 
-      .but::before {
-        content: "";
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        z-index: -1;
-        border-radius: 50%;
-        background: linear-gradient(
-          135deg,
-          #8a2be2 0%,
-          #9932cc 20%,
-          #da70d6 40%,
-          #ee82ee 60%,
-          #ff69b4 80%,
-          #ff1493 100%
-        );
-        background-size: 200% 200%;
-        animation: gradientShift 3s ease infinite;
-      }
-      .radiant-purple {
-        font-size: 18pt;
-        font-weight: bold;
-        background: linear-gradient(
-          135deg,
-          #8a2be2 0%,
-          #9932cc 20%,
-          #da70d6 40%,
-          #ee82ee 60%,
-          #ff69b4 80%,
-          #ff1493 100%
-        );
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        animation: gradientShift 6s ease infinite;
-        display: inline-block;
-      }
+.but::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #9932cc 20%,
+    #da70d6 40%,
+    #ee82ee 60%,
+    #ff69b4 80%,
+    #ff1493 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+.radiant-purple {
+  font-size: 18pt;
+  font-weight: bold;
+  background: linear-gradient(
+    135deg,
+    #8a2be2 0%,
+    #9932cc 20%,
+    #da70d6 40%,
+    #ee82ee 60%,
+    #ff69b4 80%,
+    #ff1493 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientShift 6s ease infinite;
+  display: inline-block;
+}
 
 .hoder_btn {
   border: #fff;
   border-radius: 30px;
   margin: 5px;
-  background: linear-gradient(135deg, #ff1493 0%, #fc3398 20%, #ee82ee 40%, #da70d6 60%, #9667ad 80%, #a660e7 100%);
+  background: linear-gradient(
+    135deg,
+    #ff1493 0%,
+    #fc3398 20%,
+    #ee82ee 40%,
+    #da70d6 60%,
+    #9667ad 80%,
+    #a660e7 100%
+  );
   background-size: 200% 200%;
   box-shadow: 0 0 15px rgba(218, 112, 214, 0.7);
 }
@@ -310,7 +400,7 @@ margin: 0;
   border-image: linear-gradient(to bottom, #7d0581, #250179) 1;
   border-radius: 45px;
 }
-.token_info_text{
+.token_info_text {
   padding: 2px;
 }
 .token_info_block {
@@ -333,7 +423,8 @@ margin: 0;
   border-radius: 50px;
 }
 
-.alert_block, .mega_alert_block {
+.alert_block,
+.mega_alert_block {
   border-radius: 10px;
   color: #fff;
 }
@@ -378,28 +469,28 @@ margin: 0;
 }
 
 .countdown-timer {
-    display: flex;
-    justify-content: center;
-    margin: 5px;
-    max-width: 500px;
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+  max-width: 500px;
 }
 
 .timer-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    min-width: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  min-width: 15px;
 }
 
 .timer-block span {
-    font-size: 14pt;
-    font-weight: bold;
+  font-size: 14pt;
+  font-weight: bold;
 }
 
 .label {
-    margin-top: 5px;
-    color: #ffffff;
+  margin-top: 5px;
+  color: #ffffff;
 }
 
 /* @media screen and (max-width: 425px) {
@@ -421,12 +512,12 @@ margin: 0;
 }
 
 .buy-volume {
-  background: #00FF00;
+  background: #00ff00;
   height: 100%;
 }
 
 .sell-volume {
-  background: #FF0000;
+  background: #ff0000;
   height: 100%;
 }
 
@@ -461,7 +552,8 @@ th {
 
 /* Emoji */
 .telegram-emoji {
-  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji",
+    sans-serif;
   font-size: 24px;
   background: transparent !important;
 }
