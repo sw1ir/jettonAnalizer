@@ -102,7 +102,6 @@
       let rand = Math.floor(Math.random() * 6);
       let row = document.createElement("tr");
       row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
-      row.setAttribute("id",`${key}tr`)
       let idCell = document.createElement("th");
       idCell.textContent = key;
       row.appendChild(idCell);
@@ -171,3 +170,23 @@ let wallet_card = document.getElementById("wallet_card")
 cls_pop.addEventListener("click", () => {
   wallet_card.style.display = "none"
 })
+// Получаем элемент tbody
+const tableBody = document.getElementById('tableinsert');
+
+// Добавляем обработчик события click на tbody
+tableBody.addEventListener('click', function(event) {
+    // Проверяем, был ли клик на элементе tr
+    const tr = event.target.closest('tr');
+    if (tr) {
+        // Извлекаем данные из выбранной строки
+        const cells = tr.getElementsByTagName('th');
+        const rowData = {
+            index: cells[0].innerText,
+            link: cells[1].getElementsByTagName('a')[0]?.href,
+            supply: cells[2].innerText
+        };
+
+        // Здесь вы можете делать что-то с данными строки
+        console.log(rowData);
+    }
+});
