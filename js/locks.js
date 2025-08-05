@@ -147,6 +147,8 @@ let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
 
       let walletCell = document.createElement("th");
       walletCell.appendChild(value.Кошелек);
+      row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
+
       row.appendChild(walletCell);
 
       let shareCell = document.createElement("th");

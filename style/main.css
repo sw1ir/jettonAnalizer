@@ -2,22 +2,21 @@
 * {
   box-sizing: border-box;
 }
-body {
+/*body {
         background: #0f0c29;
         background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
         min-height: 100vh;
         color: #fff;
         font-family: "Arial", sans-serif;
-}
- /*body {
-            background: linear-gradient(135deg, #1a0a2e, #2d0b4b);
+}*/
+ body {
+            background: linear-gradient(135deg, #270e44, #400e6d);
             color: #e0d6eb;
             min-height: 100vh;
-            padding: 20px;
             position: relative;
             overflow-x: hidden;
-        }*/
-.body {
+        }
+/*.body {
   margin: 0;
   min-height: 100vh;
   font-family: "Arial", sans-serif;
@@ -25,7 +24,7 @@ body {
   line-height: 20px;
   color: #fff;
   background: linear-gradient(135deg, #110c29, #1a1538);
-}
+}*/
 /* ===== TYPOGRAPHY ===== */
 .h_text,
 .logo_text {
@@ -57,7 +56,6 @@ table {
 }
 
 th {
-  background: rgba(93, 52, 147, 0.5);
   color: #e6d7f5;
   padding: 16px 20px;
   text-align: left;
@@ -119,8 +117,8 @@ td:first-child {
             backdrop-filter: blur(10px);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(157, 78, 221, 0.2);
+            box-shadow: 0 10px 30px #0051ff4d;
+            border: 1px solid #0051ff4d;
             margin-bottom: 30px;
         }
         
@@ -226,7 +224,46 @@ td:first-child {
   word-wrap: break-word; /* Перенос длинных слов */
   z-index: 1000; /* Гарантированно поверх других элементов */
 }
-
+.wallet_card{
+  background: url(../src/test.webp);
+  background-size: cover;
+  backdrop-filter: blur(10px);
+  background-repeat: no-repeat;
+  background-position: center center;
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px #0051ff4d;
+  border: 1px solid #0051ff4d;
+  height: 70vh;
+  width: 70vw;
+  margin-left: 15vw;
+  margin-right: 15vw;
+  margin-top: 15vh;
+  margin-bottom: 15vh;
+  position: fixed;
+  z-index: 10;
+  /*display:none;*/
+}
+.wallet-card-header {
+    padding: 20px 25px;
+    color: #9CFF2E;
+     display: flex; /* Включаем flex-контейнер */
+  justify-content: space-between; /* Распределяем пространство */
+  align-items: center; /* Выравниваем по вертикали */
+}
+.wallet_title{
+    flex: 1;
+    text-align: center;
+}
+.right{
+  margin-left: auto;
+}
+.close_svg{
+  fill: #9CFF2E;
+  width: 40px;
+  height: 40px;
+}
 .socials_drop::-webkit-scrollbar {
   width: 4px;
 }
@@ -373,6 +410,7 @@ td:first-child {
 .hoder_btn {
   border: #fff;
   border-radius: 30px;
+  color: #ffffff;
   margin: 5px;
   background: linear-gradient(
     135deg,
@@ -386,7 +424,10 @@ td:first-child {
   background-size: 200% 200%;
   box-shadow: 0 0 15px rgba(218, 112, 214, 0.7);
 }
-
+.table {
+ color: #4361ee;
+ border: 0.5px solid !important;
+}
 .hoder_btn:hover {
   animation: gradientShift 2s ease infinite;
   box-shadow: 0 0 25px rgba(218, 112, 214, 0.9);
@@ -397,14 +438,14 @@ td:first-child {
 .info_block {
   margin-top: 5% !important;
   border-style: solid;
-  border-image: linear-gradient(to bottom, #7d0581, #250179) 1;
+  border-image: linear-gradient(to bottom, #002fff, #4361EE) 1;
   border-radius: 45px;
 }
 .token_info_text {
   padding: 2px;
 }
 .token_info_block {
-  border: #8321f3 2px solid;
+  border: #4361EE 2px solid;
   border-radius: 30px;
   height: 100px;
   display: flex;
@@ -419,9 +460,10 @@ td:first-child {
 .token_chart_info {
   position: relative;
   overflow: hidden;
-  border: #8321f3 2px solid;
+  border: #4361EE 2px solid;
   border-radius: 50px;
 }
+/*#8321f3*/
 
 .alert_block,
 .mega_alert_block {
@@ -526,19 +568,14 @@ td:first-child {
   justify-content: space-between;
   font-size: 12px;
 }
-
-/* Table */
-table {
-  background: url(../src/images.jpeg) no-repeat center center;
-}
-
 th {
   color: #fff;
+  border: 1px solid #4361EE !important;
+
 }
 
-.table-bordered thead tr {
-  border-top: 1px solid #0dcaf0 !important;
-  border-bottom: none !important;
+.table {
+  border: 1px solid #4361EE !important;
 }
 
 /* Colors */

@@ -295,7 +295,7 @@ loadChartData();
             // текст к соцсетям
             let soc_txt = new Map([["t.me","tg"],["discord.gg","disc."],
             ["twitter.com","X"],["instagram.com","Insta"],
-            ["dexscreener.com","dex"],["app.ston.fi","stonfi"]])
+            ["dexscreener.com","dex"],["app.ston.fi","ston  "]])
             socials.forEach(element => {
               for (let [key , value] of soc_img){
                 if (element.includes(key)) {
@@ -338,7 +338,10 @@ loadChartData();
   }
     })
   
-   
+      function back(){
+        let path = document.getElementById("copy");
+        path.setAttribute("d","M104.6 48L64 48C28.7 48 0 76.7 0 112L0 384c0 35.3 28.7 64 64 64l96 0 0-48-96 0c-8.8 0-16-7.2-16-16l0-272c0-8.8 7.2-16 16-16l16 0c0 17.7 14.3 32 32 32l72.4 0C202 108.4 227.6 96 256 96l62 0c-7.1-27.6-32.2-48-62-48l-40.6 0C211.6 20.9 188.2 0 160 0s-51.6 20.9-55.4 48zM144 56a16 16 0 1 1 32 0 16 16 0 1 1 -32 0zM448 464l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l140.1 0L464 243.9 464 448c0 8.8-7.2 16-16 16zM256 512l192 0c35.3 0 64-28.7 64-64l0-204.1c0-12.7-5.1-24.9-14.1-33.9l-67.9-67.9c-9-9-21.2-14.1-33.9-14.1L256 128c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64z")
+      }
       document.querySelector("#copy_ca").addEventListener("click", () => {
         navigator.clipboard
           .writeText(contract)
@@ -349,6 +352,7 @@ loadChartData();
               "M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"
             );
           })
+          
           .catch((error) => {
             let path = document.getElementById("copy");
             path.setAttribute(
@@ -356,6 +360,7 @@ loadChartData();
               "M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
             );
           });
+          setTimeout(back , 5000)
       });
       ca = document.getElementById("ca").innerHTML = `${contract.slice(
         0,

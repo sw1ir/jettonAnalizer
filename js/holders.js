@@ -102,7 +102,7 @@
       let rand = Math.floor(Math.random() * 6);
       let row = document.createElement("tr");
       row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
-
+      row.setAttribute("id",`${key}tr`)
       let idCell = document.createElement("th");
       idCell.textContent = key;
       row.appendChild(idCell);
@@ -166,3 +166,8 @@
     // Загрузка данных
     fetchData();
   });
+let cls_pop = document.getElementById("cls_pop")
+let wallet_card = document.getElementById("wallet_card")
+cls_pop.addEventListener("click", () => {
+  wallet_card.style.display = "none"
+})
