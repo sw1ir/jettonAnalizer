@@ -3,7 +3,10 @@
   let holders_table = new Map();
   let contract = localStorage.getItem("contract") || null;
   let real_supply;
-  
+  let contract_id
+getContractId(contract).then(data=>{
+  contract_id = data.address
+})
   // Известные адреса
   let known_addreses = {
     "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f": 'Ston.fi',
@@ -101,12 +104,15 @@
     for (let [key, value] of holders_table) {
       let rand = Math.floor(Math.random() * 6);
       let row = document.createElement("tr");
+      row.setAttribute("class","gtr")
       row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
       let idCell = document.createElement("th");
       idCell.textContent = key;
+      idCell.setAttribute("class","gth")
       row.appendChild(idCell);
 
       let walletCell = document.createElement("th");
+      walletCell.setAttribute("class","gth")
       let waterfish = document.createElement("img");
       waterfish.setAttribute("src", `../src/${dict[rand]}`);
       waterfish.setAttribute("width", "20");
@@ -116,7 +122,9 @@
       row.appendChild(walletCell);
 
       let shareCell = document.createElement("th");
+      
       shareCell.textContent = value.Доля;
+      shareCell.setAttribute("class","gth")
       row.appendChild(shareCell);
 
       tableBody.appendChild(row);
@@ -170,23 +178,68 @@ let wallet_card = document.getElementById("wallet_card")
 cls_pop.addEventListener("click", () => {
   wallet_card.style.display = "none"
 })
-// Получаем элемент tbody
 const tableBody = document.getElementById('tableinsert');
 
-// Добавляем обработчик события click на tbody
 tableBody.addEventListener('click', function(event) {
-    // Проверяем, был ли клик на элементе tr
     const tr = event.target.closest('tr');
     if (tr) {
-        // Извлекаем данные из выбранной строки
+
         const cells = tr.getElementsByTagName('th');
         const rowData = {
             index: cells[0].innerText,
             link: cells[1].getElementsByTagName('a')[0]?.href,
             supply: cells[2].innerText
         };
-
-        // Здесь вы можете делать что-то с данными строки
-        console.log(rowData);
+        let index = rowData.index
+        let link = rowData.link
+        let supply = rowData.supply
+        CreatePopUp(index,link,supply)
     }
 });
+
+async function CreatePopUp(index,link,supply) {
+    wallet_card.style.display = "block"
+    let ind = document.getElementById("index")
+    let lin = document.getElementById("wallet")
+    let supl = document.getElementById("supl")
+    ind.textContent = index
+    wallet = link.replace("https://tonviewer.com/","")
+    lin.textContent = wallet
+    supl.textContent = supply
+    let operationsWithJettonsHash = []
+    GetJettonTrans(wallet).then(data =>{
+      let operations = data.operations
+      
+      operations.forEach((el)=>{
+        if ((el.jetton.address === contract_id && operationsWithJettonsHash.length < 7) ){
+          operationsWithJettonsHash.push(el.transaction_hash)
+        }
+      })
+      console.log(operationsWithJettonsHash)
+      for (const hash of operationsWithJettonsHash) {
+        GetUserTrancsations(hash).then(trData => {
+            console.log(trData);
+        });
+    }
+    })
+     
+  }
+
+  async function GetJettonTrans(wallet){
+    let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}/jettons/history?limit=100`)
+    let data = await responce.json()
+    return data
+  }
+
+  async function getContractId(contra) {
+    let responce = await fetch(`https://tonapi.io/v2/accounts/${contra}`)
+    let data = await responce.json()
+    console.log(data)
+    return data
+  }
+
+  async function GetUserTrancsations(hash) {
+    let responce = await fetch(`https://tonapi.io/v2/events/${hash}`)
+    let data = await responce.json()
+    return data
+  }
