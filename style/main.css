@@ -255,6 +255,14 @@ td:first-child {
   justify-content: space-between; /* Распределяем пространство */
   align-items: center; /* Выравниваем по вертикали */
 }
+.pop_up_info_p{
+  padding: 2px 2px;
+  color: #000000;
+}
+.pop_up_info_span{
+  padding: 2px 2px;
+  color: #9CFF2E !important;
+}
 .wallet_title{
     flex: 1;
     text-align: center;

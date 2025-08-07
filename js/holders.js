@@ -1,9 +1,12 @@
   // Глобальные переменные
   let lang = localStorage.getItem("lang") || "eng";
   let holders_table = new Map();
+  let PopUpTable = new Map();
   let contract = localStorage.getItem("contract") || null;
   let real_supply;
   let contract_id
+  let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
+  let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
 getContractId(contract).then(data=>{
   contract_id = data.address
 })
@@ -198,6 +201,10 @@ tableBody.addEventListener('click', function(event) {
 });
 
 async function CreatePopUp(index,link,supply) {
+    let wall_type = document.getElementById("wall_type")
+    let usernms = document.getElementById("usernames")
+    let nmbrs = document.getElementById("anons")
+    let balance = document.getElementById("balance")
     wallet_card.style.display = "block"
     let ind = document.getElementById("index")
     let lin = document.getElementById("wallet")
@@ -206,10 +213,42 @@ async function CreatePopUp(index,link,supply) {
     wallet = link.replace("https://tonviewer.com/","")
     lin.textContent = wallet
     supl.textContent = supply
-    let operationsWithJettonsHash = []
+    GetTgUsernames(wallet).then(data => {
+      let usrnms = ""
+      if (data.nft_items.length !== 0){
+        data.nft_items.forEach(el=>{
+          usrnms+=el.dns
+          usrnms +=", "
+        })
+      }else{
+        usrnms = "нету ююзернеймов"
+      }
+      usernms.textContent = usrnms
+      usernms = ""
+    })
+    GetAnonNumbers(wallet).then(data => {
+      let anons = ""
+      if (data.nft_items.length !== 0){
+        data.nft_items.forEach(el=>{
+          anons+=el.metadata.name
+          anons +=", "
+        })
+      }else{
+        anons = "нету номеров"
+      }
+      nmbrs.textContent = anons 
+      anons = ""
+    })
+    GetHolderInfo(wallet).then(data=>{
+      wall_type.textContent=data.interfaces[0]
+      balance.textContent = data.balance / 10**9
+    })
+
+
+
     GetJettonTrans(wallet).then(data =>{
       let operations = data.operations
-      
+          let operationsWithJettonsHash = []
       operations.forEach((el)=>{
         if ((el.jetton.address === contract_id && operationsWithJettonsHash.length < 7) ){
           operationsWithJettonsHash.push(el.transaction_hash)
@@ -217,12 +256,11 @@ async function CreatePopUp(index,link,supply) {
       })
       console.log(operationsWithJettonsHash)
       for (const hash of operationsWithJettonsHash) {
-        GetUserTrancsations(hash).then(trData => {
+    GetUserTrancsations(hash).then(trData => {
             console.log(trData);
         });
     }
     })
-     
   }
 
   async function GetJettonTrans(wallet){
@@ -234,7 +272,6 @@ async function CreatePopUp(index,link,supply) {
   async function getContractId(contra) {
     let responce = await fetch(`https://tonapi.io/v2/accounts/${contra}`)
     let data = await responce.json()
-    console.log(data)
     return data
   }
 
@@ -243,3 +280,38 @@ async function CreatePopUp(index,link,supply) {
     let data = await responce.json()
     return data
   }
+
+  async function GetTgUsernames(wallet) {
+    let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}/nfts?collection=${tg_usernms}&limit=1000&offset=0&indirect_ownership=false`)
+    let data = await responce.json()
+    return data
+  }
+  async function GetAnonNumbers(wallet) {
+    let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}/nfts?collection=${anon_numbers}&limit=1000&offset=0&indirect_ownership=false`)
+    let data = await responce.json()
+    return data
+  }
+  async  function GetHolderInfo(wallet) {
+    let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}`)
+    let data = await responce.json()
+    return data
+  }
+
+  async function RenderPopTable(wallet) {
+    
+    let tablePop = document.getElementById("PopTable")
+    tablePop.innerHTML=""
+    
+    
+  }
+
+
+  let PopUpDataFetcher = (id,type,ton,jetton) => {//buy, sell, transfer
+    
+  };
+
+
+
+    
+     
+  
