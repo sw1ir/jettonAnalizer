@@ -19,7 +19,9 @@ getContractId(contract).then(data=>{
     "0:aa36c70bc11d3cf8b40bab399e2d1edd830d60d1ce03475ecfcdec016fc4b900": 'Юпитер',
     "0:ccd11771d519e8015862f7dba840d3e8073eb870121e2a5666f5a8d9230485c9":'Бизнес',
     "0:e2f94e049d2da7a373e9556c40c787cdba35c23d74916525f9f15d08cc9ffccc":'Робертыч1',
-    "0:a569423a14e507f149f60bf848334f6f45fbfa03749dbc2aba6e1a39f42c3952":'Робертыч2',
+    "0:a569423a14e507f149f60bf848334f6f45fbfa03749dbc2aba6e1a39f42c3952": 'Робертыч2',
+    "0:92478281ca452b899045ebe65f4fd63f27054be7646d9ca15d62c3ee043f4572": 'Агзи',
+    
   };
 
   // Форматирование чисел
@@ -347,14 +349,15 @@ async function CreatePopUp(index,link,supply) {
     type: type,
     ton: amount_ton,
     jetton: amount_jetton
-  });
+      });
   };
 
 
 
 function renderPopTable() {
-  const container = document.getElementById('transactions-container');
-  container.innerHTML = '';
+  const table = document.getElementById("sss");
+
+  table.innerHTML = "";
   
   PopUpTable.forEach((value, key) => {
     let table = document.getElementById("sss");
