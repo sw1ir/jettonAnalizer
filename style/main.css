@@ -224,7 +224,7 @@ td:first-child {
   z-index: 1000; 
 }
 .wallet_card{
-  background: url(../src/test.webp);
+  background-color: #400e6d;
   background-size: cover;
   backdrop-filter: blur(10px);
   background-repeat: no-repeat;
@@ -257,7 +257,7 @@ td:first-child {
 }
 .pop_up_info_p{
   padding: 2px 2px;
-  color: #000000;
+  color: #ffffff;
 }
 .pop_up_info_span{
   padding: 2px 2px;

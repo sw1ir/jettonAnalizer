@@ -209,11 +209,10 @@ tableBody.addEventListener('click', function(event) {
 });
 
 async function CreatePopUp(index,link,supply) {
-    let wall_type = document.getElementById("wall_type")
+  let wall_type = document.getElementById("wall_type")
     let usernms = document.getElementById("usernames")
     let nmbrs = document.getElementById("anons")
     let balance = document.getElementById("balance")
-    wallet_card.style.display = "block"
     let ind = document.getElementById("index")
     let lin = document.getElementById("wallet")
     let supl = document.getElementById("supl")
@@ -221,6 +220,15 @@ async function CreatePopUp(index,link,supply) {
     wallet = link.replace("https://tonviewer.com/","")
     lin.textContent = wallet
     supl.textContent = supply
+    const holderInfo = await GetHolderInfo(wallet);
+    if(holderInfo.is_wallet || (holderInfo.interfaces && holderInfo.interfaces.some(intf => intf.includes("wallet")))){  
+          wallet_card.style.display = "block"
+
+            wall_type.textContent = holderInfo.interfaces[0];
+        balance.textContent = holderInfo.balance / 10**9;
+    wall_type.textContent=holderInfo.interfaces[0]
+    balance.textContent = holderInfo.balance / 10**9
+    
     GetTgUsernames(wallet).then(data => {
       let usrnms = ""
       if (data.nft_items.length !== 0){
@@ -247,10 +255,6 @@ async function CreatePopUp(index,link,supply) {
       nmbrs.textContent = anons 
       anons = ""
     })
-    GetHolderInfo(wallet).then(data=>{
-      wall_type.textContent=data.interfaces[0]
-      balance.textContent = data.balance / 10**9
-    })
 
     const data = await GetJettonTrans(wallet);
       let operations = data.operations
@@ -273,7 +277,7 @@ async function CreatePopUp(index,link,supply) {
                 id = hash
                 type = "Перевод"
                 ton = 0
-                if (trData.actions[0].JettonTransfer.sender === wallet){
+                if (trData.actions[0].JettonTransfer.recipient.address === wallet){
                   jettton = `+${trData.actions[0].JettonTransfer.amount}`
                 }else{
                   jettton = `-${trData.actions[0].JettonTransfer.amount}`
@@ -299,6 +303,10 @@ async function CreatePopUp(index,link,supply) {
             }
           }
           renderPopTable();
+
+        }else{
+          alert("Это не кошелек холдера")
+        }
         }
       
   async function GetJettonTrans(wallet){
