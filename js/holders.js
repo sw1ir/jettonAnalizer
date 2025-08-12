@@ -21,6 +21,9 @@ getContractId(contract).then(data=>{
     "0:e2f94e049d2da7a373e9556c40c787cdba35c23d74916525f9f15d08cc9ffccc":'Робертыч1',
     "0:a569423a14e507f149f60bf848334f6f45fbfa03749dbc2aba6e1a39f42c3952": 'Робертыч2',
     "0:92478281ca452b899045ebe65f4fd63f27054be7646d9ca15d62c3ee043f4572": 'Агзи',
+    "0:d00ac97847b648a69eec5e283b6437d6cd576cedcc9c2f3665c46f6bf29e9c4e": "Рейн",
+    "0:ce7324e136dac3667859456971afcf2f5995f452dde1616440384ca6c840e63b": "бэбро",
+    "0:e582decb3a761f7daff2d18054f0d11df55276b0c133c31d807405d7f508b975":"Маркелов"
     
   };
 
