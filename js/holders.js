@@ -23,7 +23,9 @@ getContractId(contract).then(data=>{
     "0:92478281ca452b899045ebe65f4fd63f27054be7646d9ca15d62c3ee043f4572": 'Агзи',
     "0:d00ac97847b648a69eec5e283b6437d6cd576cedcc9c2f3665c46f6bf29e9c4e": "Рейн",
     "0:ce7324e136dac3667859456971afcf2f5995f452dde1616440384ca6c840e63b": "бэбро",
-    "0:e582decb3a761f7daff2d18054f0d11df55276b0c133c31d807405d7f508b975":"Маркелов"
+    "0:e582decb3a761f7daff2d18054f0d11df55276b0c133c31d807405d7f508b975": "Маркелов" ,
+    "0:d6f666cb0f1fe73fc6bef13ed7209ba8e329c3564459012197ac1a246ed482c3": "хэш",
+    "":""
     
   };
 
@@ -275,35 +277,42 @@ async function CreatePopUp(index,link,supply) {
       let type
       let ton
       let jettton
-            if ('JettonTransfer' in trData.actions[0] || 'JettonSwap' in trData.actions[0]) {
-              if ('JettonTransfer' in trData.actions[0]){
-                id = hash
-                type = "Перевод"
-                ton = 0
-                if (trData.actions[0].JettonTransfer.recipient.address === wallet){
-                  jettton = `+${trData.actions[0].JettonTransfer.amount}`
-                }else{
-                  jettton = `-${trData.actions[0].JettonTransfer.amount}`
-                }
-                PopUpTableLog(id,type,ton,jettton)
+        try {
+          if ('JettonTransfer' in trData.actions[0] || 'JettonSwap' in trData.actions[0]) {
+            if ('JettonTransfer' in trData.actions[0]) {
+              id = hash
+              type = "Перевод"
+              ton = 0
+              if (trData.actions[0].JettonTransfer.recipient.address === wallet) {
+                jettton = `+${trData.actions[0].JettonTransfer.amount}`
+              } else {
+                jettton = `-${trData.actions[0].JettonTransfer.amount}`
               }
-              if ('JettonSwap' in trData.actions[0]){
-                if ("ton_out" in trData.actions[0].JettonSwap){
-                  id = hash
-                  type = "Продажа"
-                  ton = trData.actions[0].JettonSwap.ton_out 
-                  jettton = trData.actions[0].JettonSwap.amount_in
-                  PopUpTableLog(id,type,ton,jettton)
-                }else{
-                  id = hash
-                  type = "Покупка"
-                  ton = trData.actions[0].JettonSwap.ton_in 
-                  jettton = trData.actions[0].JettonSwap.amount_out
-                  PopUpTableLog(id,type,ton,jettton)
-                }
-              }
-            }else{
+              PopUpTableLog(id, type, ton, jettton)
             }
+            if ('JettonSwap' in trData.actions[0]) {
+              if ("ton_out" in trData.actions[0].JettonSwap) {
+                id = hash
+                type = "Продажа"
+                ton = trData.actions[0].JettonSwap.ton_out
+                jettton = trData.actions[0].JettonSwap.amount_in
+                PopUpTableLog(id, type, ton, jettton)
+              } else {
+                id = hash
+                type = "Покупка"
+                ton = trData.actions[0].JettonSwap.ton_in
+                jettton = trData.actions[0].JettonSwap.amount_out
+                PopUpTableLog(id, type, ton, jettton)
+              }
+            }
+          } else {
+          }
+        } catch {
+          id = hash;
+          type = "-"
+          ton = "-"
+          jettton = "-"
+        }
           }
           renderPopTable();
 
