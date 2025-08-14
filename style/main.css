@@ -223,45 +223,157 @@ td:first-child {
   word-wrap: break-word; /* Перенос длинных слов */
   z-index: 1000; 
 }
-.wallet_card{
+.body-no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.wallet_card {
+  /* Ваши существующие стили */
+  background-color: #400e6d;
+  /* ... */
+  
+  /* Добавляем адаптивные стили */
+  @media (max-width: 768px) {
+    width: 90vw;
+    height: 85vh;
+    
+    .col-6 {
+      flex: 0 0 80% !important;
+      min-width: 80% !important;
+    }
+    
+    .row {
+      flex-direction: column;
+    }
+  }
+}
+.wallet_card_backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 9;
+  display: none;
+}
+
+.wallet_card {
   background-color: #400e6d;
   background-size: cover;
   backdrop-filter: blur(10px);
   background-repeat: no-repeat;
   background-position: center center;
-  backdrop-filter: blur(10px);
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 10px 30px #0051ff4d;
   border: 1px solid #0051ff4d;
   height: 70vh;
   width: 70vw;
-  margin-left: 15vw;
-  margin-right: 15vw;
-  margin-top: 15vh;
-  margin-bottom: 15vh;
   position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 10;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
-  word-wrap: break-word;
+  padding: 20px;
+  overflow-y: auto;
+  display: none;
 }
 
 .wallet-card-header {
-    padding: 20px 25px;
-    color: #9CFF2E;
-     display: flex; /* Включаем flex-контейнер */
-  justify-content: space-between; /* Распределяем пространство */
-  align-items: center; /* Выравниваем по вертикали */
+  padding: 20px 25px;
+  color: #9CFF2E;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(156, 255, 46, 0.2);
 }
-.pop_up_info_p{
-  padding: 2px 2px;
+
+.wallet_title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.right {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.right:hover {
+  transform: scale(1.1);
+}
+
+.close_svg {
+  width: 24px;
+  height: 24px;
+  fill: #9CFF2E;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+}
+
+.col-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.pop_up_info_p {
+  padding: 8px 2px;
+  color: #ffffff;
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+.pop_up_info_span {
+  color: #9CFF2E !important;
+  word-break: break-all;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(156, 255, 46, 0.1);
+}
+
+table th {
+  color: #9CFF2E;
+  font-weight: 500;
+}
+
+table td {
   color: #ffffff;
 }
-.pop_up_info_span{
-  padding: 2px 2px;
-  color: #9CFF2E !important;
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .wallet_card {
+    width: 90vw;
+    height: 80vh;
+  }
+  
+  .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .wallet_title {
+    font-size: 1.2rem;
+  }
 }
 .wallet_title{
     flex: 1;

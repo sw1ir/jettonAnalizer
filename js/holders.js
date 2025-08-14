@@ -193,6 +193,7 @@ let cls_pop = document.getElementById("cls_pop")
 let wallet_card = document.getElementById("wallet_card")
 cls_pop.addEventListener("click", () => {
   wallet_card.style.display = "none"
+  
 })
 const tableBody = document.getElementById('tableinsert');
 
@@ -228,7 +229,7 @@ async function CreatePopUp(index,link,supply) {
     const holderInfo = await GetHolderInfo(wallet);
     if(holderInfo.is_wallet || (holderInfo.interfaces && holderInfo.interfaces.some(intf => intf.includes("wallet")))){  
           wallet_card.style.display = "block"
-
+          
             wall_type.textContent = holderInfo.interfaces[0];
         balance.textContent = holderInfo.balance / 10**9;
     wall_type.textContent=holderInfo.interfaces[0]
@@ -242,7 +243,7 @@ async function CreatePopUp(index,link,supply) {
           usrnms +=", "
         })
       }else{
-        usrnms = "нету ююзернеймов"
+        usrnms = "нету юзернеймов"
       }
       usernms.textContent = usrnms
       usernms = ""
