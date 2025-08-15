@@ -215,6 +215,10 @@ tableBody.addEventListener('click', function(event) {
 });
 
 async function CreatePopUp(index,link,supply) {
+    const preloader = document.getElementById('table-preloader');
+  const table = document.querySelector('.table-container table');
+  preloader.classList.remove('hidden');
+  table.classList.remove('loaded');
   let wall_type = document.getElementById("wall_type")
     let usernms = document.getElementById("usernames")
     let nmbrs = document.getElementById("anons")
@@ -314,6 +318,11 @@ async function CreatePopUp(index,link,supply) {
           ton = "-"
           jettton = "-"
         }
+        finally {
+    // Скрываем прелоадер после загрузки
+    preloader.classList.add('hidden');
+    table.classList.add('loaded');
+  }
           }
           renderPopTable();
 

@@ -241,8 +241,8 @@ td:first-child {
     height: 85vh;
     
     .col-6 {
-      flex: 0 0 80% !important;
-      min-width: 80% !important;
+      flex: 0 0 90% !important;
+      min-width: 90% !important;
     }
     
     .row {
@@ -747,3 +747,54 @@ table td {
     background-position: 0% 50%;
   }
 }
+
+.table-container {
+    position: relative;
+    min-height: 200px; /* Минимальная высота для прелоадера */
+  }
+
+  .preloader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(64, 14, 109, 0.8);
+    backdrop-filter: blur(15px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: 8px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+
+  .preloader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #9CFF2E;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+
+  .preloader-text {
+    color: #9CFF2E;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Анимация исчезновения */
+  .preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  table.loaded {
+    opacity: 1;
+  }
