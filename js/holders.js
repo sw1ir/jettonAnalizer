@@ -5,11 +5,21 @@
   let contract = localStorage.getItem("contract") || null;
   let real_supply;
   let contract_id
+  let dec
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
   let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
+  let holdersData
 getContractId(contract).then(data=>{
   contract_id = data.address
+  console.log(contract_id)
 })
+console.log(contract)
+async function dec_data(){
+   const supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
+    const supplyData = await supplyResponse.json();
+    dec = supplyData.metadata.decimals;
+}
+dec_data()
   // Известные адреса
   let known_addreses = {
     "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f": 'Ston.fi',
@@ -24,8 +34,8 @@ getContractId(contract).then(data=>{
     "0:d00ac97847b648a69eec5e283b6437d6cd576cedcc9c2f3665c46f6bf29e9c4e": "Рейн",
     "0:ce7324e136dac3667859456971afcf2f5995f452dde1616440384ca6c840e63b": "бэбро",
     "0:e582decb3a761f7daff2d18054f0d11df55276b0c133c31d807405d7f508b975": "Маркелов" ,
-    "0:d6f666cb0f1fe73fc6bef13ed7209ba8e329c3564459012197ac1a246ed482c3": "хэш",
-    "":""
+    "0:d6f666cb0f1fe73fc6bef13ed7209ba8e329c3564459012197ac1a246ed482c3": "Хэш",
+    "0:a934e543ec1879d6f6d0d2ea17f1c4973d475368de0509d58bf35a40045ad5f0":"Мужчина2"
     
   };
 
@@ -38,8 +48,8 @@ getContractId(contract).then(data=>{
   }
 
   // Расчет доли владельца
-  let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
-    let balance = element.balance / 10 ** decimals;
+  let logHolderPercentage = (element, index, totalSupply,  dec) => {
+    let balance = element.balance / 10 ** dec;
     let percentage = (balance / totalSupply) * 100;
     let kosh = document.createElement("a");
     kosh.setAttribute("href", `https://tonviewer.com/${element.owner.address}`);
@@ -156,15 +166,13 @@ getContractId(contract).then(data=>{
     try {
       let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
       let supplyData = await supplyResponse.json();
-      real_supply = supplyData.total_supply / 10 ** 9;
-
+      real_supply = supplyData.total_supply / 10 ** dec;
       let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
-      let holdersData = await holdersResponse.json();
+      holdersData = await holdersResponse.json();
       
       holdersData.addresses.forEach((el, i) => {
-        logHolderPercentage(el, i, real_supply, 9);
+        logHolderPercentage(el, i, real_supply, dec);
       });
-
       renderTable();
     } catch (error) {
       console.error("Ошибка загрузки данных:", error);
@@ -226,6 +234,8 @@ async function CreatePopUp(index,link,supply) {
     let ind = document.getElementById("index")
     let lin = document.getElementById("wallet")
     let supl = document.getElementById("supl")
+    let swap_balance=document.getElementById("swap_balance")
+    
     ind.textContent = index
     wallet = link.replace("https://tonviewer.com/","")
     lin.textContent = wallet
@@ -235,9 +245,9 @@ async function CreatePopUp(index,link,supply) {
           wallet_card.style.display = "block"
           
             wall_type.textContent = holderInfo.interfaces[0];
-        balance.textContent = holderInfo.balance / 10**9;
+        balance.textContent = holderInfo.balance / 10**dec;
     wall_type.textContent=holderInfo.interfaces[0]
-    balance.textContent = holderInfo.balance / 10**9
+    balance.textContent = holderInfo.balance / 10**dec
     
     GetTgUsernames(wallet).then(data => {
       let usrnms = ""
@@ -265,15 +275,31 @@ async function CreatePopUp(index,link,supply) {
       nmbrs.textContent = anons 
       anons = ""
     })
+    amount = holdersData.addresses[index].balance 
+    GetStonData(contract, String(amount))
+  .then(result => {
+    if (result === 1010) {
+      console.log("Нет пула на STON.fi, пробуем DeDust...");
+      GetDeDustData(contract,amount)
+      .then(data => {
+        swap_balance.textContent = data[0][0].amountOut / 10 ** 9;
+      })
+    } else {
+      swap_balance.textContent = result.ask_units / 10 ** 9;
+
+    }
+  })
 
     const data = await GetJettonTrans(wallet);
       let operations = data.operations
           let operationsWithJettonsHash = []
-      operations.forEach((el)=>{
+          abc123 = contract_id
+          operations.forEach((el)=>{
         if ((el.jetton.address === contract_id && operationsWithJettonsHash.length < 7) ){
           operationsWithJettonsHash.push(el.transaction_hash)
         }
-      })
+      }
+    )
       PopUpTable.clear();
       console.log(operationsWithJettonsHash)
       for (const hash of operationsWithJettonsHash) {
@@ -366,19 +392,51 @@ async function CreatePopUp(index,link,supply) {
   }
 
   let PopUpTableLog = (id, type, ton,jetton ) => {
-    let amount_ton = ton / 10 ** 9;
-    let amount_jetton = jetton / 10 ** 9;
+    let amount_ton = ton / 10 ** dec;
+    let amount_jetton = jetton / 10 ** dec;
     let trans_id = document.createElement("a");
+    let tton = document.createElement("span")
+    let jettton = document.createElement("span")
+    let ttype = document.createElement("span")
     trans_id.setAttribute("href", `https://tonviewer.com/transaction/${id}`);
-
     trans_id.textContent = "Транза";
     trans_id.target = '_blank';
-    
+    if (type == "Покупка"){
+      tton.textContent = amount_ton.toFixed(2)
+      tton.className = "red"
+      ttype.className = "green"
+      ttype.textContent = type
+      jettton.className = "green"
+      jettton.textContent = amount_jetton.toFixed(2)
+    }
+    else if(type == "Продажа"){
+      ttype.className = "red"
+      ttype.textContent = type
+      jettton.className = "red"
+      jettton.textContent = amount_jetton.toFixed(2)
+      tton.textContent = amount_ton.toFixed(2)
+      tton.className = "green"
+    }
+    else if(type == "Перевод"){
+      if (jetton > 0){
+        jettton.className = "green"
+        jettton.textContent = amount_jetton.toFixed(2)
+        tton.textContent = amount_ton.toFixed(2)
+        ttype.className = "green"
+        ttype.textContent = type
+      }else{
+        jettton.className = "red"
+        jettton.textContent = amount_jetton.toFixed(2)
+        tton.textContent = amount_ton.toFixed(2)
+        ttype.className = "red"
+        ttype.textContent = type
+      }
+    }
       PopUpTable.set(id, {
     trans_id: trans_id,
-    type: type,
-    ton: amount_ton,
-    jetton: amount_jetton
+    type: ttype,
+    ton: tton,
+    jetton: jettton
       });
   };
 
@@ -403,15 +461,15 @@ function renderPopTable() {
       row.appendChild(txn_id)
 
       let txn_type = document.createElement("th");
-      txn_type.textContent = value.type
+      txn_type.appendChild(value.type)
       row.appendChild(txn_type)
 
       let txn_ton = document.createElement("th");
-      txn_ton.textContent=value.ton.toFixed(2)
+      txn_ton.appendChild(value.ton)
       row.appendChild(txn_ton)
 
       let txn_jetton = document.createElement("th");
-      txn_jetton.textContent = value.jetton.toFixed(2)
+      txn_jetton.appendChild(value.jetton)
       row.appendChild(txn_jetton)
 
       table.appendChild(row)
@@ -422,7 +480,74 @@ function renderPopTable() {
 
 
 
+async function GetStonData(contract, amount) {
+  const rpcUrl = "https://rpc.ston.fi/";
+  const requestPayload = {
+    jsonrpc: "2.0",
+    id: 8,
+    method: "dex.simulate_swap",
+    params: {
+      offer_address: contract,
+      offer_units: String(amount),
+      ask_address: "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c",
+      slippage_tolerance: "0.01"
+    }
+  };
+
+  const response = await fetch(rpcUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestPayload)
+  });
+
+  const data = await response.json();
+
+  // Если есть ошибка в ответе (но HTTP статус 200)
+  if (data.error) {
+    // Проверяем код ошибки 1010 (нет пула ликвидности)
+    if (data.error.code === 1010) {
+      return 1010; // Возвращаем просто код ошибки
+    }
+    // Для других ошибок бросаем исключение
+    throw new Error(data.error.message || 'Unknown STON.fi error');
+  }
+
+  // Если ошибок нет - возвращаем результат напрямую
+  return data.result;
+}
 
 
-    
-   
+  async function GetDeDustData(contract,amount) {
+  const cntId = await getContractId(contract).then(data=>{
+  return data.address
+})
+   const url = 'https://old-api.dedust.io/v2/routing/plan';
+  
+  const requestData = {
+    from: `jetton:${cntId}`,
+    to: "native",
+    amount: String(amount)
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+              'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify(requestData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Response data:', data);
+    return data;
+  } catch (error) {
+    console.error('Error making request:', error);
+    throw error;
+  }
+}

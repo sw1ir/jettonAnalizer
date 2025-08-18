@@ -798,3 +798,9 @@ table td {
   table.loaded {
     opacity: 1;
   }
+  .red{
+    color:#ff0000;
+  }
+  .green{
+    color:#00ff00;
+  }
