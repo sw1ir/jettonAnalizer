@@ -6,6 +6,7 @@
   let real_supply;
   let contract_id
   let dec
+  let ton_dec = 9
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
   let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
   let holdersData
@@ -201,6 +202,9 @@ let cls_pop = document.getElementById("cls_pop")
 let wallet_card = document.getElementById("wallet_card")
 cls_pop.addEventListener("click", () => {
   wallet_card.style.display = "none"
+  document.getElementById('overlay').style.display = 'none';
+  document.body.classList.remove('body-lock');
+
   
 })
 const tableBody = document.getElementById('tableinsert');
@@ -223,6 +227,8 @@ tableBody.addEventListener('click', function(event) {
 });
 
 async function CreatePopUp(index,link,supply) {
+  
+
     const preloader = document.getElementById('table-preloader');
   const table = document.querySelector('.table-container table');
   preloader.classList.remove('hidden');
@@ -243,11 +249,13 @@ async function CreatePopUp(index,link,supply) {
     const holderInfo = await GetHolderInfo(wallet);
     if(holderInfo.is_wallet || (holderInfo.interfaces && holderInfo.interfaces.some(intf => intf.includes("wallet")))){  
           wallet_card.style.display = "block"
-          
+            const body = document.body;
+            document.getElementById('overlay').style.display = 'block';
+            document.body.classList.add('body-lock');
             wall_type.textContent = holderInfo.interfaces[0];
-        balance.textContent = holderInfo.balance / 10**dec;
+        balance.textContent = holderInfo.balance / 10**ton_dec;
     wall_type.textContent=holderInfo.interfaces[0]
-    balance.textContent = holderInfo.balance / 10**dec
+    balance.textContent = holderInfo.balance / 10**ton_dec
     
     GetTgUsernames(wallet).then(data => {
       let usrnms = ""
@@ -278,14 +286,14 @@ async function CreatePopUp(index,link,supply) {
     amount = holdersData.addresses[index].balance 
     GetStonData(contract, String(amount))
   .then(result => {
-    if (result === 1010) {
+    if (result === "error") {
       console.log("Нет пула на STON.fi, пробуем DeDust...");
       GetDeDustData(contract,amount)
       .then(data => {
-        swap_balance.textContent = data[0][0].amountOut / 10 ** 9;
+        swap_balance.textContent = (data[0][0].amountOut / 10 ** 9).toFixed(2);
       })
     } else {
-      swap_balance.textContent = result.ask_units / 10 ** 9;
+      swap_balance.textContent = (result.ask_units / 10 ** 9).toFixed(2);
 
     }
   })
@@ -392,7 +400,7 @@ async function CreatePopUp(index,link,supply) {
   }
 
   let PopUpTableLog = (id, type, ton,jetton ) => {
-    let amount_ton = ton / 10 ** dec;
+    let amount_ton = ton / 10 ** ton_dec;
     let amount_jetton = jetton / 10 ** dec;
     let trans_id = document.createElement("a");
     let tton = document.createElement("span")
@@ -505,9 +513,8 @@ async function GetStonData(contract, amount) {
   // Если есть ошибка в ответе (но HTTP статус 200)
   if (data.error) {
     // Проверяем код ошибки 1010 (нет пула ликвидности)
-    if (data.error.code === 1010) {
-      return 1010; // Возвращаем просто код ошибки
-    }
+      return "error"; // Возвращаем просто код ошибки
+    
     // Для других ошибок бросаем исключение
     throw new Error(data.error.message || 'Unknown STON.fi error');
   }
