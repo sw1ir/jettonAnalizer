@@ -52,45 +52,27 @@
 </div>
 
 <script>
-async function getEventInfo(event_id){
-    let responce = await fetch(`https://tonapi.io/v2/events/${event_id}`)
-    let data = await responce.json()
-    return data.actions
-}
-async function getWallInfo(walet){
-    let responce = await fetch(`https://tonapi.io/v2/accounts/${walet}/jettons?currencies=ton&supported_extensions=custom_payload`)
-    let data = await responce.json()
-    return data.balances.jetton
-}
-let try_work=["0:49ea03f56d84bba819f78a5f8d83249339b2733fc767c620cb3ae8a2b012d143","0:8731d7380282b656368d1995bbfd94c684dc62bdd1f6164552f506de5cebce02","0:caf22c1ced07c85334d3528c1d47fa5a3fc87671f11892b6a960517368a37c7b","0:71c7363248cdacba0b2f6189dc49de11dc302422eca73c58e1706d93d6a9f998","0:c34657534ca63fc0ccfee123b4e4998e20d5dae0096633f4bae885fbf8f057bc","0:96d6dcb8b0e42fc69c02d35001ac03a85017485072942fb19c7a0adaa0b1b416","0:7247a2e6136b37fe530b0621d896160f06eea1102aab41dd7a3938ca6b5ae3c0","0:64a661a20f916d9c2613929a0284ab8e3e6d415766393c801a43d94f9eea088f","0:afb14b1d73afe626e2c845d7fb0106cf2420162f1cbb3b6a759d4d4517f9204c","0:68832ce8b6646a12143751f9c7ddf394c4623d10410bb9ad523f7967c7092e02","0:5b6a2d279d9d820c7747cac2391a8a23ee6e6b4968e2b13fab3385459d77174a","0:75b7c6a04c6d87a9b11e34f31a2c003fe2d5f7d39fe58eeab02e956dcf915d0a","0:39e02823809e94ab5135896ce156468e596b959c37f4733ba5cdad03c0008b27","0:8b10b647749cf3fefdc4f32465dd034527a6ebe96c8201839ebdc4ea700e72d3","0:0a8de3c49c9ff262909bba3ae7e7e825fb0626d1ed4dab6045abcf680ece8774","0:7ef237d20c81bc04a8a6ddba124180a823b5870975fb34663f5a46aaa3285c3a","0:78efe815d5c60b33c2a90f738844af9fe6a6e32c633af249847fa30f06479572"]
-//0:1d253b9261a22e06c1764e5461a175727c699b76f6b2c447d560840714349d09
-//https://tonapi.io/v2/accounts/0%3A1d253b9261a22e06c1764e5461a175727c699b76f6b2c447d560840714349d09/jettons/history?limit=100
-//dton.io graphql_api чекнуть потом
-let wallet = "UQCypLYg_sR1hFNy-c0ndV58HdoE-WCIJZ48y58Rtmxyrfrn"
+    let contract = "0:5a0a05303a873a80708d967fe82736f4995b3bf581bbc18a1abe1fa8d48b5a9d"
+    let offset = 0
+    let limit = 1000
+    let holders = []
+    async function abc(){
 
-  async function processWallets() {
-  for (const wallet of try_work) {
-    const checker = await getWallInfo(wallet);
-    console.log(checker);  // Данные по каждому кошельку
-  }
-}
-async function getLeftData(walet){
-  let responce = await fetch(`https://tonapi.io/v2/accounts/${walet}/events?initiator=false&subject_only=false&limit=100`)
-  let data = await responce.json()
-  console.log(data.events)
-  return data.events[0]
-  }
-
- async function check() {
-  for (const wallet of try_work) {
-    let element = await getLeftData(wallet)
-    if (element.actions.some(item => ["JettonSwap", "JettonTransfer"].includes(item.type)) && element.account.is_wallet === true){
-            console.log(`${wallet}:${element}`)
+      while (true){
+        let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=${limit}&offset=${offset}`);
+        holdersData = await holdersResponse.json();
+        
+        holders.push(holdersData.addresses)
+        if((offset + limit) < holdersData.total){
+            offset += 1000
+            continue
+        }else{
+            break
         }
-  };
-};
-check() 
-
+      }
+    }
+    abc()
+    console.log(holders)
 </script>
 
     

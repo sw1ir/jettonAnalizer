@@ -6,6 +6,8 @@
   let real_supply;
   let contract_id
   let dec
+  let offset = 0
+  let limit = 1000
   let ton_dec = 9
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
   let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
@@ -168,7 +170,7 @@ dec_data()
       let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
       let supplyData = await supplyResponse.json();
       real_supply = supplyData.total_supply / 10 ** dec;
-      let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders`);
+      let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=${limit}&offset=${offset}`);
       holdersData = await holdersResponse.json();
       
       holdersData.addresses.forEach((el, i) => {
