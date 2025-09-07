@@ -149,7 +149,7 @@ td:first-child {
 .socials {
   /*#72186a*/
   background: transparent;
-  border: 2px solid #8321f3;
+  border: 3px solid #8321f3;
   color: #ffffff;
   border-radius: 15px;
   padding: 0px;
@@ -234,7 +234,6 @@ td:first-child {
   /* Ваши существующие стили */
   background-color: #400e6d;
   /* ... */
-  
   /* Добавляем адаптивные стили */
   @media (max-width: 768px) {
     width: 90vw;
@@ -260,6 +259,7 @@ td:first-child {
   backdrop-filter: blur(5px);
   z-index: 9;
   display: none;
+  
 }
 
 .wallet_card {
@@ -274,11 +274,11 @@ td:first-child {
   border: 1px solid #0051ff4d;
   height: 70vh;
   width: 70vw;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
   padding: 20px;
   overflow-y: auto;
   display: none;
@@ -803,4 +803,23 @@ table td {
   }
   .green{
     color:#00ff00;
+  }
+
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 999; /* Ниже попапа, но выше всего остального */
+    cursor: pointer;
+  }
+
+    .body-lock {
+    overflow: hidden;
+    position: relative;
+    height: 100%;
   }
