@@ -10,8 +10,13 @@
   let limit = 1000
   let ton_dec = 9
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
-  let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
-  let holdersData
+let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
+  
+let currentPage = 1;
+let rowsPerPage = 1000; // будет синхронизироваться с cntRows
+let totalPages = 1;
+
+  // let allAdresses 
 getContractId(contract).then(data=>{
   contract_id = data.address
   console.log(contract_id)
@@ -62,14 +67,14 @@ dec_data()
     kosh.textContent = name;
     kosh.target = '_blank';
     
-    holders_table.set(index, {
+    holders_table.set(holders_table.size, {
       Кошелек: kosh,
-      Доля: balance > 0 
-        ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
-        : "0"
+      Доля:
+        balance > 0
+          ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
+          : "0",
     });
   };
-
   // Получение локализованных текстов
   function getLocalizedTexts() {
     if (lang === "eng") {
@@ -110,96 +115,361 @@ dec_data()
     }
     
     // Обновление текстов
-    document.getElementById("pick").textContent = all;
     document.getElementById("koshel").textContent = wall;
     document.getElementById("suplay").textContent = supl;
-    document.getElementById("all_holder").textContent = shown + holders_table.size;
-    document.getElementById("btn-1").textContent = `${all} (${holders_table.size})`;
-    document.getElementById("btn-2").textContent = `${left} ()`;
-    document.getElementById("btn-3").textContent = `${otlega} ()`;
+
     
     // Обработчики кнопок
-    document.getElementById("btn-1").onclick = () => document.getElementById("pick").textContent = all;
-    document.getElementById("btn-2").onclick = () => document.getElementById("pick").textContent = left;
-    document.getElementById("btn-3").onclick = () => document.getElementById("pick").textContent = otlega;
+
+  }
+let cntRows = 1000;
+let cntRow1 = document.getElementById("cntRow1");
+let cntRow2 = document.getElementById("cntRow2");
+let cntRow3 = document.getElementById("cntRow3");
+
+cntRow1.addEventListener("click", () => {
+  rowsPerPage = 250;
+  cntRow1.className += " active";
+  cntRow2.classList.remove("active");
+  cntRow3.classList.remove("active");
+  currentPage = 1; // Сбрасываем на первую страницу
+  renderTable(); // renderTable вызовет updatePagination()
+});
+
+cntRow2.addEventListener("click", () => {
+  rowsPerPage = 500;
+  cntRow2.className += " active";
+  cntRow1.classList.remove("active");
+  cntRow3.classList.remove("active");
+  currentPage = 1;
+  renderTable();
+});
+
+cntRow3.addEventListener("click", () => {
+  rowsPerPage = 1000;
+  cntRow3.className += " active";
+  cntRow2.classList.remove("active");
+  cntRow1.classList.remove("active");
+  currentPage = 1;
+  renderTable();
+});
+  // Рендер таблицы
+function renderTable() {
+  let tableBody = document.getElementById("tableinsert");
+  tableBody.innerHTML = "";
+  let dict = [
+    "1f991.png",
+    "1f990.png",
+    "1f433.png",
+    "1f421.png",
+    "1f420.png",
+    "1f419.png",
+  ];
+
+  // Рассчитываем индексы для текущей страницы
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const endIndex = Math.min(startIndex + rowsPerPage, holders_table.size);
+
+  // Если нет данных, показываем пустую таблицу
+  if (holders_table.size === 0) {
+    updateUI();
+    updatePagination(); // Обновляем пагинацию даже если данных нет
+    return;
   }
 
-  // Рендер таблицы
-  function renderTable() {
-    let tableBody = document.getElementById("tableinsert");
-    tableBody.innerHTML = "";
-    let dict = ["1f991.png", "1f990.png", "1f433.png", "1f421.png", "1f420.png", "1f419.png"];
-    
-    for (let [key, value] of holders_table) {
-      let rand = Math.floor(Math.random() * 6);
-      let row = document.createElement("tr");
-      row.setAttribute("class","gtr")
-      row.setAttribute("style", "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;")
-      let idCell = document.createElement("th");
-      idCell.textContent = key;
-      idCell.setAttribute("class","gth")
-      row.appendChild(idCell);
+  // Преобразуем Map в массив для удобной навигации по страницам
+  const holdersArray = Array.from(holders_table.entries());
 
-      let walletCell = document.createElement("th");
-      walletCell.setAttribute("class","gth")
-      let waterfish = document.createElement("img");
-      waterfish.setAttribute("src", `../src/${dict[rand]}`);
-      waterfish.setAttribute("width", "20");
-      waterfish.setAttribute("alt", "emoji");
-      walletCell.appendChild(waterfish);
-      walletCell.appendChild(value.Кошелек);
-      row.appendChild(walletCell);
+  // Отображаем только строки для текущей страницы
+  for (let i = startIndex; i < endIndex; i++) {
+    const [key, value] = holdersArray[i];
 
-      let shareCell = document.createElement("th");
-      
-      shareCell.textContent = value.Доля;
-      shareCell.setAttribute("class","gth")
-      row.appendChild(shareCell);
+    let rand = Math.floor(Math.random() * 6);
+    let row = document.createElement("tr");
+    row.setAttribute("class", "gtr");
+    row.setAttribute(
+      "style",
+      "opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;",
+    );
 
-      tableBody.appendChild(row);
+    let idCell = document.createElement("th");
+    idCell.textContent = key;
+    idCell.setAttribute("class", "gth");
+    row.appendChild(idCell);
+
+    let walletCell = document.createElement("th");
+    walletCell.setAttribute("class", "gth");
+    let waterfish = document.createElement("img");
+    waterfish.setAttribute("src", `../src/${dict[rand]}`);
+    waterfish.setAttribute("width", "20");
+    waterfish.setAttribute("alt", "emoji");
+    walletCell.appendChild(waterfish);
+    walletCell.appendChild(value.Кошелек);
+    row.appendChild(walletCell);
+
+    let shareCell = document.createElement("th");
+    shareCell.textContent = value.Доля;
+    shareCell.setAttribute("class", "gth");
+    row.appendChild(shareCell);
+
+    tableBody.appendChild(row);
+  }
+
+  updateUI();
+  updatePagination(); // ВАЖНО: обновляем пагинацию после каждого рендера
+}
+
+
+
+// Функция обновления пагинации
+function updatePagination() {
+  // Пересчитываем общее количество страниц
+  totalPages = Math.ceil(holders_table.size / rowsPerPage);
+
+  // Если нет данных, показываем 1 страницу
+  if (totalPages === 0) totalPages = 1;
+
+  // Получаем контейнер пагинации
+  const paginationContainer = document.querySelector(".pagination");
+  if (!paginationContainer) return;
+
+  // Сохраняем кнопки "Предыдущая" и "Следующая"
+  const prevButton = paginationContainer.querySelector(
+    ".page-item:first-child",
+  );
+  const nextButton = paginationContainer.querySelector(".page-item:last-child");
+
+  // Удаляем все кнопки страниц, кроме первой и последней
+  while (paginationContainer.children.length > 2) {
+    paginationContainer.removeChild(paginationContainer.children[1]);
+  }
+
+  // Если страниц мало, показываем все
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) {
+      const pageItem = createPageItem(i);
+      paginationContainer.insertBefore(pageItem, nextButton);
     }
+  } else {
+    // Показываем с эллипсисом
+    paginationContainer.insertBefore(createPageItem(1), nextButton);
+
+    if (currentPage > 3) {
+      paginationContainer.insertBefore(createEllipsis(), nextButton);
+    }
+
+    // Страницы вокруг текущей
+    let start = Math.max(2, currentPage - 1);
+    let end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) {
+      paginationContainer.insertBefore(createPageItem(i), nextButton);
+    }
+
+    if (currentPage < totalPages - 2) {
+      paginationContainer.insertBefore(createEllipsis(), nextButton);
+    }
+
+    // Последняя страница
+    if (totalPages > 1) {
+      paginationContainer.insertBefore(createPageItem(totalPages), nextButton);
+    }
+  }
+
+  // Обновляем активную страницу
+  document.querySelectorAll(".page-item").forEach((item) => {
+    const link = item.querySelector(".page-link");
+    if (link && link.textContent == currentPage) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
+    }
+  });
+
+  // Обновляем состояние кнопок навигации
+  const prevLink = prevButton.querySelector(".page-link");
+  const nextLink = nextButton.querySelector(".page-link");
+
+  if (currentPage === 1 || totalPages === 0) {
+    prevButton.classList.add("disabled");
+    if (prevLink) prevLink.style.pointerEvents = "none";
+  } else {
+    prevButton.classList.remove("disabled");
+    if (prevLink) prevLink.style.pointerEvents = "auto";
+  }
+
+  if (currentPage === totalPages || totalPages === 0) {
+    nextButton.classList.add("disabled");
+    if (nextLink) nextLink.style.pointerEvents = "none";
+  } else {
+    nextButton.classList.remove("disabled");
+    if (nextLink) nextLink.style.pointerEvents = "auto";
+  }
+}
+
+// Создание элемента страницы
+function createPageItem(pageNum) {
+  const li = document.createElement("li");
+  li.className = "page-item";
+
+  const a = document.createElement("a");
+  a.className = "page-link";
+  a.href = "#";
+  a.textContent = pageNum;
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    goToPage(pageNum);
+  });
+
+  li.appendChild(a);
+  return li;
+}
+
+// Создание эллипсиса
+function createEllipsis() {
+    const li = document.createElement('li');
+    li.className = 'page-item disabled';
     
-    updateUI();
+    const a = document.createElement('a');
+    a.className = 'page-link';
+    a.href = '#';
+    a.textContent = '...';
+    
+    li.appendChild(a);
+    return li;
+}
+
+// Переход на страницу
+function goToPage(page) {
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  renderTable(); // renderTable уже вызывает updatePagination()
+}
+  // Загрузка данных
+let fetchData = async () => {
+  if (!contract) return;
+
+  try {
+    let supplyResponse = await fetch(
+      `https://tonapi.io/v2/jettons/${contract}`,
+    );
+    let supplyData = await supplyResponse.json();
+
+    real_supply = supplyData.total_supply / 10 ** dec;
+    offset = 0;
+
+    // Очищаем таблицу перед загрузкой
+    holders_table.clear();
+
+    // Создаем индикатор загрузки
+    const tableBody = document.getElementById("tableinsert");
+    let loadingRow = document.createElement("tr");
+    loadingRow.id = "loading-row";
+    let loadingCell = document.createElement("td");
+    loadingCell.colSpan = 3;
+    loadingCell.textContent = "Загрузка данных...";
+    loadingCell.style.textAlign = "center";
+    loadingRow.appendChild(loadingCell);
+    tableBody.appendChild(loadingRow);
+
+    while (holders_table.size < supplyData.holders_count) {
+      console.log(
+        `Загружено: ${holders_table.size}/${supplyData.holders_count}`,
+      );
+
+      let holdersResponse = await fetch(
+        `https://tonapi.io/v2/jettons/${contract}/holders?limit=${limit}&offset=${offset}`,
+      );
+      holdersData = await holdersResponse.json();
+
+      if (holdersData.addresses && holdersData.addresses.length > 0) {
+        holdersData.addresses.forEach((el) => {
+          logHolderPercentage(el, holders_table.size, real_supply, dec);
+        });
+      }
+
+      offset += limit;
+
+      // Показываем первые 1000 кошельков сразу
+      if (holders_table.size >= 1000 || offset >= 10000) {
+        // Удаляем строку загрузки
+        const loadingRowEl = document.getElementById("loading-row");
+        if (loadingRowEl) loadingRowEl.remove();
+        renderTable(); // Это вызовет updatePagination()
+      }
+
+      // Ждем между запросами
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Ограничение API
+      if (offset >= 10000) break;
+    }
+
+    // Удаляем строку загрузки, если она еще есть
+    const loadingRowEl = document.getElementById("loading-row");
+    if (loadingRowEl) loadingRowEl.remove();
+
+    // Финальный рендер
+    renderTable(); // Финальное обновление пагинации
+    console.log(
+      `Загрузка завершена. Всего кошельков: ${holders_table.size}, страниц: ${totalPages}`,
+    );
+  } catch (error) {
+    console.error("Ошибка загрузки данных:", error);
+    const loadingRowEl = document.getElementById("loading-row");
+    if (loadingRowEl) loadingRowEl.remove();
+
+    // Показываем ошибку
+    const tableBody = document.getElementById("tableinsert");
+    const errorRow = document.createElement("tr");
+    const errorCell = document.createElement("td");
+    errorCell.colSpan = 3;
+    errorCell.textContent =
+      "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
+    errorCell.style.textAlign = "center";
+    errorCell.style.color = "red";
+    errorRow.appendChild(errorCell);
+    tableBody.appendChild(errorRow);
+  }
+};
+
+
+  // Инициализация
+document.addEventListener("DOMContentLoaded", () => {
+  // ... существующие обработчики языка ...
+
+  // Добавляем обработчики для кнопок пагинации
+  const paginationContainer = document.querySelector(".pagination");
+  if (paginationContainer) {
+    const prevButton = paginationContainer.querySelector(
+      ".page-item:first-child",
+    );
+    const nextButton = paginationContainer.querySelector(
+      ".page-item:last-child",
+    );
+
+    if (prevButton) {
+      prevButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+          goToPage(currentPage - 1);
+        }
+      });
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+          goToPage(currentPage + 1);
+        }
+      });
+    }
   }
 
   // Загрузка данных
-  let fetchData = async () => {
-    if (!contract) return;
-    
-    try {
-      let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
-      let supplyData = await supplyResponse.json();
-      real_supply = supplyData.total_supply / 10 ** dec;
-      let holdersResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=${limit}&offset=${offset}`);
-      holdersData = await holdersResponse.json();
-      
-      holdersData.addresses.forEach((el, i) => {
-        logHolderPercentage(el, i, real_supply, dec);
-      });
-      renderTable();
-    } catch (error) {
-      console.error("Ошибка загрузки данных:", error);
-    }
-  };
-
-  // Инициализация
-  document.addEventListener("DOMContentLoaded", () => {
-    // Обработчики кнопок языка
-    document.getElementById("eng_btn").addEventListener("click", () => {
-      lang = "eng";
-      localStorage.setItem("lang", lang);
-      updateUI();
-    });
-    
-    document.getElementById("rus_btn").addEventListener("click", () => {
-      lang = "rus";
-      localStorage.setItem("lang", lang);
-      updateUI();
-    });
-    
-    // Загрузка данных
-    fetchData();
-  });
+  fetchData();
+});
 let cls_pop = document.getElementById("cls_pop")
 let wallet_card = document.getElementById("wallet_card")
 cls_pop.addEventListener("click", () => {
@@ -227,6 +497,7 @@ tableBody.addEventListener('click', function(event) {
         CreatePopUp(index,link,supply)
     }
 });
+    
 
 async function CreatePopUp(index,link,supply) {
   
@@ -285,7 +556,8 @@ async function CreatePopUp(index,link,supply) {
       nmbrs.textContent = anons 
       anons = ""
     })
-    amount = holdersData.addresses[index].balance 
+      amount = holdersData.addresses[index].balance 
+      console.log(holdersData);
     GetStonData(contract, String(amount))
   .then(result => {
     if (result === "error") {
@@ -307,11 +579,15 @@ async function CreatePopUp(index,link,supply) {
           operations.forEach((el)=>{
         if ((el.jetton.address === contract_id && operationsWithJettonsHash.length < 7) ){
           operationsWithJettonsHash.push(el.transaction_hash)
-        }
+        } 
       }
     )
       PopUpTable.clear();
       console.log(operationsWithJettonsHash)
+      if (operationsWithJettonsHash.length === 0) {
+        preloader.classList.add("hidden");
+        console.log("Ничего не нашлось");
+      }
       for (const hash of operationsWithJettonsHash) {
       const trData = await GetUserTrancsations(hash);
       let id
@@ -357,8 +633,9 @@ async function CreatePopUp(index,link,supply) {
         finally {
     // Скрываем прелоадер после загрузки
     preloader.classList.add('hidden');
-    table.classList.add('loaded');
-  }
+          table.classList.add('loaded');
+        }
+        
           }
           renderPopTable();
 
@@ -560,3 +837,193 @@ async function GetStonData(contract, amount) {
     throw error;
   }
 }
+
+
+            const ctx = document
+              .getElementById("myBubbleChart")
+              .getContext("2d");
+
+            // Плагин для фона
+            const backgroundPlugin = {
+              id: "custom_canvas_background_color",
+              beforeDraw: (chart) => {
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.globalCompositeOperation = "destination-over";
+                ctx.fillStyle = "#8a2be2";
+                ctx.fillRect(0, 0, chart.width, chart.height);
+                ctx.restore();
+              },
+            };
+
+            // Плагин для рисования линий между пузырьками
+            const linePlugin = {
+              id: "lineConnector",
+              afterDatasetsDraw: (chart) => {
+                const { ctx, data, chartArea } = chart;
+                const { top, bottom, left, right } = chartArea;
+
+                // Координаты пузырьков
+                const points = [];
+                const dataset = data.datasets[0];
+
+                // Получаем позиции каждого пузырька
+                dataset.data.forEach((item, index) => {
+                  const x = chart.scales.x.getPixelForValue(item.x);
+                  const y = chart.scales.y.getPixelForValue(item.y);
+                  points.push({ x, y, radius: item.r });
+                });
+
+                // Рисуем линии между точками
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+                ctx.lineWidth = 2;
+
+                // Пример: соединяем точки по порядку
+                for (let i = 0; i < points.length - 1; i++) {
+                  ctx.beginPath();
+                  ctx.moveTo(points[i].x, points[i].y);
+                  ctx.lineTo(points[i + 1].x, points[i + 1].y);
+                  ctx.stroke();
+                }
+
+                // Или соединяем конкретные пары (например, 0-1, 0-2)
+                // ctx.beginPath();
+                // ctx.moveTo(points[0].x, points[0].y);
+                // ctx.lineTo(points[1].x, points[1].y);
+                // ctx.stroke();
+                //
+                // ctx.beginPath();
+                // ctx.moveTo(points[0].x, points[0].y);
+                // ctx.lineTo(points[2].x, points[2].y);
+                // ctx.stroke();
+
+                ctx.restore();
+              },
+            };
+
+            const data = {
+              datasets: [
+                {
+                  label: "sosal",
+                  data: [
+                    loddBubbleData()
+                  ],
+                  backgroundColor: "rgb(0, 255, 0)",
+                  borderColor: "rgb(0, 255, 0)",
+                },
+              ],
+            };
+
+            const config = {
+              type: "bubble",
+              data: data,
+              plugins: [backgroundPlugin, linePlugin], // Добавляем оба плагина
+              options: {
+                responsive: true,
+                scales: {
+                  x: {
+                    title: { display: false },
+                    min: 0,
+                    max: 40,
+                  },
+                  y: {
+                    title: { display: false },
+                    min: 0,
+                    max: 40,
+                  },
+                },
+              },
+            };
+
+            new Chart(ctx, config);
+
+// это перевод где получатель я https://tonviewer.com/transaction/234afdfdb6da8c14a77750cc63214807e154a7914829242d72d7cecbe3372fb6
+//{
+    //   "operation": "transfer",
+    //   "utime": 1703792367,
+    //   "lt": 43533701000004,
+    //   "transaction_hash": "234afdfdb6da8c14a77750cc63214807e154a7914829242d72d7cecbe3372fb6",
+    //   "source": {
+    //     "address": "0:92ff44695cf6d130d0f27d2f7bdf5eb88d8317907cd9e4941052e663ed76842c",
+    //     "is_scam": false,
+    //     "is_wallet": true
+    //   },
+    //   "destination": {
+    //     "address": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
+    //     "name": "zxc-sperma.ton",
+    //     "is_scam": false,
+    //     "is_wallet": true
+    //   },
+    //   "amount": "1000000000",
+    //   "jetton": {
+    //     "address": "0:f6eb371de82aa9cfb5b22ca547f31fdc0fa0fbb41ae89ba84a73272ff0bf2157",
+    //     "name": "DeFinder Capital",
+    //     "symbol": "DFC",
+    //     "decimals": 9,
+    //     "image": "https://cache.tonapi.io/imgproxy/TENmVD1ZlCwI7F4dyM9k6PPyLzMrd7rZHIAyeom79SA/rs:fill:200:200:1/g:no/aHR0cHM6Ly90YW4tdG91Z2gtc2x1Zy0zNTEubXlwaW5hdGEuY2xvdWQvaXBmcy9RbVhRb2pKVVB2a0dDQ2VSOVF1OFd3bWNaRjFnTERZMjhlcExMaFBZdkR5OFRr.webp",
+    //     "verification": "whitelist",
+    //     "score": 0
+    //   },
+    //   "trace_id": "b06081be4efe8b7fae2d404469f6540ef03e2107d26869923f52ff0a1d791127",
+    //   "query_id": "",
+    //   "payload": {}
+// }
+    
+
+
+// это свап https://tonviewer.com/transaction/54b098c4e6cbc039fc4fb5518e67f29806437961d3b729ff9ffea31dcddf5959
+//  {
+//       "operation": "transfer",
+//       "utime": 1760131770,
+//       "lt": 62428565000004,
+//       "transaction_hash": "54b098c4e6cbc039fc4fb5518e67f29806437961d3b729ff9ffea31dcddf5959",
+//       "source": {
+//         "address": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
+//         "name": "zxc-sperma.ton",
+//         "is_scam": false,
+//         "is_wallet": true
+//       },
+//       "destination": {
+//         "address": "0:70a4118401bf8d823531a66011020565f02e05ff91ac5f1677769b00d6acd07a",
+//         "name": "STON.fi DEX",
+//         "is_scam": false,
+//         "is_wallet": false
+//       },
+//       "amount": "3123182281433211",
+//       "jetton": {
+//         "address": "0:6c4e969dd07aa1fad6733bc2c9a2693ee06c403838d9b9a38b11eff4907b81c7",
+//         "name": "ZACKERMANBANK",
+//         "symbol": "ZMBANK",
+//         "decimals": 9,
+//         "image": "https://cache.tonapi.io/imgproxy/Dg712NwkBhOcnsRxNLevRTaEfgUbe4OOX-ozGKC6TcU/rs:fill:200:200:1/g:no/aHR0cDovL3phY2tlcm1hbmJhbmsuY29tL2xvZ28yMDgucG5n.webp",
+//         "verification": "whitelist",
+//         "score": 0,
+//         "description": "Be at the top of the financial chain! The bank makes money - you make money"
+//       },
+//       "trace_id": "9b93932c0054b621becaa4707a61bb12f5f06c37c8e1905b90cc99cf7c10ca2f",
+//       "query_id": "",
+//       "payload": {
+//         "SumType": "StonfiSwapV2",
+//         "OpCode": 1717886506,
+//         "Value": {
+//           "TokenWallet1": "0:728da3a36bafa9af10eb9e2188cecfa50663673fe9ecbc6c47d57db2e0cdcce6",
+//           "RefundAddress": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
+//           "ExcessesAddress": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
+//           "TxDeadline": 1760132638,
+//           "CrossSwapBody": {
+//             "MinOut": "6348906922",
+//             "Receiver": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
+//             "FwdGas": "0",
+//             "CustomPayload": null,
+//             "RefundFwdGas": "0",
+//             "RefundPayload": null,
+//             "RefFee": 10,
+//             "RefAddress": ""
+//           }
+//         }
+//       }
+//     },
+
+// для бабл мапы нужно создать массив кошельков у которых основная эмиссия и проверять их адреса(убирать не кошельки холдеров) на присутствие их адресов в source или destination 

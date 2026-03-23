@@ -242,8 +242,10 @@ loadChartData();
     //async burn
       async function getBurnInfo(){
         let responce = await fetch(`https://tonapi.io/v2/accounts/UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ/jettons/${contract}?currencies=ton,usd,rub&supported_extensions=custom_payload`)
-        let data = await responce.json()
-        return data.balance
+        let responce2 = await fetch(`https://tonapi.io/v2/accounts/UQDYzZmfsrGzhObKJUw4gzdeIxEai3jAFbiGKGwxvxHinf4K/jettons/${contract}?currencies=ton,usd,rub&supported_extensions=custom_payload`);
+        let data = await responce.json() 
+        let data2 = await responce2.json()
+        return Number(data.balance) + Number(data2.balance);
     }
         //lock async vivod
         lock = document.getElementById("lock");

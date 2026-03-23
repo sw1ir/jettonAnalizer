@@ -4,6 +4,10 @@
     <link rel="icon" href="../src/favicon.ico" type="image/x-icon">
     <title>Crypto scan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../style/main.css">
 </head>
 <body>
@@ -136,20 +140,30 @@
     </header>
     <main>
         <div class="row alllert">
-            <div class='col-11 bg-danger mega_alert_block'>
-                <h2 id="pick"><span class="percent"></span></h2>
+            
+                <div class="col-11 accordion accordion-flush mega_alert_block" id="accordionFlushExample">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed bg-danger" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        Bubble chart связей кошельков держателей
+                      </button>
+                    </h2>
+                    <div id="flush-collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionFlushExample">
+                      <div class="accordion-body" style="background-color: #8a2be2;">
+                          <canvas id="myBubbleChart"></canvas>
+
+
+                    </div>
+                  </div>
+                </div>
             </div>
-        </div>
+        
         <div class="row">
             <div class="col-11 mx-auto container">
                   <div class="card">
                 <div class="card-header">
-                    <div class="d-flex">
-                    <button id="btn-1" class=" hoder_btn "></button>
-                    <button id="btn-2" class=" hoder_btn "></button>
-                    <button id="btn-3" class=" hoder_btn "></button>
-                    <span id="all_holder" class="ms-auto"></span>
-                </div>
+                    
                 <table class="table table-bordered pupu">
                     <thead>
                         <tr style="opacity: 1; transform: translateY(0px); transition: opacity 0.5s, transform 0.5s;">
@@ -159,7 +173,45 @@
                         </tr>
                     </thead>
                     <tbody id="tableinsert"></tbody>
-                </table>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+                      <!-- Пагинация по центру -->
+                      <div style="flex: 1;"></div> <!-- Пустой блок слева для баланса -->
+                    
+                      <ul class="pagination" style="margin-bottom: 0;">
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Предыдущая">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Следующая">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    
+                      <!-- Dropdown справа -->
+                      <div class="dropdown" style="flex: 1; display: flex; justify-content: flex-end;">
+                        <div class="btn-group d-flex align-items-center gap-2">
+                          <span class="text-nowrap">Отображать:</span>
+                          <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static"
+                            aria-expanded="false">
+                            N строк
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end">
+                            <li><button class="dropdown-item" type="button" id="cntRow1">250</button></li>
+                            <li><button class="dropdown-item" type="button" id="cntRow2">500</button></li>
+                            <li><button class="dropdown-item active" type="button" id="cntRow3">1000</button></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    
+                    </table>
              
         </div>
             </div>
@@ -168,8 +220,10 @@
                        
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/holders.js"></script>
   <div class="overlay" id="overlay" style="display: none;"></div>
+
 
 </body>
 </html> 
