@@ -11,7 +11,7 @@
   let ton_dec = 9
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
 let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
-  
+ let allHoldersData = [];  
 let currentPage = 1;
 let rowsPerPage = 1000; // будет синхронизироваться с cntRows
 let totalPages = 1;
@@ -56,25 +56,35 @@ dec_data()
   }
 
   // Расчет доли владельца
-  let logHolderPercentage = (element, index, totalSupply,  dec) => {
-    let balance = element.balance / 10 ** dec;
-    let percentage = (balance / totalSupply) * 100;
-    let kosh = document.createElement("a");
-    kosh.setAttribute("href", `https://tonviewer.com/${element.owner.address}`);
-    let name = known_addreses[element.owner.address] || 
-               (element.owner.name ? element.owner.name : 
-               `${element.owner.address.slice(0,5)}...${element.owner.address.slice(-5)}`);
-    kosh.textContent = name;
-    kosh.target = '_blank';
-    
-    holders_table.set(holders_table.size, {
-      Кошелек: kosh,
-      Доля:
-        balance > 0
-          ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
-          : "0",
-    });
+let logHolderPercentage = (element, index, totalSupply, dec) => {
+  let balance = element.balance / 10 ** dec;
+  let percentage = (balance / totalSupply) * 100;
+  let kosh = document.createElement("a");
+  kosh.setAttribute("href", `https://tonviewer.com/${element.owner.address}`);
+  let name =
+    known_addreses[element.owner.address] ||
+    (element.owner.name
+      ? element.owner.name
+      : `${element.owner.address.slice(0, 5)}...${element.owner.address.slice(-5)}`);
+  kosh.textContent = name;
+  kosh.target = "_blank";
+
+  // Сохраняем в Map для таблицы
+  holders_table.set(holders_table.size, {
+    Кошелек: kosh,
+    Доля:
+      balance > 0
+        ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
+        : "0",
+  });
+
+  // Сохраняем данные о балансе в отдельный массив по индексу
+  allHoldersData[index] = {
+    address: element.owner.address,
+    balance: element.balance,
+    owner: element.owner,
   };
+};
   // Получение локализованных текстов
   function getLocalizedTexts() {
     if (lang === "eng") {
@@ -358,8 +368,9 @@ let fetchData = async () => {
     real_supply = supplyData.total_supply / 10 ** dec;
     offset = 0;
 
-    // Очищаем таблицу перед загрузкой
+    // Очищаем данные
     holders_table.clear();
+    allHoldersData = []; // Очищаем массив данных
 
     // Создаем индикатор загрузки
     const tableBody = document.getElementById("tableinsert");
@@ -372,6 +383,8 @@ let fetchData = async () => {
     loadingRow.appendChild(loadingCell);
     tableBody.appendChild(loadingRow);
 
+    let globalIndex = 0;
+
     while (holders_table.size < supplyData.holders_count) {
       console.log(
         `Загружено: ${holders_table.size}/${supplyData.holders_count}`,
@@ -380,11 +393,12 @@ let fetchData = async () => {
       let holdersResponse = await fetch(
         `https://tonapi.io/v2/jettons/${contract}/holders?limit=${limit}&offset=${offset}`,
       );
-      holdersData = await holdersResponse.json();
+      let holdersDataPage = await holdersResponse.json();
 
-      if (holdersData.addresses && holdersData.addresses.length > 0) {
-        holdersData.addresses.forEach((el) => {
-          logHolderPercentage(el, holders_table.size, real_supply, dec);
+      if (holdersDataPage.addresses && holdersDataPage.addresses.length > 0) {
+        holdersDataPage.addresses.forEach((el) => {
+          logHolderPercentage(el, globalIndex, real_supply, dec);
+          globalIndex++;
         });
       }
 
@@ -392,44 +406,21 @@ let fetchData = async () => {
 
       // Показываем первые 1000 кошельков сразу
       if (holders_table.size >= 1000 || offset >= 10000) {
-        // Удаляем строку загрузки
         const loadingRowEl = document.getElementById("loading-row");
         if (loadingRowEl) loadingRowEl.remove();
-        renderTable(); // Это вызовет updatePagination()
+        renderTable();
       }
 
-      // Ждем между запросами
       await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Ограничение API
       if (offset >= 10000) break;
     }
 
-    // Удаляем строку загрузки, если она еще есть
     const loadingRowEl = document.getElementById("loading-row");
     if (loadingRowEl) loadingRowEl.remove();
-
-    // Финальный рендер
-    renderTable(); // Финальное обновление пагинации
-    console.log(
-      `Загрузка завершена. Всего кошельков: ${holders_table.size}, страниц: ${totalPages}`,
-    );
+    renderTable();
+    console.log(`Загрузка завершена. Всего кошельков: ${holders_table.size}`);
   } catch (error) {
     console.error("Ошибка загрузки данных:", error);
-    const loadingRowEl = document.getElementById("loading-row");
-    if (loadingRowEl) loadingRowEl.remove();
-
-    // Показываем ошибку
-    const tableBody = document.getElementById("tableinsert");
-    const errorRow = document.createElement("tr");
-    const errorCell = document.createElement("td");
-    errorCell.colSpan = 3;
-    errorCell.textContent =
-      "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
-    errorCell.style.textAlign = "center";
-    errorCell.style.color = "red";
-    errorRow.appendChild(errorCell);
-    tableBody.appendChild(errorRow);
   }
 };
 
@@ -499,150 +490,190 @@ tableBody.addEventListener('click', function(event) {
 });
     
 
-async function CreatePopUp(index,link,supply) {
-  
+async function CreatePopUp(index, link, supply) {
+  const preloader = document.getElementById("table-preloader");
+  const table = document.querySelector(".table-container table");
+  preloader.classList.remove("hidden");
+  table.classList.remove("loaded");
 
-    const preloader = document.getElementById('table-preloader');
-  const table = document.querySelector('.table-container table');
-  preloader.classList.remove('hidden');
-  table.classList.remove('loaded');
-  let wall_type = document.getElementById("wall_type")
-    let usernms = document.getElementById("usernames")
-    let nmbrs = document.getElementById("anons")
-    let balance = document.getElementById("balance")
-    let ind = document.getElementById("index")
-    let lin = document.getElementById("wallet")
-    let supl = document.getElementById("supl")
-    let swap_balance=document.getElementById("swap_balance")
-    
-    ind.textContent = index
-    wallet = link.replace("https://tonviewer.com/","")
-    lin.textContent = wallet
-    supl.textContent = supply
-    const holderInfo = await GetHolderInfo(wallet);
-    if(holderInfo.is_wallet || (holderInfo.interfaces && holderInfo.interfaces.some(intf => intf.includes("wallet")))){  
-          wallet_card.style.display = "block"
-            const body = document.body;
-            document.getElementById('overlay').style.display = 'block';
-            document.body.classList.add('body-lock');
-            wall_type.textContent = holderInfo.interfaces[0];
-        balance.textContent = holderInfo.balance / 10**ton_dec;
-    wall_type.textContent=holderInfo.interfaces[0]
-    balance.textContent = holderInfo.balance / 10**ton_dec
-    
-    GetTgUsernames(wallet).then(data => {
-      let usrnms = ""
-      if (data.nft_items.length !== 0){
-        data.nft_items.forEach(el=>{
-          usrnms+=el.dns
-          usrnms +=", "
-        })
-      }else{
-        usrnms = "нету юзернеймов"
+  let wall_type = document.getElementById("wall_type");
+  let usernms = document.getElementById("usernames");
+  let nmbrs = document.getElementById("anons");
+  let balance = document.getElementById("balance");
+  let ind = document.getElementById("index");
+  let lin = document.getElementById("wallet");
+  let supl = document.getElementById("supl");
+  let swap_balance = document.getElementById("swap_balance");
+
+  ind.textContent = index;
+  wallet = link.replace("https://tonviewer.com/", "");
+  lin.textContent = wallet;
+  supl.textContent = supply;
+
+  // ПОЛУЧАЕМ ДАННЫЕ ИЗ allHoldersData ПО ИНДЕКСУ
+  const holderData = allHoldersData[parseInt(index)];
+
+  if (!holderData) {
+    console.error(`Нет данных для индекса ${index}`);
+    preloader.classList.add("hidden");
+    table.classList.add("loaded");
+    alert("Ошибка: данные о кошельке не найдены");
+    return;
+  }
+
+  // Используем сохраненный баланс
+  const amount = holderData.balance;
+  console.log(`Баланс кошелька ${wallet}: ${amount}`);
+
+  const holderInfo = await GetHolderInfo(wallet);
+
+  if (
+    holderInfo.is_wallet ||
+    (holderInfo.interfaces &&
+      holderInfo.interfaces.some((intf) => intf.includes("wallet")))
+  ) {
+    wallet_card.style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+    document.body.classList.add("body-lock");
+
+    wall_type.textContent = holderInfo.interfaces
+      ? holderInfo.interfaces[0]
+      : "Unknown";
+    balance.textContent = (holderInfo.balance / 10 ** ton_dec).toFixed(2);
+
+    // Получаем Telegram username
+    GetTgUsernames(wallet).then((data) => {
+      let usrnms = "";
+      if (data.nft_items && data.nft_items.length !== 0) {
+        data.nft_items.forEach((el) => {
+          usrnms += el.dns + ", ";
+        });
+        usrnms = usrnms.slice(0, -2);
+      } else {
+        usrnms = "нету юзернеймов";
       }
-      usernms.textContent = usrnms
-      usernms = ""
-    })
-    GetAnonNumbers(wallet).then(data => {
-      let anons = ""
-      if (data.nft_items.length !== 0){
-        data.nft_items.forEach(el=>{
-          anons+=el.metadata.name
-          anons +=", "
-        })
-      }else{
-        anons = "нету номеров"
+      usernms.textContent = usrnms;
+    });
+
+    // Получаем анонимные номера
+    GetAnonNumbers(wallet).then((data) => {
+      let anons = "";
+      if (data.nft_items && data.nft_items.length !== 0) {
+        data.nft_items.forEach((el) => {
+          anons += (el.metadata?.name || "Unknown") + ", ";
+        });
+        anons = anons.slice(0, -2);
+      } else {
+        anons = "нету номеров";
       }
-      nmbrs.textContent = anons 
-      anons = ""
-    })
-      amount = holdersData.addresses[index].balance 
-      console.log(holdersData);
+      nmbrs.textContent = anons;
+    });
+
+    // Получаем стоимость в TON
     GetStonData(contract, String(amount))
-  .then(result => {
-    if (result === "error") {
-      console.log("Нет пула на STON.fi, пробуем DeDust...");
-      GetDeDustData(contract,amount)
-      .then(data => {
-        swap_balance.textContent = (data[0][0].amountOut / 10 ** 9).toFixed(2);
+      .then((result) => {
+        if (result === "error") {
+          console.log("Нет пула на STON.fi, пробуем DeDust...");
+          GetDeDustData(contract, amount)
+            .then((data) => {
+              if (data && data[0] && data[0][0]) {
+                swap_balance.textContent = (
+                  data[0][0].amountOut /
+                  10 ** 9
+                ).toFixed(2);
+              } else {
+                swap_balance.textContent = "0";
+              }
+            })
+            .catch((err) => {
+              console.error("DeDust error:", err);
+              swap_balance.textContent = "Ошибка";
+            });
+        } else if (result && result.ask_units) {
+          swap_balance.textContent = (result.ask_units / 10 ** 9).toFixed(2);
+        } else {
+          swap_balance.textContent = "0";
+        }
       })
-    } else {
-      swap_balance.textContent = (result.ask_units / 10 ** 9).toFixed(2);
+      .catch((err) => {
+        console.error("STON.fi error:", err);
+        swap_balance.textContent = "Ошибка";
+      });
 
-    }
-  })
-
+    // Получаем историю транзакций
     const data = await GetJettonTrans(wallet);
-      let operations = data.operations
-          let operationsWithJettonsHash = []
-          abc123 = contract_id
-          operations.forEach((el)=>{
-        if ((el.jetton.address === contract_id && operationsWithJettonsHash.length < 7) ){
-          operationsWithJettonsHash.push(el.transaction_hash)
-        } 
-      }
-    )
-      PopUpTable.clear();
-      console.log(operationsWithJettonsHash)
-      if (operationsWithJettonsHash.length === 0) {
-        preloader.classList.add("hidden");
-        console.log("Ничего не нашлось");
-      }
-      for (const hash of operationsWithJettonsHash) {
-      const trData = await GetUserTrancsations(hash);
-      let id
-      let type
-      let ton
-      let jettton
-        try {
-          if ('JettonTransfer' in trData.actions[0] || 'JettonSwap' in trData.actions[0]) {
-            if ('JettonTransfer' in trData.actions[0]) {
-              id = hash
-              type = "Перевод"
-              ton = 0
-              if (trData.actions[0].JettonTransfer.recipient.address === wallet) {
-                jettton = `+${trData.actions[0].JettonTransfer.amount}`
-              } else {
-                jettton = `-${trData.actions[0].JettonTransfer.amount}`
-              }
-              PopUpTableLog(id, type, ton, jettton)
-            }
-            if ('JettonSwap' in trData.actions[0]) {
-              if ("ton_out" in trData.actions[0].JettonSwap) {
-                id = hash
-                type = "Продажа"
-                ton = trData.actions[0].JettonSwap.ton_out
-                jettton = trData.actions[0].JettonSwap.amount_in
-                PopUpTableLog(id, type, ton, jettton)
-              } else {
-                id = hash
-                type = "Покупка"
-                ton = trData.actions[0].JettonSwap.ton_in
-                jettton = trData.actions[0].JettonSwap.amount_out
-                PopUpTableLog(id, type, ton, jettton)
-              }
-            }
-          } else {
-          }
-        } catch {
-          id = hash;
-          type = "-"
-          ton = "-"
-          jettton = "-"
-        }
-        finally {
-    // Скрываем прелоадер после загрузки
-    preloader.classList.add('hidden');
-          table.classList.add('loaded');
-        }
-        
-          }
-          renderPopTable();
+    let operations = data.operations || [];
+    let operationsWithJettonsHash = [];
 
-        }else{
-          alert("Это не кошелек холдера")
+    operations.forEach((el) => {
+      if (
+        el.jetton &&
+        el.jetton.address === contract_id &&
+        operationsWithJettonsHash.length < 7
+      ) {
+        operationsWithJettonsHash.push(el.transaction_hash);
+      }
+    });
+
+    PopUpTable.clear();
+    console.log("Найдено операций:", operationsWithJettonsHash.length);
+
+    if (operationsWithJettonsHash.length === 0) {
+      preloader.classList.add("hidden");
+      table.classList.add("loaded");
+      console.log("Ничего не нашлось");
+      renderPopTable();
+      return;
+    }
+
+    // Обрабатываем каждую транзакцию
+    for (const hash of operationsWithJettonsHash) {
+      try {
+        const trData = await GetUserTrancsations(hash);
+        let id, type, ton, jettton;
+
+        if (trData.actions && trData.actions[0]) {
+          if ("JettonTransfer" in trData.actions[0]) {
+            id = hash;
+            type = "Перевод";
+            ton = 0;
+            if (trData.actions[0].JettonTransfer.recipient.address === wallet) {
+              jettton = `+${trData.actions[0].JettonTransfer.amount}`;
+            } else {
+              jettton = `-${trData.actions[0].JettonTransfer.amount}`;
+            }
+            PopUpTableLog(id, type, ton, jettton);
+          } else if ("JettonSwap" in trData.actions[0]) {
+            if ("ton_out" in trData.actions[0].JettonSwap) {
+              id = hash;
+              type = "Продажа";
+              ton = trData.actions[0].JettonSwap.ton_out;
+              jettton = trData.actions[0].JettonSwap.amount_in;
+              PopUpTableLog(id, type, ton, jettton);
+            } else {
+              id = hash;
+              type = "Покупка";
+              ton = trData.actions[0].JettonSwap.ton_in;
+              jettton = trData.actions[0].JettonSwap.amount_out;
+              PopUpTableLog(id, type, ton, jettton);
+            }
+          }
         }
-        }
+      } catch (err) {
+        console.error("Ошибка обработки транзакции:", hash, err);
+        PopUpTableLog(hash, "-", "-", "-");
+      }
+    }
+
+    preloader.classList.add("hidden");
+    table.classList.add("loaded");
+    renderPopTable();
+  } else {
+    alert("Это не кошелек холдера");
+    preloader.classList.add("hidden");
+    table.classList.add("loaded");
+  }
+}
       
   async function GetJettonTrans(wallet){
     let responce = await fetch(`https://tonapi.io/v2/accounts/${wallet}/jettons/history?limit=100`)
