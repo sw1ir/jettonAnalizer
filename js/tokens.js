@@ -145,6 +145,7 @@ rusbtn.setAttribute("class","btn btn-success")
       async function getLockData(){
         let responce = await fetch(`https://api.tonraffles.app/api/v2/lock/${contract}`)
         let data = await responce.json()
+        console.log(data)
         return data.totalLockedTokens
       }
       
@@ -261,8 +262,11 @@ loadChartData();
     getBurnInfo().then(burned_amount => {
         burn.textContent = formatNumber(burned_amount / 10 ** 9);
     
-        let supply = data.total_supply;
-        real_supply = supply / 10 ** 9;
+      let supply = data.total_supply;
+      console.log(supply);
+      console.log(data.total_supply)
+      real_supply = supply / 10 ** 9;
+      console.log(real_supply)
         let img = data.metadata.image;
         document.getElementById("logo").src = img;
         let name = data.metadata.name;
@@ -272,8 +276,9 @@ loadChartData();
         let holders = data.holders_count;
         document.getElementById("holders").innerHTML = holders;
         document.getElementById("description").innerHTML =data.metadata.description;
-        let emision = document.getElementById("total_suplly")
-        if (burned_amount === undefined){
+      let emision = document.getElementById("total_suplly");
+      
+        if (isNaN(burned_amount)){
           emision.textContent = formatNumber(real_supply)
         }else{
           emision.textContent = formatNumber(real_supply-(burned_amount/ 10 ** 9))
@@ -297,7 +302,7 @@ loadChartData();
             // текст к соцсетям
             let soc_txt = new Map([["t.me","tg"],["discord.gg","disc."],
             ["twitter.com","X"],["instagram.com","Insta"],
-            ["dexscreener.com","dex"],["app.ston.fi","ston  "]])
+            ["dexscreener.com","dex"],["app.ston.fi","ston  "],["app.ston.fi","ston  "]])
             socials.forEach(element => {
               for (let [key , value] of soc_img){
                 if (element.includes(key)) {
@@ -376,10 +381,6 @@ loadChartData();
         socials_drop.style.display ="inline-block"
       }
       })
-
-
-
-
 
 
 

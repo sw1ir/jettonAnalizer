@@ -27,75 +27,103 @@ let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
     let balance = element.initialTokens / 10 ** decimals;
     let percentage = (balance / totalSupply) * 100;
     let now = Date.now() / 1000;
-
-    if (element.contractData.firstPayoutTime < now) {
-        return;
+    if ( element.contractData.firstPayoutTime < now && element.initialTokens - element.claimedTokens === 0) {
+      return;
     } else {
+      
         let lock_date = element.lockTime * 1000;
         let unlock_date = element.contractData.firstPayoutTime;
         let udata = new Date(unlock_date * 1000);
         let ldata = new Date(lock_date);
-        
+
         // Создаем элементы для отображения данных
         let unlock_data = document.createElement("span");
         let lock_data = document.createElement("span");
         let utime = document.createElement("span");
-        
-         const formatDateTime = (date) => {
-            let day = date.getDate().toString().padStart(2, '0');
-            let month = (date.getMonth() + 1).toString().padStart(2, '0');
-            let year = date.getFullYear();
-            let hours = date.getHours().toString().padStart(2, '0');
-            let minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${day}.${month}.${year} ${hours}:${minutes}`;
+
+        const formatDateTime = (date) => {
+          let day = date.getDate().toString().padStart(2, "0");
+          let month = (date.getMonth() + 1).toString().padStart(2, "0");
+          let year = date.getFullYear();
+          let hours = date.getHours().toString().padStart(2, "0");
+          let minutes = date.getMinutes().toString().padStart(2, "0");
+          return `${day}.${month}.${year} ${hours}:${minutes}`;
         };
-      
-      
+
         unlock_data.textContent = formatDateTime(udata);
         lock_data.textContent = formatDateTime(ldata);
         // Функция для обновления обратного отсчета
         function updateCountdown() {
-            const now = Math.floor(Date.now() / 1000);
-            const diff = unlock_date - now;
-            
-            if (diff <= 0) {
-                utime.textContent = "Разблокировано";
-                return;
-            }
-            
-            const days = Math.floor(diff / (60 * 60 * 24));
-            const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
-            const minutes = Math.floor((diff % (60 * 60)) / 60);
-            const seconds = Math.floor(diff % 60);
-            
-            utime.textContent = `${days} days ${hours} hours ${minutes} min. ${seconds} sec.`;
+          const now = Math.floor(Date.now() / 1000);
+          const diff = unlock_date - now;
+
+          if (diff <= 0) {
+            utime.textContent = "Разблокировано";
+            return;
+          }
+
+          const days = Math.floor(diff / (60 * 60 * 24));
+          const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+          const minutes = Math.floor((diff % (60 * 60)) / 60);
+          const seconds = Math.floor(diff % 60);
+
+          utime.textContent = `${days} days ${hours} hours ${minutes} min. ${seconds} sec.`;
         }
-        
+
         // Первое обновление
         updateCountdown();
-        
+
         // Запускаем таймер
         const timer = setInterval(updateCountdown, 1000);
-        
+
         // Создаем ссылку на кошелек
         let kosh = document.createElement("a");
-        kosh.setAttribute("href", `https://tonraffles.app/lock/${contract}/${element.address}`);
-        let name = `${element.address.slice(0,5)}...${element.address.slice(-5)}`;
+        kosh.setAttribute(
+          "href",
+          `https://tonraffles.app/lock/${contract}/${element.address}`,
+        );
+        let name = `${element.address.slice(0, 5)}...${element.address.slice(-5)}`;
         kosh.textContent = name;
-        kosh.target = '_blank';
-        
-        // Сохраняем данные в holders_table
+        kosh.target = "_blank";
+
+      // Сохраняем данные в holders_table
+      if (
+        element.contractData.firstPayoutTime > now ) {
         holders_table.set(index, {
-            Кошелек: kosh,
-            Доля: balance > 0 
-                ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
-                : "0",
-            Лок: lock_data,
-            Разлок: unlock_data,
-            Время_Разлока: utime,
-            timerId: timer // Сохраняем ID таймера для последующей очистки
+          Кошелек: kosh,
+          Доля:
+            balance > 0
+              ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
+              : "0",
+          Лок: lock_data,
+          Разлок: unlock_data,
+          Время_Разлока: utime,
+          timerId: timer, // Сохраняем ID таймера для последующей очистки
         });
-    }
+      } else {
+        balance =
+          (element.initialTokens - element.claimedTokens) / 10 ** decimals;
+        percentage = (balance / totalSupply) * 100;
+        let claim = document.createElement("span");
+        let suppl_perc =
+          (element.claimedTokens /
+            10 ** decimals /
+            (element.initialTokens / 10 ** decimals)) *
+          100;
+        console.log(suppl_perc);
+        claim.textContent = `${formatNumber(element.initialTokens / 10 ** decimals.toFixed(2))}/${formatNumber(element.claimedTokens / 10 ** decimals.toFixed(2))} выведено: ${suppl_perc}% осталось: ${formatNumber(balance.toFixed(2))}`;
+        holders_table.set(index, {
+          Кошелек: kosh,
+          Доля:
+            balance > 0
+              ? `${formatNumber(balance.toFixed(2))} (${percentage.toFixed(2)}%)`
+              : "0",
+          Лок: lock_data,
+          Разлок: unlock_data,
+          Время_Разлока: claim,
+        });
+      }
+  }
 };
   // Получение локализованных текстов
   function getLocalizedTexts() {
@@ -189,7 +217,8 @@ let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
     try {
       let locks = await fetch(`https://api.tonraffles.app/api/v2/lock/${contract}`)
       let allLockData = await locks.json()
-    let massiv = allLockData.lockRecords
+      let massiv = allLockData.lockRecords
+      console.log(massiv)
 
     let supplyResponse = await fetch(`https://tonapi.io/v2/jettons/${contract}`);
       let supplyData = await supplyResponse.json();

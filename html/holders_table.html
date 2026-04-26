@@ -184,8 +184,7 @@
                           </a>
                         </li>
                         <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        
                         <li class="page-item">
                           <a class="page-link" href="#" aria-label="Следующая">
                             <span aria-hidden="true">&raquo;</span>
@@ -197,11 +196,11 @@
                       <div class="dropdown" style="flex: 1; display: flex; justify-content: flex-end;">
                         <div class="btn-group d-flex align-items-center gap-2">
                           <span class="text-nowrap">Отображать:</span>
-                          <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static"
+                          <button type="button" class="btn btn-secondary dropdown-toggle shown" data-bs-toggle="dropdown" data-bs-display="static"
                             aria-expanded="false">
-                            N строк
+                            <span id="cnt_shown"></span> строк
                           </button>
-                          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end">
+                          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-end drrdwn">
                             <li><button class="dropdown-item" type="button" id="cntRow1">250</button></li>
                             <li><button class="dropdown-item" type="button" id="cntRow2">500</button></li>
                             <li><button class="dropdown-item active" type="button" id="cntRow3">1000</button></li>
@@ -222,6 +221,7 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/holders.js"></script>
+  <script src="../js/json.js"></script>
   <div class="overlay" id="overlay" style="display: none;"></div>
 
 

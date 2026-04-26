@@ -11,11 +11,14 @@
   let ton_dec = 9
   let tg_usernms = "0:80d78a35f955a14b679faa887ff4cd5bfc0f43b4a4eea2a7e6927f3701b273c2"
 let anon_numbers = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fabcf80845eafafdb2"
- let allHoldersData = [];  
+let allHoldersData = [];  
+let holders_array2 = []
+ let bubbleArrayHolders = []
 let currentPage = 1;
 let rowsPerPage = 1000; // будет синхронизироваться с cntRows
 let totalPages = 1;
-
+let cnt_shown = document.getElementById("cnt_shown");
+cnt_shown.textContent = rowsPerPage;
   // let allAdresses 
 getContractId(contract).then(data=>{
   contract_id = data.address
@@ -31,19 +34,12 @@ dec_data()
   // Известные адреса
   let known_addreses = {
     "0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f": 'Ston.fi',
-    "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad": 'Мужчина',
-    "0:a99e7ce7794f81b1f8d83b748818908ead65ff809a0f54a9a8317d34690b51b9": 'Фомо',
-    "0:0e7f011c7b0fc7b9fecd6e9b32a55377f2c0359e424f64c4753dff02fce6175d": 'Овер',
-    "0:aa36c70bc11d3cf8b40bab399e2d1edd830d60d1ce03475ecfcdec016fc4b900": 'Юпитер',
-    "0:ccd11771d519e8015862f7dba840d3e8073eb870121e2a5666f5a8d9230485c9":'Бизнес',
-    "0:e2f94e049d2da7a373e9556c40c787cdba35c23d74916525f9f15d08cc9ffccc":'Робертыч1',
-    "0:a569423a14e507f149f60bf848334f6f45fbfa03749dbc2aba6e1a39f42c3952": 'Робертыч2',
-    "0:92478281ca452b899045ebe65f4fd63f27054be7646d9ca15d62c3ee043f4572": 'Агзи',
-    "0:d00ac97847b648a69eec5e283b6437d6cd576cedcc9c2f3665c46f6bf29e9c4e": "Рейн",
-    "0:ce7324e136dac3667859456971afcf2f5995f452dde1616440384ca6c840e63b": "бэбро",
-    "0:e582decb3a761f7daff2d18054f0d11df55276b0c133c31d807405d7f508b975": "Маркелов" ,
-    "0:d6f666cb0f1fe73fc6bef13ed7209ba8e329c3564459012197ac1a246ed482c3": "Хэш",
-    "0:a934e543ec1879d6f6d0d2ea17f1c4973d475368de0509d58bf35a40045ad5f0":"Мужчина2"
+    "0:dae153a74d894bbc32748198cd626e4f5df4a69ad2fa56ce80fc2644b5708d20": 'Dedust',
+    "0:d887d0e2d1c4fc4126e71c970d33ab1896940000eae703bb1ab6cecc830777e3": "Mexc",
+    "0:1b84c5a8b28c5ea174c98bd4e5c34f4c1233d5bdd25ef63d270ba2baae8d1dd6": "amocucinare-rugger.ton",
+    "0:c8b0596f090b2415fe55ef2e0785f1c576992bfde436aeac75efcec3ab1f0fac": "hashtag-on-tele-gram.ton",
+    "0:779dcc815138d9500e449c5291e7f12738c23d575b5310000f6a253bd607384e": "STON.fi DEX",
+    "0:1cc0180d280b5bb6be317dd0dd40dca22c52c3fc7df570d4bebc18649c8d1d5c": "0:1cc...d1d5c"
     
   };
 
@@ -68,7 +64,11 @@ let logHolderPercentage = (element, index, totalSupply, dec) => {
       : `${element.owner.address.slice(0, 5)}...${element.owner.address.slice(-5)}`);
   kosh.textContent = name;
   kosh.target = "_blank";
-
+  holders_array2.push({
+    koshel: element.owner.address ,
+    balans: balance,
+    is_wallet: element.owner.is_wallet
+  })
   // Сохраняем в Map для таблицы
   holders_table.set(holders_table.size, {
     Кошелек: kosh,
@@ -89,28 +89,53 @@ let logHolderPercentage = (element, index, totalSupply, dec) => {
   function getLocalizedTexts() {
     if (lang === "eng") {
       return {
-        shown: "Shown on page ",
-        all: "All",
-        left: "New",
-        otlega: "Old with afk",
         wall: "Wallet",
         supl: "share"
       };
     } else {
       return {
-        shown: "Показано на странице ",
-        all: "Все",
-        left: "Левые",
-        otlega: "Отлега",
         wall: "Кошелек",
         supl: "Доля"
       };
     }
+}
+  
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+async function findBubles() {
+  // Ждем, пока holders_table заполнится
+  let buuble_array = [];
+  while (holders_array2.length === 0 && allHoldersData.length === 0) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
+  for (let i = 0; i < 50; i++) {
+    if ((holders_array2[i].koshel in known_addreses) || (holders_array2[i].is_wallet === false)) {
+      continue;
+    } else {
+      bubbleArrayHolders.push(holders_array2[i]);
+    }
+  }
+  let operationns = {};
+
+  while (bubbleArrayHolders.length === 0) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  for (let i = 0; i < bubbleArrayHolders.length; i++) {
+    await wait(1500);
+    let traks = await GetJettonTrans(bubbleArrayHolders[i].koshel);
+    operationns[bubbleArrayHolders[i].koshel] = traks;
+
+    console.log(bubbleArrayHolders)
+  }
+  console.log(operationns);
+  console.log(operationns.length);
+
+}
+
+findBubles(); 
   // Обновление интерфейса
   function updateUI() {
-    let { shown, all, left, otlega, wall, supl } = getLocalizedTexts();
+    let {  wall, supl } = getLocalizedTexts();
     
     // Кнопки переключения языка
     let engbtn = document.getElementById("eng_btn");
@@ -142,6 +167,7 @@ cntRow1.addEventListener("click", () => {
   cntRow1.className += " active";
   cntRow2.classList.remove("active");
   cntRow3.classList.remove("active");
+  cnt_shown.textContent = 250
   currentPage = 1; // Сбрасываем на первую страницу
   renderTable(); // renderTable вызовет updatePagination()
 });
@@ -151,6 +177,7 @@ cntRow2.addEventListener("click", () => {
   cntRow2.className += " active";
   cntRow1.classList.remove("active");
   cntRow3.classList.remove("active");
+  cnt_shown.textContent = 500;
   currentPage = 1;
   renderTable();
 });
@@ -160,6 +187,7 @@ cntRow3.addEventListener("click", () => {
   cntRow3.className += " active";
   cntRow2.classList.remove("active");
   cntRow1.classList.remove("active");
+  cnt_shown.textContent = 1000;
   currentPage = 1;
   renderTable();
 });
@@ -179,7 +207,7 @@ function renderTable() {
   // Рассчитываем индексы для текущей страницы
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = Math.min(startIndex + rowsPerPage, holders_table.size);
-
+  
   // Если нет данных, показываем пустую таблицу
   if (holders_table.size === 0) {
     updateUI();
@@ -189,7 +217,7 @@ function renderTable() {
 
   // Преобразуем Map в массив для удобной навигации по страницам
   const holdersArray = Array.from(holders_table.entries());
-
+  
   // Отображаем только строки для текущей страницы
   for (let i = startIndex; i < endIndex; i++) {
     const [key, value] = holdersArray[i];
@@ -235,7 +263,7 @@ function renderTable() {
 function updatePagination() {
   // Пересчитываем общее количество страниц
   totalPages = Math.ceil(holders_table.size / rowsPerPage);
-
+  
   // Если нет данных, показываем 1 страницу
   if (totalPages === 0) totalPages = 1;
 
@@ -367,7 +395,7 @@ let fetchData = async () => {
 
     real_supply = supplyData.total_supply / 10 ** dec;
     offset = 0;
-
+    
     // Очищаем данные
     holders_table.clear();
     allHoldersData = []; // Очищаем массив данных
@@ -411,7 +439,7 @@ let fetchData = async () => {
         renderTable();
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       if (offset >= 10000) break;
     }
 
@@ -869,192 +897,441 @@ async function GetStonData(contract, amount) {
   }
 }
 
+// ============ ФУНКЦИЯ ДЛЯ ПОСТРОЕНИЯ BUBBLE MAP ============
 
-            const ctx = document
-              .getElementById("myBubbleChart")
-              .getContext("2d");
+// Глобальная переменная для хранения данных операций
+let operationsData = {};
 
-            // Плагин для фона
-            const backgroundPlugin = {
-              id: "custom_canvas_background_color",
-              beforeDraw: (chart) => {
-                const ctx = chart.ctx;
-                ctx.save();
-                ctx.globalCompositeOperation = "destination-over";
-                ctx.fillStyle = "#8a2be2";
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.restore();
-              },
-            };
+// Функция для создания графика
+function initBubbleChart() {
+  const canvas = document.getElementById("myBubbleChart");
+  if (!canvas) {
+    console.error("Canvas элемент myBubbleChart не найден");
+    return;
+  }
 
-            // Плагин для рисования линий между пузырьками
-            const linePlugin = {
-              id: "lineConnector",
-              afterDatasetsDraw: (chart) => {
-                const { ctx, data, chartArea } = chart;
-                const { top, bottom, left, right } = chartArea;
+  // Проверяем наличие contract_id
+  if (!contract_id) {
+    console.log("contract_id еще не загружен, ожидание...");
+    setTimeout(initBubbleChart, 500);
+    return;
+  }
 
-                // Координаты пузырьков
-                const points = [];
-                const dataset = data.datasets[0];
+  console.log(`🎯 Фильтруем по contract_id: ${contract_id}`);
 
-                // Получаем позиции каждого пузырька
-                dataset.data.forEach((item, index) => {
-                  const x = chart.scales.x.getPixelForValue(item.x);
-                  const y = chart.scales.y.getPixelForValue(item.y);
-                  points.push({ x, y, radius: item.r });
-                });
+  // Проверяем наличие данных operationsData
+  if (Object.keys(operationsData).length === 0) {
+    console.log("Данные operationsData еще не загружены, ожидание...");
+    setTimeout(initBubbleChart, 1000);
+    return;
+  }
 
-                // Рисуем линии между точками
-                ctx.save();
-                ctx.beginPath();
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
-                ctx.lineWidth = 2;
+  // Проверяем наличие балансов
+  if (bubbleArrayHolders.length === 0) {
+    console.log("Данные балансов еще не загружены, ожидание...");
+    setTimeout(initBubbleChart, 1000);
+    return;
+  }
 
-                // Пример: соединяем точки по порядку
-                for (let i = 0; i < points.length - 1; i++) {
-                  ctx.beginPath();
-                  ctx.moveTo(points[i].x, points[i].y);
-                  ctx.lineTo(points[i + 1].x, points[i + 1].y);
-                  ctx.stroke();
-                }
+  // Ждем открытия аккордеона
+  const checkVisibility = () => {
+    if (canvas.offsetParent === null || canvas.offsetWidth === 0) {
+      console.log("Canvas скрыт, ожидание открытия аккордеона...");
+      setTimeout(checkVisibility, 500);
+      return;
+    }
+    renderBubbleChart();
+  };
+  
+  checkVisibility();
+}
 
-                // Или соединяем конкретные пары (например, 0-1, 0-2)
-                // ctx.beginPath();
-                // ctx.moveTo(points[0].x, points[0].y);
-                // ctx.lineTo(points[1].x, points[1].y);
-                // ctx.stroke();
-                //
-                // ctx.beginPath();
-                // ctx.moveTo(points[0].x, points[0].y);
-                // ctx.lineTo(points[2].x, points[2].y);
-                // ctx.stroke();
-
-                ctx.restore();
-              },
-            };
-
-            const data = {
-              datasets: [
-                {
-                  label: "sosal",
-                  data: [
-                    loddBubbleData()
-                  ],
-                  backgroundColor: "rgb(0, 255, 0)",
-                  borderColor: "rgb(0, 255, 0)",
-                },
-              ],
-            };
-
-            const config = {
-              type: "bubble",
-              data: data,
-              plugins: [backgroundPlugin, linePlugin], // Добавляем оба плагина
-              options: {
-                responsive: true,
-                scales: {
-                  x: {
-                    title: { display: false },
-                    min: 0,
-                    max: 40,
-                  },
-                  y: {
-                    title: { display: false },
-                    min: 0,
-                    max: 40,
-                  },
-                },
-              },
-            };
-
-            new Chart(ctx, config);
-
-// это перевод где получатель я https://tonviewer.com/transaction/234afdfdb6da8c14a77750cc63214807e154a7914829242d72d7cecbe3372fb6
-//{
-    //   "operation": "transfer",
-    //   "utime": 1703792367,
-    //   "lt": 43533701000004,
-    //   "transaction_hash": "234afdfdb6da8c14a77750cc63214807e154a7914829242d72d7cecbe3372fb6",
-    //   "source": {
-    //     "address": "0:92ff44695cf6d130d0f27d2f7bdf5eb88d8317907cd9e4941052e663ed76842c",
-    //     "is_scam": false,
-    //     "is_wallet": true
-    //   },
-    //   "destination": {
-    //     "address": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
-    //     "name": "zxc-sperma.ton",
-    //     "is_scam": false,
-    //     "is_wallet": true
-    //   },
-    //   "amount": "1000000000",
-    //   "jetton": {
-    //     "address": "0:f6eb371de82aa9cfb5b22ca547f31fdc0fa0fbb41ae89ba84a73272ff0bf2157",
-    //     "name": "DeFinder Capital",
-    //     "symbol": "DFC",
-    //     "decimals": 9,
-    //     "image": "https://cache.tonapi.io/imgproxy/TENmVD1ZlCwI7F4dyM9k6PPyLzMrd7rZHIAyeom79SA/rs:fill:200:200:1/g:no/aHR0cHM6Ly90YW4tdG91Z2gtc2x1Zy0zNTEubXlwaW5hdGEuY2xvdWQvaXBmcy9RbVhRb2pKVVB2a0dDQ2VSOVF1OFd3bWNaRjFnTERZMjhlcExMaFBZdkR5OFRr.webp",
-    //     "verification": "whitelist",
-    //     "score": 0
-    //   },
-    //   "trace_id": "b06081be4efe8b7fae2d404469f6540ef03e2107d26869923f52ff0a1d791127",
-    //   "query_id": "",
-    //   "payload": {}
-// }
+// Отрисовка графика
+function renderBubbleChart() {
+  const canvas = document.getElementById("myBubbleChart");
+  const ctx = canvas.getContext("2d");
+  
+  console.log("🚀 Начинаем создание графика...");
+  console.log(`🎯 Используем contract_id для фильтрации: ${contract_id}`);
+  console.log(`📊 Загружено кошельков с операциями: ${Object.keys(operationsData).length}`);
+  console.log(`💰 Загружено балансов: ${bubbleArrayHolders.length}`);
+  
+  // Получаем все адреса кошельков, для которых есть операции
+  const walletAddressesSet = new Set(Object.keys(operationsData));
+  
+  // Поиск переводов между кошельками ТОЛЬКО для нужного токена
+  let transfersBetweenWallets = [];
+  let filteredCount = 0;
+  
+  for (const [walletAddress, walletData] of Object.entries(operationsData)) {
+    if (!walletData?.operations) continue;
     
+    walletData.operations.forEach((operation) => {
+      const src = operation.source?.address;
+      const dest = operation.destination?.address;
+      const jettonAddr = operation.jetton?.address;
+      
+      // Логируем первые несколько операций для отладки
+      if (filteredCount < 5 && jettonAddr) {
+        console.log(`🔍 Операция: jettonAddr=${jettonAddr}, contract_id=${contract_id}, совпадение=${jettonAddr === contract_id}`);
+        filteredCount++;
+      }
+      
+      // Проверяем: оба адреса есть в нашем списке и это нужный токен
+      if (src && dest && 
+          walletAddressesSet.has(src) && 
+          walletAddressesSet.has(dest) &&
+          jettonAddr === contract_id) {
+        
+        transfersBetweenWallets.push({
+          from: src,
+          to: dest,
+          amount: operation.amount,
+          time: operation.utime,
+          fromName: operation.source?.name || src.substring(0, 15),
+          toName: operation.destination?.name || dest.substring(0, 15),
+        });
+      }
+    });
+  }
+  
+  console.log(`💰 Найдено переводов между кошельками для токена ${contract_id}: ${transfersBetweenWallets.length}`);
+  
+  // Находим все уникальные адреса, которые участвуют в переводах
+  const connectedWallets = new Set();
+  transfersBetweenWallets.forEach(transfer => {
+    connectedWallets.add(transfer.from);
+    connectedWallets.add(transfer.to);
+  });
+  
+  console.log(`🔗 Кошельков с переводами: ${connectedWallets.size}`);
+  
+  if (connectedWallets.size === 0) {
+    console.log("Нет связанных кошельков для отображения");
+    showNoDataMessage(canvas, "Нет переводов между кошельками для этого токена");
+    return;
+  }
+  
+  // Создаем карту балансов только для связанных кошельков
+  const balanceMap = new Map();
+  bubbleArrayHolders.forEach(item => {
+    if (connectedWallets.has(item.koshel)) {
+      balanceMap.set(item.koshel, item.balans);
+    }
+  });
+  
+  console.log(`📊 Связанных кошельков с балансами: ${balanceMap.size}`);
+  
+  // Получаем массив связанных кошельков
+  const connectedWalletsArray = Array.from(connectedWallets);
+  
+  if (connectedWalletsArray.length === 0) {
+    showNoDataMessage(canvas, "Нет данных для отображения");
+    return;
+  }
+  
+  // Создаем позиции для кошельков (распределение по кругу)
+  const positions = new Map();
+  const centerX = 20;
+  const centerY = 20;
+  const radius = 15;
+  
+  // Находим максимальный баланс среди связанных кошельков
+  const balancesList = connectedWalletsArray.map(addr => balanceMap.get(addr) || 0);
+  const maxBalance = Math.max(...balancesList, 1);
+  console.log(`💰 Максимальный баланс среди связанных: ${maxBalance.toLocaleString()}`);
+  
+  connectedWalletsArray.forEach((address, index) => {
+    const angle = (index / connectedWalletsArray.length) * 2 * Math.PI;
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+    const balance = balanceMap.get(address) || 0;
+    // Размер пузырька: от 5 до 20 в зависимости от баланса
+    const scaledRadius = 5 + (balance / maxBalance) * 15;
+    
+    // Получаем имя кошелька
+    let walletName = address.substring(0, 15);
+    const transfer = transfersBetweenWallets.find(t => t.from === address || t.to === address);
+    if (transfer) {
+      if (transfer.from === address && transfer.fromName) walletName = transfer.fromName;
+      if (transfer.to === address && transfer.toName) walletName = transfer.toName;
+    }
+    
+    positions.set(address, {
+      x: x,
+      y: y,
+      radius: Math.max(5, Math.min(20, scaledRadius)),
+      balance: balance,
+      address: address,
+      name: walletName
+    });
+  });
+  
+  // Создаем данные для пузырьков
+  const bubbleData = [];
+  for (const [address, pos] of positions) {
+    bubbleData.push({
+      x: pos.x,
+      y: pos.y,
+      r: pos.radius,
+      address: address,
+      name: pos.name,
+      balance: pos.balance
+    });
+  }
+  
+  // Создаем уникальные связи (без дубликатов)
+  const connectionsMap = new Map();
+  transfersBetweenWallets.forEach(transfer => {
+    const fromPos = positions.get(transfer.from);
+    const toPos = positions.get(transfer.to);
+    if (fromPos && toPos) {
+      const key = `${transfer.from}|${transfer.to}`;
+      if (!connectionsMap.has(key)) {
+        connectionsMap.set(key, {
+          fromX: fromPos.x,
+          fromY: fromPos.y,
+          toX: toPos.x,
+          toY: toPos.y,
+        });
+      }
+    }
+  });
+  
+  const connections = Array.from(connectionsMap.values());
+  console.log(`🔗 Уникальных связей: ${connections.length}`);
+  
+  // Плагин для рисования линий
+  const linePlugin = {
+    id: "lineConnector",
+    afterDatasetsDraw: (chart) => {
+      const { ctx, scales } = chart;
+      if (connections.length === 0) return;
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 1.5;
+      connections.forEach(conn => {
+        ctx.beginPath();
+        ctx.moveTo(scales.x.getPixelForValue(conn.fromX), scales.y.getPixelForValue(conn.fromY));
+        ctx.lineTo(scales.x.getPixelForValue(conn.toX), scales.y.getPixelForValue(conn.toY));
+        ctx.stroke();
+      });
+      ctx.restore();
+    },
+  };
+  
+  // Плагин для фона
+  const backgroundPlugin = {
+    id: "custom_canvas_background_color",
+    beforeDraw: (chart) => {
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.fillStyle = "#1a1a2e";
+      ctx.fillRect(0, 0, chart.width, chart.height);
+      ctx.restore();
+    },
+  };
+  
+  // Уничтожаем старый график если есть
+  let existingChart = Chart.getChart(canvas);
+  if (existingChart) existingChart.destroy();
+  
+  // Создаем новый график
+  const config = {
+    type: "bubble",
+    data: {
+      datasets: [{
+        label: `Связанные кошельки (${bubbleData.length})`,
+        data: bubbleData,
+        backgroundColor: (context) => {
+          const value = context.raw.balance;
+          if (value > 100000000) return "rgba(255, 99, 132, 0.8)";
+          if (value > 50000000) return "rgba(255, 159, 64, 0.8)";
+          if (value > 10000000) return "rgba(255, 205, 86, 0.8)";
+          if (value > 1000000) return "rgba(75, 192, 192, 0.8)";
+          return "rgba(54, 162, 235, 0.8)";
+        },
+        borderColor: "rgba(255, 255, 255, 0.8)",
+        borderWidth: 2,
+      }]
+    },
+    plugins: [backgroundPlugin, linePlugin],
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        tooltip: {
+  callbacks: {
+    label: (context) => {
+      const point = context.raw;
+      const balanceFormatted = point.balance.toLocaleString('ru-RU', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      return [
+        `Кошелек: ${point.name}`,
+        `Баланс: ${balanceFormatted}`,
+        `Адрес: ${point.address.substring(0, 20)}...`
+      ];
+    }
+  }
+},
+        legend: {
+          display: true,
+          position: 'top',
+          labels: { 
+            color: '#fff', 
+            font: { size: 12 }
+          }
+        }
+      },
+      scales: {
+        x: { 
+          min: 0, 
+          max: 40, 
+          grid: { color: "rgba(255, 255, 255, 0.1)" }, 
+          ticks: { display: false } 
+        },
+        y: { 
+          min: 0, 
+          max: 40, 
+          grid: { color: "rgba(255, 255, 255, 0.1)" }, 
+          ticks: { display: false } 
+        }
+      },
+      elements: { 
+        point: { 
+          hoverRadius: 12, 
+          hoverBorderWidth: 3 
+        } 
+      }
+    }
+  };
+  
+  new Chart(ctx, config);
+  console.log(`✅ График успешно создан! Показано ${bubbleData.length} связанных кошельков из ${connectedWallets.size}`);
+}
 
+// Функция для отображения сообщения при отсутствии данных
+function showNoDataMessage(canvas, message) {
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth || 800;
+  canvas.height = canvas.offsetHeight || 500;
+  ctx.fillStyle = "#1a1a2e";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+}
 
-// это свап https://tonviewer.com/transaction/54b098c4e6cbc039fc4fb5518e67f29806437961d3b729ff9ffea31dcddf5959
-//  {
-//       "operation": "transfer",
-//       "utime": 1760131770,
-//       "lt": 62428565000004,
-//       "transaction_hash": "54b098c4e6cbc039fc4fb5518e67f29806437961d3b729ff9ffea31dcddf5959",
-//       "source": {
-//         "address": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
-//         "name": "zxc-sperma.ton",
-//         "is_scam": false,
-//         "is_wallet": true
-//       },
-//       "destination": {
-//         "address": "0:70a4118401bf8d823531a66011020565f02e05ff91ac5f1677769b00d6acd07a",
-//         "name": "STON.fi DEX",
-//         "is_scam": false,
-//         "is_wallet": false
-//       },
-//       "amount": "3123182281433211",
-//       "jetton": {
-//         "address": "0:6c4e969dd07aa1fad6733bc2c9a2693ee06c403838d9b9a38b11eff4907b81c7",
-//         "name": "ZACKERMANBANK",
-//         "symbol": "ZMBANK",
-//         "decimals": 9,
-//         "image": "https://cache.tonapi.io/imgproxy/Dg712NwkBhOcnsRxNLevRTaEfgUbe4OOX-ozGKC6TcU/rs:fill:200:200:1/g:no/aHR0cDovL3phY2tlcm1hbmJhbmsuY29tL2xvZ28yMDgucG5n.webp",
-//         "verification": "whitelist",
-//         "score": 0,
-//         "description": "Be at the top of the financial chain! The bank makes money - you make money"
-//       },
-//       "trace_id": "9b93932c0054b621becaa4707a61bb12f5f06c37c8e1905b90cc99cf7c10ca2f",
-//       "query_id": "",
-//       "payload": {
-//         "SumType": "StonfiSwapV2",
-//         "OpCode": 1717886506,
-//         "Value": {
-//           "TokenWallet1": "0:728da3a36bafa9af10eb9e2188cecfa50663673fe9ecbc6c47d57db2e0cdcce6",
-//           "RefundAddress": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
-//           "ExcessesAddress": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
-//           "TxDeadline": 1760132638,
-//           "CrossSwapBody": {
-//             "MinOut": "6348906922",
-//             "Receiver": "0:b2a4b620fec475845372f9cd27755e7c1dda04f96088259e3ccb9f11b66c72ad",
-//             "FwdGas": "0",
-//             "CustomPayload": null,
-//             "RefundFwdGas": "0",
-//             "RefundPayload": null,
-//             "RefFee": 10,
-//             "RefAddress": ""
-//           }
-//         }
-//       }
-//     },
+// Функция для запуска графика (вызывать после загрузки данных)
+function startBubbleChart() {
+  console.log("🚀 Запуск Bubble Chart...");
+  console.log(`contract_id: ${contract_id}`);
+  console.log(`operationsData: ${Object.keys(operationsData).length} кошельков`);
+  console.log(`bubbleArrayHolders: ${bubbleArrayHolders.length} кошельков`);
+  
+  if (!contract_id) {
+    console.log("⏳ contract_id еще не загружен, ожидание...");
+    setTimeout(startBubbleChart, 1000);
+    return;
+  }
+  
+  if (Object.keys(operationsData).length > 0 && bubbleArrayHolders.length > 0) {
+    initBubbleChart();
+  } else {
+    console.log("⏳ Данные не готовы, ожидание...");
+    setTimeout(startBubbleChart, 2000);
+  }
+}
 
-// для бабл мапы нужно создать массив кошельков у которых основная эмиссия и проверять их адреса(убирать не кошельки холдеров) на присутствие их адресов в source или destination 
+// ============ ИСПРАВЛЕННАЯ ФУНКЦИЯ findBubles ============
+async function findBubles() {
+  // Ждем, пока contract_id загрузится (ВАЖНО!)
+  let waitCount = 0;
+  while (!contract_id && waitCount < 30) {
+    console.log(`⏳ Ожидание загрузки contract_id... (${waitCount + 1}/30)`);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    waitCount++;
+  }
+  
+  if (!contract_id) {
+    console.error("❌ contract_id не загружен после 30 секунд ожидания!");
+    const canvas = document.getElementById("myBubbleChart");
+    if (canvas) {
+      showNoDataMessage(canvas, "Ошибка: не удалось загрузить contract_id");
+    }
+    return;
+  }
+  
+  console.log(`✅ contract_id загружен: ${contract_id}`);
+  
+  // Ждем, пока holders_array2 заполнится
+  while (holders_array2.length === 0 && allHoldersData.length === 0) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  // Отбираем только кошельки (is_wallet: true) и не из known_addreses
+  for (let i = 0; i < holders_array2.length; i++) {
+    const holder = holders_array2[i];
+    const isWallet = holder.is_wallet === true;
+    const isKnown = holder.koshel in known_addreses;
+    
+    if (isWallet && !isKnown) {
+      bubbleArrayHolders.push(holder);
+    }
+  }
+  
+  // Ограничиваем количество для анализа
+  bubbleArrayHolders = bubbleArrayHolders.slice(0, 45);
+  console.log(`📊 Отобрано кошельков для анализа: ${bubbleArrayHolders.length}`);
+  
+  // Загружаем операции для каждого кошелька
+  for (let i = 0; i < bubbleArrayHolders.length; i++) {
+    const wallet = bubbleArrayHolders[i];
+    console.log(`🔄 Загрузка операций для ${wallet.koshel.substring(0, 20)}... (${i + 1}/${bubbleArrayHolders.length})`);
+    
+    // Добавляем задержку между запросами
+    if (i > 0) {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+    
+    try {
+      const response = await fetch(`https://tonapi.io/v2/accounts/${wallet.koshel}/jettons/history?limit=100`);
+      
+      if (response.status === 429) {
+        console.log(`⚠️ Rate limit, ждем 3 секунды...`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        i--; // повторяем попытку
+        continue;
+      }
+      
+      const data = await response.json();
+      
+      if (data && !data.error) {
+        operationsData[wallet.koshel] = data;
+        console.log(`✅ Загружено (${Object.keys(operationsData).length}/${bubbleArrayHolders.length})`);
+      } else {
+        console.log(`❌ Ошибка или нет данных для ${wallet.koshel.substring(0, 20)}`);
+      }
+    } catch (error) {
+      console.error(`❌ Ошибка загрузки для ${wallet.koshel.substring(0, 20)}:`, error);
+    }
+  }
+  
+  console.log(`📊 Загружено операций для ${Object.keys(operationsData).length} кошельков из ${bubbleArrayHolders.length}`);
+  console.log(`🎯 Финальный contract_id: ${contract_id}`);
+  
+  // ВАЖНО: ЗАПУСКАЕМ ГРАФИК ПОСЛЕ ЗАГРУЗКИ ВСЕХ ДАННЫХ
+  if (Object.keys(operationsData).length > 0) {
+    console.log("🎯 Все данные загружены, запускаем график!");
+    startBubbleChart();
+  } else {
+    console.error("❌ Не удалось загрузить данные ни для одного кошелька");
+    const canvas = document.getElementById("myBubbleChart");
+    if (canvas) {
+      showNoDataMessage(canvas, "Не удалось загрузить данные. Попробуйте позже.");
+    }
+  }
+}
