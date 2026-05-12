@@ -11,8 +11,11 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../style/main.css">
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
+  
   <body>
+    
 <header>
       <nav class="navbar">
         <div class="container-fluid">
@@ -324,5 +327,24 @@
         <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
     <script src="../js/tokens.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+  // Инициализация глобального клиента (если ещё не создан)
+  if (!window.supabaseClient) {
+    const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wyKGfavUluoEkE-9MsrKqw_vbniU1Rm';
+    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  
+  // Функция сохранения истории (использует глобальный supabaseClient)
+  window.saveSearchToHistory = async function(contractAddress) {
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) return;
+    const { error } = await window.supabaseClient
+      .from('search_history')
+      .insert([{ user_id: user.id, contract_address: contractAddress }]);
+    if (error) console.error('Ошибка сохранения истории:', error);
+    else console.log('Поиск сохранён в историю');
+  };
+</script>
   </body>
 </html>

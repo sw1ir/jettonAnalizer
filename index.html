@@ -25,10 +25,27 @@
 <noscript><div><img src="https://mc.yandex.ru/watch/104073134" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 
-
+<!-- ПОДКЛЮЧЕНИЕ SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   </head>
   <body class="body">
+    <script>
+  // Проверка авторизации — если нет, идём на страницу входа
+  (async function checkAuth() {
+    // Инициализация глобального клиента (если ещё не создан)
+    if (!window.supabaseClient) {
+      const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_wyKGfavUluoEkE-9MsrKqw_vbniU1Rm';
+      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) {
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
     <header>
       <nav class="navbar">
         <div class="container-fluid">
@@ -173,7 +190,6 @@
                 />
               </svg>
             </button>
-            <a href="html/token.html">
               <button class="search-button" id="search">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +203,6 @@
                   />
                 </svg>
               </button>
-            </a>
             <input
               id="contractInput"
               class="form-control form-control-lg search-input"
@@ -201,9 +216,51 @@
         <div class="mx-auto col-3 cards-container"></div>
       </div>
     </main>
+<script>
+  // Инициализация глобального клиента Supabase для работы с историей
+  if (!window.supabaseClient) {
+    const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_wyKGfavUluoEkE-9MsrKqw_vbniU1Rm';
+    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
+  // Сохранение истории поиска
+  async function saveSearchHistory(contractAddress) {
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) {
+      console.log('Пользователь не авторизован');
+      return false;
+    }
+    const { error } = await window.supabaseClient.from('search_history').insert([{ 
+      user_id: user.id, 
+      contract_address: contractAddress 
+    }]);
+    if (error) {
+      console.error('Ошибка сохранения истории:', error);
+      return false;
+    }
+    console.log('История сохранена для', contractAddress);
+    return true;
+  }
+
+  // Перехватываем нажатие на кнопку поиска
+  document.getElementById('search').addEventListener('click', async function(e) {
+    e.preventDefault(); // предотвращаем любые действия по умолчанию
+    const contractAddress = document.getElementById('contractInput').value.trim();
+    if (!contractAddress) {
+      alert('Введите адрес контракта');
+      return;
+    }
+    
+    // Сохраняем в историю
+    await saveSearchHistory(contractAddress);
+    
+    // Сохраняем в localStorage и перенаправляем
+    localStorage.setItem('contract', contractAddress);
+    window.location.href = 'html/token.html';
+  });
+</script>
             <script src="js/index.js"></script>
 
   </body>
 </html>
-
-
