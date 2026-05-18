@@ -1,70 +1,253 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <link rel="icon" href="src/favicon.ico" type="image/x-icon">
   <title>Авторизация - JettonAnalizer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
     }
-    .auth-card {
-      margin-top: 100px;
+
+    /* Центральная карточка с современным стеклом */
+    .glass-card {
+      background: rgba(20, 15, 35, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      padding: 2rem 1.8rem 2.2rem;
+      width: 100%;
+      max-width: 460px;
+      transition: all 0.3s ease;
+    }
+
+    /* Логотип в центре */
+    .logo-wrapper {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-img {
+      max-width: 140px;
+      width: 100%;
+      height: auto;
+      display: inline-block;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+      transition: transform 0.2s;
+    }
+
+    .logo-img:hover {
+      transform: scale(1.02);
+    }
+
+    /* Заголовок формы */
+    .form-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(120deg, #fff, #e0d6ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    /* Поля ввода — современный стиль */
+    .input-group-custom {
+      margin-bottom: 1.25rem;
+    }
+
+    .input-group-custom label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.3px;
+    }
+
+    .custom-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1.2rem;
+      padding: 0.85rem 1.2rem;
+      font-size: 0.95rem;
+      color: white;
+      transition: all 0.2s;
+      outline: none;
+      font-family: 'Inter', monospace;
+    }
+
+    .custom-input:focus {
+      border-color: #a78bfa;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3);
+    }
+
+    .custom-input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 400;
+    }
+
+    /* Фиолетовая кнопка (основная) */
+    .btn-purple {
+      background: linear-gradient(95deg, #8b5cf6, #7c3aed);
+      border: none;
+      border-radius: 2rem;
+      padding: 0.85rem 0;
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      width: 100%;
+      transition: 0.2s;
+      box-shadow: 0 8px 18px rgba(124, 58, 237, 0.3);
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .btn-purple:hover {
+      background: linear-gradient(95deg, #7c3aed, #6d28d9);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-purple:active {
+      transform: translateY(1px);
+    }
+
+    /* Вторичная ссылка/кнопка */
+    .link-action {
+      background: transparent;
+      border: none;
+      color: #c4b5fd;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      padding: 0.5rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    .link-action:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    /* Текст-подсказка внизу формы */
+    .form-footer-text {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .inline-link {
+      background: none;
+      border: none;
+      color: #ddd6fe;
+      font-weight: 600;
+      padding: 0 0.2rem;
+      cursor: pointer;
+    }
+
+    .inline-link:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    hr {
+      background-color: rgba(255, 255, 255, 0.15);
+      margin: 1rem 0;
+    }
+
+    /* Анимация переключения */
+    .transition-fade {
+      transition: opacity 0.2s ease;
+    }
+
+    /* адаптив */
+    @media (max-width: 500px) {
+      .glass-card {
+        padding: 1.6rem 1.4rem;
+      }
+      .logo-img {
+        max-width: 110px;
+      }
+      .form-title {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="row justify-content-center auth-card">
-    <div class="col-md-4">
-      <div class="card bg-dark text-white">
-        <div class="card-header text-center">
-          <h4>🔐 JettonAnalizer</h4>
-        </div>
-        <div class="card-body">
-          <!-- Форма входа -->
-          <div id="loginForm">
-            <div class="mb-3">
-              <label>Email</label>
-              <input type="email" id="loginEmail" class="form-control" placeholder="user@example.com">
-            </div>
-            <div class="mb-3">
-              <label>Пароль</label>
-              <input type="password" id="loginPassword" class="form-control" placeholder="********">
-            </div>
-            <button class="btn btn-primary w-100 mb-2" id="loginBtn">Войти</button>
-            <button class="btn btn-secondary w-100" id="showRegisterBtn">Зарегистрироваться</button>
-          </div>
+<div class="glass-card">
+  <!-- Логотип по центру -->
+  <div class="logo-wrapper">
+    <img src="/src/logo1.png" alt="JettonAnalizer" class="logo-img" onerror="this.src='https://placehold.co/140x140?text=JA&bg=7c3aed&textColor=white'; this.onerror=null;">
+  </div>
 
-          <!-- Форма регистрации (скрыта) -->
-          <div id="registerForm" style="display: none;">
-            <div class="mb-3">
-              <label>Email</label>
-              <input type="email" id="regEmail" class="form-control" placeholder="user@example.com">
-            </div>
-            <div class="mb-3">
-              <label>Пароль</label>
-              <input type="password" id="regPassword" class="form-control" placeholder="********">
-            </div>
-            <div class="mb-3">
-              <label>Повторите пароль</label>
-              <input type="password" id="regPasswordConfirm" class="form-control" placeholder="********">
-            </div>
-            <button class="btn btn-success w-100 mb-2" id="registerBtn">Зарегистрироваться</button>
-            <button class="btn btn-secondary w-100" id="showLoginBtn">Назад к входу</button>
-          </div>
-        </div>
-      </div>
+  <!-- Форма входа -->
+  <div id="loginForm" class="transition-fade">
+    <div class="form-title">Добро пожаловать</div>
+    <div class="input-group-custom">
+      <label>📧 Email</label>
+      <input type="email" id="loginEmail" class="custom-input" placeholder="user@example.com" autocomplete="email">
+    </div>
+    <div class="input-group-custom">
+      <label>🔒 Пароль</label>
+      <input type="password" id="loginPassword" class="custom-input" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-purple" id="loginBtn">Войти</button>
+    <div class="form-footer-text">
+      Нет аккаунта?
+      <button class="inline-link" id="showRegisterBtn">Зарегистрироваться</button>
+    </div>
+  </div>
+
+  <!-- Форма регистрации (изначально скрыта) с подтверждением пароля -->
+  <div id="registerForm" style="display: none;" class="transition-fade">
+    <div class="form-title">Создать аккаунт</div>
+    <div class="input-group-custom">
+      <label>📧 Email</label>
+      <input type="email" id="regEmail" class="custom-input" placeholder="user@example.com" autocomplete="email">
+    </div>
+    <div class="input-group-custom">
+      <label>🔒 Пароль</label>
+      <input type="password" id="regPassword" class="custom-input" placeholder="минимум 6 символов" autocomplete="new-password">
+    </div>
+    <div class="input-group-custom">
+      <label>✅ Подтверждение пароля</label>
+      <input type="password" id="regPasswordConfirm" class="custom-input" placeholder="повторите пароль" autocomplete="off">
+    </div>
+    <button class="btn-purple" id="registerBtn">Зарегистрироваться</button>
+    <div class="form-footer-text">
+      Уже есть аккаунт?
+      <button class="inline-link" id="showLoginBtn">Войти</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // ------------------- ПОЛНОСТЬЮ СОХРАНЁННАЯ ЛОГИКА SUPABASE -------------------
   // Инициализация глобального клиента (если ещё не создан)
   if (!window.supabaseClient) {
     const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
@@ -72,53 +255,125 @@
     window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
 
-  // Перенаправление на главную страницу после входа
+  // Перенаправление на главную страницу после входа (если уже залогинен)
   async function redirectIfLoggedIn() {
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
-    if (user) {
-      window.location.href = 'index.html';
+    try {
+      const { data: { user } } = await window.supabaseClient.auth.getUser();
+      if (user) {
+        window.location.href = 'index.html';
+      }
+    } catch (err) {
+      console.warn("Ошибка проверки сессии:", err);
     }
   }
 
-  // Обработчики
-  document.getElementById('loginBtn').onclick = async () => {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    if (!email || !password) return alert('Введите email и пароль');
-    const { error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) alert('Ошибка: ' + error.message);
-    else window.location.href = 'index.html';
-  };
+  // DOM элементы
+  const loginFormDiv = document.getElementById('loginForm');
+  const registerFormDiv = document.getElementById('registerForm');
+  const loginBtn = document.getElementById('loginBtn');
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const showLoginBtn = document.getElementById('showLoginBtn');
+  const registerBtn = document.getElementById('registerBtn');
 
-  document.getElementById('showRegisterBtn').onclick = () => {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'block';
-  };
+  // Переключение на регистрацию
+  if (showRegisterBtn) {
+    showRegisterBtn.onclick = () => {
+      loginFormDiv.style.display = 'none';
+      registerFormDiv.style.display = 'block';
+      // Очистка полей для лучшего UX (необязательно, но приятно)
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    };
+  }
 
-  document.getElementById('showLoginBtn').onclick = () => {
-    document.getElementById('registerForm').style.display = 'none';
-    document.getElementById('loginForm').style.display = 'block';
-  };
+  // Переключение на логин
+  if (showLoginBtn) {
+    showLoginBtn.onclick = () => {
+      registerFormDiv.style.display = 'none';
+      loginFormDiv.style.display = 'block';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPassword').value = '';
+      document.getElementById('regPasswordConfirm').value = '';
+    };
+  }
 
-  document.getElementById('registerBtn').onclick = async () => {
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regPasswordConfirm').value;
-    if (!email || !password) return alert('Введите email и пароль');
-    if (password !== confirm) return alert('Пароли не совпадают');
-    if (password.length < 6) return alert('Пароль не менее 6 символов');
-    const { error } = await window.supabaseClient.auth.signUp({ email, password });
-    if (error) alert('Ошибка: ' + error.message);
-    else {
-      alert('Регистрация успешна! Теперь войдите.');
-      document.getElementById('registerForm').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'block';
-    }
-  };
+  // ЛОГИН
+  if (loginBtn) {
+    loginBtn.onclick = async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) {
+        alert('Введите email и пароль');
+        return;
+      }
+      
+      try {
+        const { error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          alert('Ошибка: ' + error.message);
+        } else {
+          // Успешный вход -> редирект на главную
+          window.location.href = 'index.html';
+        }
+      } catch (err) {
+        alert('Сетевая ошибка: ' + err.message);
+      }
+    };
+  }
 
-  // Проверяем, если уже залогинены — идём на главную
+  // РЕГИСТРАЦИЯ с полным подтверждением пароля
+  if (registerBtn) {
+    registerBtn.onclick = async () => {
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regPasswordConfirm').value;
+      
+      if (!email || !password) {
+        alert('Введите email и пароль');
+        return;
+      }
+      if (password !== confirm) {
+        alert('Пароли не совпадают');
+        return;
+      }
+      if (password.length < 6) {
+        alert('Пароль должен содержать не менее 6 символов');
+        return;
+      }
+      
+      try {
+        const { error } = await window.supabaseClient.auth.signUp({ 
+          email: email, 
+          password: password,
+          options: {
+            emailRedirectTo: 'https://sw1ir.github.io/jettonAnalizer/'  // Ссылка на ваш проект
+          }
+        });
+        
+        if (error) {
+          alert('Ошибка: ' + error.message);
+        } else {
+          alert('Пожайлуста подтвердите почту.');
+          // Переключаем обратно на форму входа
+          registerFormDiv.style.display = 'none';
+          loginFormDiv.style.display = 'block';
+          // Очищаем поля логина, чтобы пользователь ввел свежие данные
+          document.getElementById('loginEmail').value = '';
+          document.getElementById('loginPassword').value = '';
+          // Очищаем поля регистрации
+          document.getElementById('regEmail').value = '';
+          document.getElementById('regPassword').value = '';
+          document.getElementById('regPasswordConfirm').value = '';
+        }
+      } catch (err) {
+        alert('Ошибка подключения: ' + err.message);
+      }
+    };
+  }
+
+  // Проверяем авторизацию при загрузке страницы
   redirectIfLoggedIn();
 </script>
-
 </body>
 </html>

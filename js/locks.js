@@ -139,7 +139,7 @@ let logHolderPercentage = (element, index, totalSupply, decimals = 9) => {
     } else {
       return {
         wall: "Кошелек",
-        supl: "Заблокированно",
+        supl: "Заблокировано",
         stlock : "Дата лока",
         unlok: "Дата разлока",
         left: "Осталось"

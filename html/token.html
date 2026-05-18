@@ -12,10 +12,92 @@
     />
     <link rel="stylesheet" href="../style/main.css">
      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+     <style>
+      /* Стили для всплывающей подсказки */
+      .safety-tooltip {
+        position: relative;
+        cursor: help;
+        display: inline-flex;
+        align-items: center;
+      }
+      
+      .safety-tooltip .tooltip-text {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(20, 20, 35, 0.98);
+        backdrop-filter: blur(12px);
+        color: #e0e0e0;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 12px;
+        width: 280px;
+        z-index: 9999;
+        border: 1px solid #555;
+        transition: opacity 0.2s ease-in-out;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        text-align: left;
+        line-height: 1.5;
+      }
+      
+      /* Стрелочка подсказки */
+      .safety-tooltip .tooltip-text::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        background: rgba(20, 20, 35, 0.98);
+        border-right: 1px solid #555;
+        border-bottom: 1px solid #555;
+        rotate: 45deg;
+      }
+      
+      .safety-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+      
+      /* Иконка вопроса */
+      .question-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background: #555;
+        color: white;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 6px;
+      }
+    </style>
   </head>
   
   <body>
+     <script>
+  // Проверка авторизации — если нет, идём на страницу входа
+  (async function checkAuth() {
+    // Инициализация глобального клиента (если ещё не создан)
+    if (!window.supabaseClient) {
+      const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_wyKGfavUluoEkE-9MsrKqw_vbniU1Rm';
+      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
     
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) {
+      window.location.href = '../login.html';
+    }
+  })();
+</script>
 <header>
       <nav class="navbar">
         <div class="container-fluid">
@@ -62,19 +144,6 @@
               ></path>
             </svg>
             </a>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
-              width="30"
-              height="24"
-              viewBox="0 0 50 50"
-              style="fill: #fff"
-            >
-              <path
-                d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"
-              ></path>
-            </svg>
             <a href="https://github.com/sw1ir/jettonanazer" style="text-decoration: none;">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -236,17 +305,24 @@
                 <div id="burn" class="token_info_text"></div>
               </div>
             </div>
-            <div class="col-4">
+             <div class="col-4">
               <div class="token_info_block">
-                <p>
-                  <img
-                    src="../src/shield.gif"
-                    width="30"
-                    height="24"
-                    class="d-inline-block align-text-top"
-                  /><span id="safe"></span>
-                </p>
-                <div id="safety" class="token_info_text"></div>
+                <p><img src="../src/shield.gif" width="30" height="24" class="d-inline-block align-text-top"/><span id="safe">Безопасность</span></p>
+                <div id="safety" class="token_info_text" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span style="font-size: 24px; font-weight: bold; color: #f8640f;">37%</span>
+                  <div class="safety-tooltip">
+                    <span class="question-icon">?</span>
+                    <div class="tooltip-text">
+                      <div style="font-weight: bold; margin-bottom: 8px; color: #ff8888;">⚠️ Факторы риска:</div>
+                      <div>• Концентрация топ-10: <strong>94%</strong></div>
+                      <div>• Ликвидность: <strong>$11.6K</strong></div>
+                      <div>• Заблокированно:<strong>207.5M</strong> токенов (20.75%)</div>
+                      <div>• Торговая активность: <strong>23 сделки/24ч</strong></div>
+                      
+                    </div>
+                  </div>
+                  
+                </div>
               </div>
             </div>
             <div class="col-4">
@@ -299,24 +375,7 @@
             </div>
           </div>
           
-          <div class="row mx-auto">
-            <div class="col bg-danger alert_block">
-              <img
-                src="../src/red_flag_png.gif"
-                width="30"
-                height="24"
-                class="d-inline-block align-text-top"
-              /><span id="left"></span>
-            </div>
-            <div class="col bg-danger alert_block">
-              <img
-                src="../src/red_flag_png.gif"
-                width="30"
-                height="24"
-                class="d-inline-block align-text-top"
-              /><span id="otlega"></span>
-            </div>
-          </div>
+          
           <!-- закрытие row -->
         </div>
         <!-- закрытие col-11 mx-auto info_block -->

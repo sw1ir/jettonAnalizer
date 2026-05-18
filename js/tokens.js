@@ -1,5 +1,5 @@
 
-let lingvistic = new Map([["price chart","График цены"],["holders","Холдеры"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокированно"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"], ["socials","соц. сети"]])
+let lingvistic = new Map([["price chart","График цены"],["holders","Держатели"],["price","Цена"],["mcap","Капитализация"],["Lock","Заблокировано"],["burned","Соженно"],["safety","Безопасность"],["liquidity","Ликвидность"],["trancsations","Транкзации"],["total_supply","Эмиссия"],["left","Левые"],["old with afk","Отлега"], ["socials","соц. сети"]])
 let engbtn = document.getElementById("eng_btn")
 let rusbtn = document.getElementById("rus_btn")
 let price_chart = document.getElementById("price_chart")
