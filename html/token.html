@@ -309,20 +309,19 @@
               <div class="token_info_block">
                 <p><img src="../src/shield.gif" width="30" height="24" class="d-inline-block align-text-top"/><span id="safe">Безопасность</span></p>
                 <div id="safety" class="token_info_text" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span style="font-size: 24px; font-weight: bold; color: #f8640f;">37%</span>
-                  <div class="safety-tooltip">
-                    <span class="question-icon">?</span>
-                    <div class="tooltip-text">
-                      <div style="font-weight: bold; margin-bottom: 8px; color: #ff8888;">⚠️ Факторы риска:</div>
-                      <div>• Концентрация топ-10: <strong>94%</strong></div>
-                      <div>• Ликвидность: <strong>$11.6K</strong></div>
-                      <div>• Заблокированно:<strong>207.5M</strong> токенов (20.75%)</div>
-                      <div>• Торговая активность: <strong>23 сделки/24ч</strong></div>
-                      
-                    </div>
-                  </div>
-                  
-                </div>
+  <span id="safetyPercent" style="font-size: 24px; font-weight: bold; color: #f8640f;">--%</span>
+  <div class="safety-tooltip">
+    <span class="question-icon">?</span>
+    <div id="safetyTooltipContent" class="tooltip-text">
+      <!-- Сюда JavaScript подставит факторы риска -->
+      <div style="font-weight: bold; margin-bottom: 8px; color: #ff8888;">⚠️ Факторы риска:</div>
+      <div id="riskConcentration">• Концентрация топ-10: <strong>--%</strong></div>
+      <div id="riskLiquidity">• Ликвидность: <strong>$--</strong></div>
+      <div id="riskLocked">• Заблокированно: <strong>--</strong> токенов (--%)</div>
+      <div id="riskActivity">• Торговая активность: <strong>--</strong> сделок/24ч</div>
+    </div>
+  </div>
+</div>
               </div>
             </div>
             <div class="col-4">
@@ -381,7 +380,21 @@
         <!-- закрытие col-11 mx-auto info_block -->
       </div>
       <!-- закрытие основного row -->
-       
+       <div style="
+    margin-top: 30px;
+    padding: 12px 16px;
+    background: rgba(255, 100, 100, 0.1);
+    border-left: 4px solid #ff6464;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+">
+    ⚠️ <strong>Не является финансовой рекомендацией</strong>. Все показатели рассчитаны автоматически на основе открытых данных и носят ознакомительный характер. Перед принятием инвестиционного решения проведите собственное исследование (DYOR).
+</div>
     </main>
         <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
     <script src="../js/tokens.js"></script>

@@ -15,6 +15,42 @@ let suplyy = document.getElementById("suplayy")
 let left = document.getElementById("left")
 let otlega = document.getElementById("otlega")
 let soc_txt = document.getElementById("soc_txt")
+
+function getSafetyColor(percent) {
+    if (percent < 20) {
+        return {
+            text: '#ff4444',
+            gradient: 'linear-gradient(135deg, #ff4444, #cc0000)',
+            bg: 'rgba(255, 68, 68, 0.15)'
+        };
+    } else if (percent < 40) {
+        return {
+            text: '#ff8844',
+            gradient: 'linear-gradient(135deg, #ff8844, #ff5500)',
+            bg: 'rgba(255, 136, 68, 0.15)'
+        };
+    } else if (percent < 60) {
+        return {
+            text: '#ffdd44',
+            gradient: 'linear-gradient(135deg, #ffdd44, #ffaa00)',
+            bg: 'rgba(255, 221, 68, 0.15)'
+        };
+    } else if (percent < 80) {
+        return {
+            text: '#88ff44',
+            gradient: 'linear-gradient(135deg, #88ff44, #55cc00)',
+            bg: 'rgba(136, 255, 68, 0.15)'
+        };
+    } else {
+        return {
+            text: '#44ff88',
+            gradient: 'linear-gradient(135deg, #44ff88, #00cc55)',
+            bg: 'rgba(68, 255, 136, 0.15)'
+        };
+    }
+}
+
+
 function chg_lng(){
 if(localStorage.getItem("lang")=="eng"){
   engbtn.removeAttribute("class")
@@ -33,7 +69,7 @@ trancsations.textContent="trancsations"
 suplyy.textContent="total_supply"
 left.textContent = "left"
 otlega.textContent = "old with afk" 
-soc_txt.textContent=" socials ㅤ"   
+soc_txt.textContent=" socials"   
 }
 if(localStorage.getItem("lang")=="rus"){
 rusbtn.removeAttribute("class")
@@ -129,6 +165,10 @@ rusbtn.setAttribute("class","btn btn-success")
           chartImg.src = "../src/chart_down.gif"
           mcapImg.src = "../src/chart_down.gif"
           }
+
+          window.currentLiquidityUSD = liquidity;
+          window.buyVolume24h = buyValue;
+          window.sellVolume24h = sellValue;
     })
       function formatNumber(num) {
         if (num >= 1000000000) {
@@ -251,7 +291,9 @@ loadChartData();
         //lock async vivod
         lock = document.getElementById("lock");
         getLockData().then( data => {
+          window.lockedTokensCount = data / 10**9;
           lock.textContent = formatNumber( data/ 10 ** 9);
+
         })
         //основная инфа о монете
     getJettonInfo().then(data =>{
@@ -261,7 +303,7 @@ loadChartData();
       
     getBurnInfo().then(burned_amount => {
         burn.textContent = formatNumber(burned_amount / 10 ** 9);
-    
+         window.burnedAmount = burned_amount / 10 ** 9;
       let supply = data.total_supply;
       console.log(supply);
       console.log(data.total_supply)
@@ -275,6 +317,7 @@ loadChartData();
         document.getElementById("token_name").innerHTML = token;
         let holders = data.holders_count;
         document.getElementById("holders").innerHTML = holders;
+        window.holdersCount = holders;
         document.getElementById("description").innerHTML =data.metadata.description;
       let emision = document.getElementById("total_suplly");
       
@@ -286,7 +329,7 @@ loadChartData();
         })
         let socials = data.metadata.social
         let sites = data.metadata.websites
-          
+        
         
         button = document.getElementById("socials")
         let soc_drp = document.getElementById("socials_drop")
@@ -294,6 +337,8 @@ loadChartData();
         button.style.display ="none"          
       }else{
         if (socials.length >0 || sites.length >0){
+          window.hasSocials = socials.length > 0;
+          window.hasWebsite = sites.length > 0;
           button.disabled = false
           if (socials.length >0){
             let soc_img = new Map([["t.me","../src/teleg.png"],["discord.gg","../src/discord.png"],
@@ -381,7 +426,126 @@ loadChartData();
         socials_drop.style.display ="inline-block"
       }
       })
+// ========== РАСШИРЕННЫЙ РАСЧЁТ БЕЗОПАСНОСТИ (СКРЫТЫЕ БОНУСЫ) ==========
+
+async function getTop10HoldersShare() {
+    if (!contract) return 0;
+    try {
+        const response = await fetch(`https://tonapi.io/v2/jettons/${contract}/holders?limit=10&offset=0`);
+        const data = await response.json();
+        if (!data.addresses) return 0;
+        
+        let top10Balance = 0;
+        data.addresses.forEach(holder => {
+            top10Balance += holder.balance / 10**9;
+        });
+        
+        return top10Balance;
+    } catch (error) {
+        console.error('Ошибка топ-10:', error);
+        return 0;
+    }
+}
 
 
+    
+async function updateSafety() {
+    if (!window.real_supply) {
+        setTimeout(updateSafety, 500);
+        return;
+    }
+    
+    // ===== 1. Данные =====
+    const totalSupply = window.real_supply;
+    const liquidity = window.currentLiquidityUSD || 0;
+    const lockedTokens = window.lockedTokensCount || 0;
+    const buyVol = window.buyVolume24h || 0;
+    const sellVol = window.sellVolume24h || 0;
+    const totalVolume = buyVol + sellVol;
+    const burnedAmount = window.burnedAmount || 0;
+    const holdersCount = window.holdersCount || 0;
+    const hasSocials = window.hasSocials || false;
+    const hasWebsite = window.hasWebsite || false;
+    
+    // ===== 2. Штрафы по 4 факторам (в сумме не более 90) =====
+    const top10BalanceRaw = await getTop10HoldersShare();
+    const top10Share = (top10BalanceRaw / totalSupply) * 100;
+    let penaltyConcentration = 0;
+    if (top10Share > 60) penaltyConcentration = 30;
+    else if (top10Share > 40) penaltyConcentration = 22;
+    else if (top10Share > 20) penaltyConcentration = 15;
+    else if (top10Share > 10) penaltyConcentration = 8;
+    
+    let penaltyLiquidity = 0;
+    if (liquidity < 5000) penaltyLiquidity = 25;
+    else if (liquidity < 25000) penaltyLiquidity = 18;
+    else if (liquidity < 100000) penaltyLiquidity = 12;
+    else if (liquidity < 500000) penaltyLiquidity = 6;
+    
+    // Локи: если нет локов — высокий штраф, если есть — маленький или 0
+    const lockedShare = totalSupply ? (lockedTokens / totalSupply) * 100 : 0;
+    let penaltyLock = 0;
+    if (lockedShare === 0) penaltyLock = 20;
+    else if (lockedShare < 5) penaltyLock = 15;
+    else if (lockedShare < 15) penaltyLock = 8;
+    else if (lockedShare < 30) penaltyLock = 3;
+    // если локов много (>30%) — штрафа нет
+    
+    let penaltyActivity = 0;
+    if (totalVolume < 50) penaltyActivity = 15;
+    else if (totalVolume < 300) penaltyActivity = 10;
+    else if (totalVolume < 1000) penaltyActivity = 5;
+    
+    let totalPenalty = penaltyConcentration + penaltyLiquidity + penaltyLock + penaltyActivity;
+    if (totalPenalty > 90) totalPenalty = 90;
+    
+    // ===== 3. Бонусы (скрытые, не более 10) =====
+    const burnedShare = totalSupply ? (burnedAmount / totalSupply) * 100 : 0;
+    let bonusBurned = 0;
+    if (burnedShare > 20) bonusBurned = 4;
+    else if (burnedShare > 10) bonusBurned = 3;
+    else if (burnedShare > 2) bonusBurned = 2;
+    else if (burnedShare > 0.1) bonusBurned = 1;
+    
+    let bonusHolders = 0;
+    if (holdersCount > 10000) bonusHolders = 3;
+    else if (holdersCount > 5000) bonusHolders = 2;
+    else if (holdersCount > 1000) bonusHolders = 1.5;
+    else if (holdersCount > 100) bonusHolders = 0.5;
+    
+    let bonusSocial = 0;
+    if (hasSocials) bonusSocial += 2;
+    if (hasWebsite) bonusSocial += 1;
+    
+    let totalBonus = bonusBurned + bonusHolders + bonusSocial;
+    if (totalBonus > 10) totalBonus = 10;
+    
+    // ===== 4. Итог =====
+    let safetyPercent = 90 - totalPenalty + totalBonus;
+    safetyPercent = Math.max(0, Math.min(100, safetyPercent));
+    
+    // ===== 5. Обновляем интерфейс с цветом =====
+    const safetyDiv = document.getElementById('safety');
+    if (safetyDiv) {
+        const safePercent = Math.round(safetyPercent);
+        const colors = getSafetyColor(safePercent);
+        
+        safetyDiv.innerHTML = `
+            <span style="font-size:24px;font-weight:bold;color:${colors.text};">${safePercent}%</span>
+            <div class="safety-tooltip">
+                <span class="question-icon" style="background:${colors.text};">?</span>
+                <div class="tooltip-text">
+                    <div style="font-weight:bold;margin-bottom:8px;color:#ff8888;">⚠️ Факторы риска:</div>
+                    <div>• Концентрация топ-10: <strong>${top10Share.toFixed(1)}%</strong></div>
+                    <div>• Ликвидность: <strong>$${formatNumber(liquidity)}</strong></div>
+                    <div>• Заблокированно: <strong>${formatNumber(lockedTokens)}</strong> токенов (${lockedShare.toFixed(1)}%)</div>
+                    <div>• Торговая активность: <strong>${totalVolume}</strong> сделок/24ч</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    console.log(`Безопасность: ${Math.round(safetyPercent)}% | Штрафы: конц=${penaltyConcentration}, ликв=${penaltyLiquidity}, лок=${penaltyLock}, актив=${penaltyActivity} | Бонусы: ${totalBonus}`);
+}
 
-
+setTimeout(updateSafety, 5000);
