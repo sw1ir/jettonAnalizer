@@ -894,3 +894,16 @@ table td {
   color: #00ff00;
   background-color: #7c4dff;
 }
+
+.profile-dropdown-content {
+    transition: all 0.2s ease;
+}
+
+.profile-dropdown-content button:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+#profileBtn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #888;
+}
