@@ -20,7 +20,7 @@ async function loadProfile() {
         }
     } else {
         // Пользователь не авторизован — перенаправляем на login.html
-        window.location.href = '../login.html';
+        window.location.href = '/jettonAnalizer/login.html';
     }
 }
 
@@ -74,7 +74,7 @@ function initLogout() {
     
     logoutBtn.addEventListener('click', async () => {
         await window.supabaseClient.auth.signOut();
-        window.location.href = '../login.html';
+        window.location.href = '/jettonAnalizer/login.html';
     });
 }
 
