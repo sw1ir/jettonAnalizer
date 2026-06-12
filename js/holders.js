@@ -1102,23 +1102,52 @@ function renderBubbleChart() {
   console.log(`🔗 Уникальных связей: ${connections.length}`);
   
   // Плагин для рисования линий
-  const linePlugin = {
-    id: "lineConnector",
-    afterDatasetsDraw: (chart) => {
-      const { ctx, scales } = chart;
-      if (connections.length === 0) return;
-      ctx.save();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-      ctx.lineWidth = 1.5;
-      connections.forEach(conn => {
-        ctx.beginPath();
-        ctx.moveTo(scales.x.getPixelForValue(conn.fromX), scales.y.getPixelForValue(conn.fromY));
-        ctx.lineTo(scales.x.getPixelForValue(conn.toX), scales.y.getPixelForValue(conn.toY));
-        ctx.stroke();
-      });
-      ctx.restore();
-    },
-  };
+  // Плагин для рисования линий со стрелками
+const linePlugin = {
+  id: "lineConnector",
+  afterDatasetsDraw: (chart) => {
+    const { ctx, scales } = chart;
+    if (connections.length === 0) return;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.lineWidth = 1.5;
+    
+    connections.forEach(conn => {
+      const fromX = scales.x.getPixelForValue(conn.fromX);
+      const fromY = scales.y.getPixelForValue(conn.fromY);
+      const toX = scales.x.getPixelForValue(conn.toX);
+      const toY = scales.y.getPixelForValue(conn.toY);
+      
+      // Рисуем линию
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.stroke();
+      
+      // Рисуем стрелку (треугольник на конце)
+      const angle = Math.atan2(toY - fromY, toX - fromX);
+      const arrowSize = 10;
+      const arrowX = toX;
+      const arrowY = toY;
+      
+      const leftAngle = angle + Math.PI - 0.7;
+      const rightAngle = angle - Math.PI + 0.7;
+      
+      const leftX = arrowX + Math.cos(leftAngle) * arrowSize;
+      const leftY = arrowY + Math.sin(leftAngle) * arrowSize;
+      const rightX = arrowX + Math.cos(rightAngle) * arrowSize;
+      const rightY = arrowY + Math.sin(rightAngle) * arrowSize;
+      
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY);
+      ctx.lineTo(leftX, leftY);
+      ctx.lineTo(rightX, rightY);
+      ctx.fill();
+    });
+    ctx.restore();
+  },
+};
   
   // Плагин для фона
   const backgroundPlugin = {
