@@ -376,7 +376,7 @@
             </div>
           </div>
           </div>
-        
+          
         <div class="mx-auto col-4">
           <img class="logo" src="src/logo1.png" />
         </div>
@@ -421,9 +421,88 @@
       <div class="row">
         <div class="mx-auto col-3 cards-container"></div>
       </div>
+      <!-- Блок с примерами токенов -->
+<div class="row mt-4">
+  <div class="mx-auto col-10 col-md-8 col-lg-6">
+    <div style="
+      background: rgba(30, 15, 50, 0.5);
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 1px solid rgba(157, 78, 221, 0.3);
+    ">
+      <p style="color: #b8a0c8; font-size: 14px; margin-bottom: 12px; text-align: center;">
+        📋 Анализируемые токены (нажмите, чтобы скопировать адрес)
+      </p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+        
+        <!-- Пример 1: DOGS -->
+        <button class="example-token-btn" data-contract="EQBvfpasf82aAQUkdGZBuAxlcUR3Al7vY1T7ifC6UXAnnhhA" style="
+          background: rgba(106, 17, 203, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.4);
+          border-radius: 20px;
+          padding: 6px 14px;
+          color: #d0b3e6;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: 'Inter', sans-serif;
+        ">из видео</button>
+        
+        <!-- Пример 2: NOTCOIN -->
+        <button class="example-token-btn" data-contract="EQBZ_cafPyDr5KUTs0aNxh0ZTDhkpEZONmLJA2SNGlLm4Cko" style="
+          background: rgba(106, 17, 203, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.4);
+          border-radius: 20px;
+          padding: 6px 14px;
+          color: #d0b3e6;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: 'Inter', sans-serif;
+        ">REDO</button>
+        
+        <!-- Пример 3: STON -->
+        <button class="example-token-btn" data-contract="EQBaCgUwOoc6gHCNln_oJzb0mVs79YG7wYoavh-o1ItaneLA" style="
+          background: rgba(106, 17, 203, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.4);
+          border-radius: 20px;
+          padding: 6px 14px;
+          color: #d0b3e6;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: 'Inter', sans-serif;
+        ">UTYA</button>
+        
+        <!-- Пример 4: DUMP -->
+        <button class="example-token-btn" data-contract="EQBKRSNRkeP1-2jcg5T_f__0s5Hj-vrbfNLMQy8dnZs7xd_p" style="
+          background: rgba(106, 17, 203, 0.3);
+          border: 1px solid rgba(157, 78, 221, 0.4);
+          border-radius: 20px;
+          padding: 6px 14px;
+          color: #d0b3e6;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: 'Inter', sans-serif;
+        ">CHERRY</button>
+        
+      </div>
+      <div id="copy-feedback" style="
+        text-align: center;
+        font-size: 12px;
+        color: #88ff88;
+        margin-top: 10px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      ">✅ Адрес скопирован!</div>
+    </div>
+  </div>
+</div>
     </main>
 <script>
   // Инициализация глобального клиента Supabase для работы с историей
+
   if (!window.supabaseClient) {
     const SUPABASE_URL = 'https://mwwckbqqpcxltelwduuc.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_wyKGfavUluoEkE-9MsrKqw_vbniU1Rm';
@@ -465,7 +544,39 @@
     localStorage.setItem('contract', contractAddress);
     window.location.href = 'html/token.html';
   });
-</script>
+  
+  // Обработка клика по кнопке примера токена
+  document.querySelectorAll('.example-token-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const contract = this.dataset.contract;
+      
+      // Копируем в буфер обмена
+      navigator.clipboard.writeText(contract).then(() => {
+        // Показываем уведомление
+        const feedback = document.getElementById('copy-feedback');
+        feedback.style.opacity = '1';
+        setTimeout(() => {
+          feedback.style.opacity = '0';
+        }, 2000);
+        
+        // Вставляем в поле поиска
+        const input = document.getElementById('contractInput');
+        if (input) {
+          input.value = contract;
+          input.focus();
+        }
+      }).catch(() => {
+        // Если clipboard не работает — вставляем через старый метод
+        const input = document.getElementById('contractInput');
+        if (input) {
+          input.value = contract;
+          input.focus();
+        }
+        alert('Адрес вставлен в поле поиска');
+      });
+    });
+  });
+  </script>
             <script src="js/index.js"></script>
 <script src="js/profile.js"></script>
   </body>
